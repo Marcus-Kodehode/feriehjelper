@@ -8,22 +8,22 @@ Alle som reiser og ønsker struktur i ferien sin. Appen skal kunne brukes både 
 ________________________________________
 🌍 Hva brukeren skal kunne gjøre (kjernefunksjoner)
 1.	Reisemål og oppholdssteder
-o	Legge til destinasjoner og opphold
-o	Se tidligere og kommende reiser i oversikt
+-	Legge til destinasjoner og opphold
+-	Se tidligere og kommende reiser i oversikt
 2.	Budsjettstyring
-o	Sette opp totalbudsjett og dagsbudsjett
-o	Registrere utgifter
-o	Se hvor mye som er brukt og hva som gjenstår
+-	Sette opp totalbudsjett og dagsbudsjett
+-	Registrere utgifter
+-	Se hvor mye som er brukt og hva som gjenstår
 3.	Aktivitetsplanlegging
-o	Lage dagsplaner og aktiviteter
-o	Redigere eller slette aktiviteter
-o	Ha en oversikt over planlagte dager
+-	Lage dagsplaner og aktiviteter
+-	Redigere eller slette aktiviteter
+-	Ha en oversikt over planlagte dager
 4.	Viktig informasjon
-o	Lagre nødnummer, adresser, ambassader og kontaktinfo
-o	Rask tilgang via egen "nødsideseksjon"
+-	Lagre nødnummer, adresser, ambassader og kontaktinfo
+-	Rask tilgang via egen "nødsideseksjon"
 5.	Innlogging og personlig konto (planlagt)
-o	Brukeren kan logge inn med Google (via Clerk)
-o	Dataen knyttes til deres konto for personlig visning
+-	Brukeren kan logge inn med Google (via Clerk)
+-	Dataen knyttes til deres konto for personlig visning
 ________________________________________
 🛠️ Teknisk oppsett (valgt stack)
 		Teknologi
