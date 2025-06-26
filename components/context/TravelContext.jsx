@@ -1,26 +1,43 @@
 "use client";
-import { createContext, useState, useContext } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
-// 1. Lag konteksten
 const TravelContext = createContext();
 
-// 2. Lag en provider-komponent
-export const TravelProvider = ({ children }) => {
+export function TravelProvider({ children }) {
   const [trips, setTrips] = useState([]);
 
-  const addTrip = (newTrip) => {
-    setTrips((prev) => [...prev, newTrip]);
+  // 👉 Hent fra localStorage én gang når appen starter
+  useEffect(() => {
+    const lagrede = localStorage.getItem("trips");
+    if (lagrede) {
+      setTrips(JSON.parse(lagrede));
+    }
+  }, []);
+
+  // 👉 Lagre til localStorage hver gang trips endres
+  useEffect(() => {
+    localStorage.setItem("trips", JSON.stringify(trips));
+  }, [trips]);
+
+  const addTrip = (trip) => {
+    setTrips((prev) => [...prev, trip]);
+  };
+
+  const deleteTrip = (id) => {
+    setTrips((prev) => prev.filter((trip) => trip.id !== id));
   };
 
   return (
-    <TravelContext.Provider value={{ trips, addTrip }}>
+    <TravelContext.Provider value={{ trips, addTrip, deleteTrip }}>
       {children}
     </TravelContext.Provider>
   );
-};
+}
 
-// 3. Egen hook for lettere bruk
-export const useTravel = () => useContext(TravelContext);
+export function useTravel() {
+  return useContext(TravelContext);
+}
+
 
 
 // Dette gir deg en global "reisestorage" du kan bruke på tvers av Dashboard, TravelForm, osv.

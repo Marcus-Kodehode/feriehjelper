@@ -1,42 +1,45 @@
-export default function TravelCard({ trip, isNextTrip = false }) {
-  const startDate = new Date(trip.from);
-  const endDate = new Date(trip.to);
-  const today = new Date();
+import { useTravel } from "@/components/context/TravelContext";
 
-  const duration =
-    Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+export default function TravelCard({ trip, isNextTrip }) {
+  const { deleteTrip } = useTravel();
 
-  const daysUntil =
-    Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const daysLeft = Math.ceil((new Date(trip.from) - new Date()) / (1000 * 60 * 60 * 24));
+  const length = Math.ceil((new Date(trip.to) - new Date(trip.from)) / (1000 * 60 * 60 * 24)) + 1;
 
   return (
-    <div className="bg-[#1f1f1f] text-footerText p-4 rounded-lg shadow-lg mb-4 border border-contrast flex justify-between items-start">
-      {/* VENSTRE SIDE */}
+    <div className="relative bg-[#1f1f1f] text-footerText p-4 rounded-lg shadow-lg mb-4 border border-contrast flex justify-between items-start">
+      {/* Venstre side */}
       <div>
         <h2 className="text-lg font-semibold text-primary">{trip.title}</h2>
         <p className="text-sm text-gray-300">{trip.destination}</p>
-        <p className="text-sm text-gray-400">
-          {trip.from} – {trip.to}
-        </p>
-        <p className="mt-1 text-xs italic text-gray-500">{trip.travelers ?? 2} reisende</p>
-        <p className="mt-1 text-xs text-contrast">Varighet: {duration} dager</p>
+        <p className="text-sm text-gray-400">{trip.from} – {trip.to}</p>
+        <p className="text-sm italic text-gray-400">Varighet: {length} dager</p>
         {trip.notes && (
-          <p className="mt-2 text-sm italic text-gray-500">{trip.notes}</p>
+          <p className="mt-1 text-sm italic text-gray-400">{trip.notes}</p>
         )}
+        {trip.travelers && (
+        <p className="mt-1 text-sm italic text-gray-400">
+            {trip.travelers} {trip.travelers === "1" ? "reisende" : "reisende"}
+        </p>
+        )}
+
       </div>
 
-      {/* HØYRE SIDE */}
-      <div className="space-y-2 text-right">
+      {/* Høyre side */}
+      <div className="flex flex-col items-end gap-2">
         {isNextTrip && (
-          <span className="inline-block px-2 py-1 text-xs font-bold text-black rounded-full bg-contrast">
+          <span className="px-2 py-1 text-xs font-bold text-green-400 border border-green-500 rounded">
             Neste reise
           </span>
         )}
-        {daysUntil >= 0 && (
-          <p className="text-sm font-semibold text-accent">
-            {daysUntil} dager igjen
-          </p>
-        )}
+        <span className="text-sm font-semibold text-pink-400">{daysLeft} dager igjen</span>
+
+        <button
+          onClick={() => deleteTrip(trip.id)}
+          className="px-2 py-1 mt-2 text-xs text-white bg-red-600 rounded hover:bg-red-700"
+        >
+          Slett
+        </button>
       </div>
     </div>
   );

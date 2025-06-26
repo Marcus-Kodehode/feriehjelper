@@ -13,6 +13,7 @@ export default function TravelForm() {
     transport: "",
     stay: "",
     notes: "",
+    travelers: "",
   });
 
   const handleChange = (e) => {
@@ -38,6 +39,7 @@ export default function TravelForm() {
       transport: "",
       stay: "",
       notes: "",
+      travelers: "",
     });
   };
 
@@ -101,6 +103,16 @@ export default function TravelForm() {
       onChange={handleChange}
       className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
     />
+    <input
+    type="number"
+    name="travelers"
+    placeholder="Antall reisende"
+    min="1"
+    value={formData.travelers}
+    onChange={handleChange}
+    className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
+    />
+
   </div>
 
   <textarea
