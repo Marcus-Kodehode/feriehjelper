@@ -27,24 +27,25 @@ ________________________________________
 ________________________________________
 🛠️ Teknisk oppsett (valgt stack)
 		Teknologi
-Frontend - Next.js
-Stil/CSS - Tailwind CSS
-Autentisering - Clerk + Google-login (senere)
-Data og lagring - Lokalt først, ev. Turso etter hvert
-Designverktøy - Figma (for skisser og prototyp)
+1. Frontend - Next.js.
+2. Stil/CSS - Tailwind CSS.
+3. Autentisering - Clerk + Google-login (senere).
+4. Data og lagring - Lokalt først, ev. Turso etter hvert.
+5. Designverktøy - Figma (for skisser og prototyp).
 ________________________________________
 💡 Planlagte og mulige utvidelser
 Dersom tid og fremgang tillater det, ønsker jeg å inkludere noen eller flere av følgende funksjoner:
 Funksjon	Beskrivelse
-📦 Pakkeliste	Brukeren lager en liste over ting å huske og kan sjekke av
-🗺️ Kartintegrasjon	Viser reisemål og aktiviteter på kart (Google Maps/Leaflet)
-📓 Feriedagbok	Brukeren kan skrive daglige notater og minner
-💱 Valutakalkulator	Omregning av NOK til lokal valuta
-🌦️ Værvisning	API-hentet værmelding for destinasjonen
-📂 Dokumenter	Mulighet for å laste opp pass, billetter, osv.
-🔔 Påminnelser	Varsel om dagsaktiviteter, budsjettgrenser m.m.
-📤 Deling	Del reiseplan med familie eller venner (via link eller PDF)
-❤️ Favoritter	Lagre steder man ønsker å besøke igjen
+1. 📦 Pakkeliste	Brukeren lager en liste over ting å huske og kan sjekke av
+2. 🗺️ Kartintegrasjon	Viser reisemål og aktiviteter på kart (Google Maps/Leaflet)
+3. 📓 Feriedagbok	Brukeren kan skrive daglige notater og minner
+4. 💱 Valutakalkulator	Omregning av NOK til lokal valuta
+5. 🌦️ Værvisning	API-hentet værmelding for destinasjonen
+6. 📂 Dokumenter	Mulighet for å laste opp pass, billetter, osv.
+7. 🔔 Påminnelser	Varsel om dagsaktiviteter, budsjettgrenser m.m.
+8. 📤 Deling	Del reiseplan med familie eller venner (via link eller PDF)
+9. ❤️ Favoritter	Lagre steder man ønsker å besøke igjen
+
 🧩 Hvorfor dette prosjektet?
 Dette er et prosjekt jeg brenner for fordi det kombinerer praktisk nytte, god struktur, og moderne teknologi. Det lar meg trene på ferdigheter innen webutvikling på en måte som føles ekte og relevant, og gir rom for kreativitet og vekst i eget tempo.
 ________________________________________
