@@ -6,7 +6,7 @@ export default function TravelSummary() {
   const { trips } = useTravel();
 
   if (trips.length === 0) {
-    return <p>Du har ingen reiser enda. Legg til en for å komme i gang!</p>;
+    return <p>Du har ingen reiser enda. Gå til Reiser siden og legg til en for å komme i gang!</p>;
   }
 
   const today = new Date();
