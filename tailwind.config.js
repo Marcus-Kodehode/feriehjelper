@@ -7,24 +7,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Base palette
-        orange: "#FFB347",
-        pink: "#F67280",
-        beige: "#FAF3E0",
-        dark: "#2C2C2C",
-        teal: "#3E8E7E",
-
-        // Named roles
-        background: "#FAF3E0",
+        primary: "#FFB347",        // Orange
+        accent: "#F67280",         // Rosa
+        background: "#1A1A1A",     // Bakgrunn mørk
+        header: "#2A2A35",         // Header mørkeblå-ish
+        footer: "#111111",         // Footer sort
+        footerText: "#FAF3E0",     // Lys tekst
         textDark: "#2C2C2C",
-        contrast: "#3E8E7E",
-        primary: "#FFB347",
-        accent: "#F67280",
-
-        // Component specific
-        header: "#FFB347",
-        footer: "#2C2C2C",
-        footerText: "#EDEDED",
+        contrast: "#3E8E7E",       // Grønnblå
+        danger: "#D7263D",         // Rød
+        dark: "#1E1E1E",
       },
     },
   },

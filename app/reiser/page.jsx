@@ -25,7 +25,7 @@ export default function ReiserPage() {
 
       {/* SKJEMA FOR Å REGISTRERE REISE */}
       {visSkjema && (
-        <div className="p-6 bg-white rounded-lg shadow-md">
+        <div className="p-6 bg-transparent border rounded-lg border-contrast">
           <TravelForm />
         </div>
       )}
