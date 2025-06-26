@@ -7,3 +7,9 @@ html, body {
   padding: 0;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer components {
+  .nav-btn {
+    @apply px-3 py-1 text-white transition bg-teal-700 rounded hover:bg-teal-600;
+  }
+}
