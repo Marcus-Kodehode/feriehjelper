@@ -27,11 +27,11 @@ ________________________________________
 ________________________________________
 🛠️ Teknisk oppsett (valgt stack)
 		Teknologi
-Frontend	Next.js
-Stil/CSS	Tailwind CSS
-Autentisering	Clerk + Google-login (senere)
-Data og lagring	Lokalt først, ev. Turso etter hvert
-Designverktøy	Figma (for skisser og prototyp)
+Frontend - Next.js
+Stil/CSS - Tailwind CSS
+Autentisering - Clerk + Google-login (senere)
+Data og lagring - Lokalt først, ev. Turso etter hvert
+Designverktøy - Figma (for skisser og prototyp)
 ________________________________________
 💡 Planlagte og mulige utvidelser
 Dersom tid og fremgang tillater det, ønsker jeg å inkludere noen eller flere av følgende funksjoner:
