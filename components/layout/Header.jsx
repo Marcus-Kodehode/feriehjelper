@@ -2,33 +2,39 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="shadow-md bg-header text-footerText">
-      <div className="flex items-center justify-between max-w-6xl px-6 py-4 mx-auto">
-        <h1 className="text-xl font-bold text-primary">
-          <Link href="/">Feriehjelper</Link>
-        </h1>
-        <nav className="flex gap-3">
-          {[
-            { href: "/", label: "Dashbord" },
-            { href: "/reiser", label: "Reiser" },
-            { href: "/budsjett", label: "Budsjett" },
-            { href: "/aktiviteter", label: "Aktiviteter" },
-            { href: "/konto", label: "Min konto" },
-          ].map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="px-3 py-1 text-sm text-white transition rounded bg-contrast hover:bg-opacity-80"
-            >
-              {link.label}
-            </Link>
-          ))}
+    <header className="px-6 py-4 text-white shadow-md bg-header">
+      <div className="flex items-center justify-between max-w-6xl mx-auto">
+        {/* Logo + Tekstlink til forside */}
+        <Link href="/" className="flex items-center space-x-2">
+          <img
+            src="/images/logoT.png"
+            alt="Feriehjelper logo"
+            className="object-contain w-12 h-12"
+          />
+          <span className="text-lg font-bold">
+            <span className="text-primary">Vacation</span>
+            <span className="text-contrast">Helper</span>
+          </span>
+        </Link>
 
-          {/* Nødinfo i rød stil */}
-          <Link
-            href="/nødinformasjon"
-            className="px-3 py-1 text-sm text-white transition rounded bg-danger hover:bg-red-600"
-          >
+        {/* Navigasjon */}
+        <nav className="flex space-x-2 text-sm font-medium">
+          <Link href="/" className="px-3 py-1 text-white rounded bg-contrast hover:opacity-90">
+            Dashbord
+          </Link>
+          <Link href="/reiser" className="px-3 py-1 text-white rounded bg-contrast hover:opacity-90">
+            Reiser
+          </Link>
+          <Link href="/budsjett" className="px-3 py-1 text-white rounded bg-contrast hover:opacity-90">
+            Budsjett
+          </Link>
+          <Link href="/aktiviteter" className="px-3 py-1 text-white rounded bg-contrast hover:opacity-90">
+            Aktiviteter
+          </Link>
+          <Link href="/konto" className="px-3 py-1 text-white rounded bg-contrast hover:opacity-90">
+            Min konto
+          </Link>
+          <Link href="/nødinformasjon" className="px-3 py-1 text-white rounded bg-danger hover:opacity-90">
             Nødinformasjon
           </Link>
         </nav>

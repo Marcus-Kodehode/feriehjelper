@@ -9,10 +9,22 @@ export default function TravelSummary() {
     return <p>Du har ingen reiser enda. Legg til en for å komme i gang!</p>;
   }
 
+  const today = new Date();
+
+  // Sorter reiser etter startdato
+  const sortedTrips = trips.slice().sort((a, b) => new Date(a.from) - new Date(b.from));
+
+  // Finn første fremtidige reise
+  const nextTripId = sortedTrips.find(trip => new Date(trip.from) > today)?.id;
+
   return (
     <div className="grid gap-4 mt-4">
-      {trips.map((trip) => (
-        <TravelCard key={trip.id} trip={trip} />
+      {sortedTrips.map((trip) => (
+        <TravelCard
+          key={trip.id}
+          trip={trip}
+          isNextTrip={trip.id === nextTripId}
+        />
       ))}
     </div>
   );
