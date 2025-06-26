@@ -8,7 +8,7 @@ export default function ReiserPage() {
 
   return (
     <div className="max-w-4xl p-6 mx-auto">
-      <h1 className="mb-4 text-2xl font-bold">Mine reiser</h1>
+      <h1 className="mb-4 text-2xl font-bold text-primary">Mine reiser</h1>
 
       {/* VIS ALLE REISEKORT */}
       <TravelSummary />
