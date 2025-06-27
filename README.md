@@ -7,10 +7,10 @@ ________________________________________
 Alle som reiser og ønsker struktur i ferien sin. Appen skal kunne brukes både til enkeltreiser og større turer, og være nyttig for både unge og voksne brukere.
 ________________________________________
 🌍 Hva brukeren skal kunne gjøre (kjernefunksjoner)
-1.	Reisemål og oppholdssteder
+1.	Reisemål og oppholdssteder ✅
 -	Legge til destinasjoner og opphold
 -	Se tidligere og kommende reiser i oversikt
-2.	Budsjettstyring
+2.	Budsjettstyring ✅
 -	Sette opp totalbudsjett og dagsbudsjett
 -	Registrere utgifter
 -	Se hvor mye som er brukt og hva som gjenstår
