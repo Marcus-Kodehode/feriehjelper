@@ -4,7 +4,7 @@ import { BudgetProvider } from "@/components/context/BudgetContext";
 import Layout from "@/components/layout/Layout";
 
 export const metadata = {
-  title: "Feriehjelper",
+  title: "VacationHelper",
 };
 
 export default function RootLayout({ children }) {
