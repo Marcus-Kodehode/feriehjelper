@@ -9,10 +9,15 @@ export default function BudgetForm() {
 
   const [formData, setFormData] = useState({
     tripId: "",
+    currency: "NOK",
     amount: "",
     daily: "",
+    transport: "",
+    accommodation: "",
+    food: "",
+    activities: "",
+    misc: "",
     notes: "",
-    currency: "NOK", // Standard valuta
   });
 
   const handleChange = (e) => {
@@ -26,38 +31,31 @@ export default function BudgetForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const selectedTrip = trips.find((t) => t.id === Number(formData.tripId));
-    let dailyBudget = formData.daily;
-
-    // Automatisk beregning av daglig budsjett hvis det ikke er fylt inn
-    if (!dailyBudget && selectedTrip) {
-      const days =
-        Math.ceil(
-          (new Date(selectedTrip.to) - new Date(selectedTrip.from)) /
-            (1000 * 60 * 60 * 24)
-        ) + 1;
-      dailyBudget = (Number(formData.amount) / days).toFixed(0);
-    }
-
     const newBudget = {
       id: Date.now(),
       ...formData,
-      daily: dailyBudget,
     };
 
     addBudget(newBudget);
+
+    // Tilbakestill
     setFormData({
       tripId: "",
+      currency: "NOK",
       amount: "",
       daily: "",
+      transport: "",
+      accommodation: "",
+      food: "",
+      activities: "",
+      misc: "",
       notes: "",
-      currency: "NOK",
     });
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Velg reise */}
+      {/* Reisekobling */}
       <select
         name="tripId"
         value={formData.tripId}
@@ -73,7 +71,7 @@ export default function BudgetForm() {
         ))}
       </select>
 
-      {/* Velg valuta */}
+      {/* Valuta */}
       <select
         name="currency"
         value={formData.currency}
@@ -84,10 +82,9 @@ export default function BudgetForm() {
         <option value="USD">USD ($)</option>
         <option value="EUR">EUR (€)</option>
         <option value="GBP">GBP (£)</option>
-        <option value="SEK">SEK (kr)</option>
       </select>
 
-      {/* Totalbudsjett */}
+      {/* Påkrevd totalbudsjett */}
       <input
         type="number"
         name="amount"
@@ -98,7 +95,7 @@ export default function BudgetForm() {
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
       />
 
-      {/* Daglig budsjett (valgfritt) */}
+      {/* Valgfrie felt */}
       <input
         type="number"
         name="daily"
@@ -108,7 +105,51 @@ export default function BudgetForm() {
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
       />
 
-      {/* Notater */}
+      <input
+        type="number"
+        name="transport"
+        placeholder="Fly / Transport (valgfritt)"
+        value={formData.transport}
+        onChange={handleChange}
+        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+      />
+
+      <input
+        type="number"
+        name="accommodation"
+        placeholder="Hotell / Overnatting (valgfritt)"
+        value={formData.accommodation}
+        onChange={handleChange}
+        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+      />
+
+      <input
+        type="number"
+        name="food"
+        placeholder="Mat (valgfritt)"
+        value={formData.food}
+        onChange={handleChange}
+        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+      />
+
+      <input
+        type="number"
+        name="activities"
+        placeholder="Aktiviteter (valgfritt)"
+        value={formData.activities}
+        onChange={handleChange}
+        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+      />
+
+      <input
+        type="number"
+        name="misc"
+        placeholder="Annet (valgfritt)"
+        value={formData.misc}
+        onChange={handleChange}
+        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+      />
+
       <textarea
         name="notes"
         placeholder="Notater (valgfritt)"
@@ -117,7 +158,6 @@ export default function BudgetForm() {
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
       />
 
-      {/* Lagre knapp */}
       <button
         type="submit"
         className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"

@@ -13,10 +13,16 @@ export default function TravelDetails({ trip, onClose }) {
 
   if (!trip) return null;
 
-  const length = Math.ceil((new Date(trip.to) - new Date(trip.from)) / (1000 * 60 * 60 * 24)) + 1;
-  const daysLeft = Math.ceil((new Date(trip.from) - new Date()) / (1000 * 60 * 60 * 24));
+  const length =
+    Math.ceil(
+      (new Date(trip.to) - new Date(trip.from)) / (1000 * 60 * 60 * 24)
+    ) + 1;
+  const daysLeft = Math.ceil(
+    (new Date(trip.from) - new Date()) / (1000 * 60 * 60 * 24)
+  );
 
   const budsjett = budgets.find((b) => Number(b.tripId) === trip.id);
+  const currency = budsjett?.currency || "kr";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
@@ -28,10 +34,11 @@ export default function TravelDetails({ trip, onClose }) {
           Lukk
         </button>
 
-        {/* Reiseinfo */}
         <h2 className="mb-2 text-2xl font-bold text-primary">{trip.title}</h2>
         <p className="text-sm text-gray-300">{trip.destination}</p>
-        <p className="text-sm text-gray-400">{trip.from} – {trip.to}</p>
+        <p className="text-sm text-gray-400">
+          {trip.from} – {trip.to}
+        </p>
         <p className="mb-2 text-sm italic text-gray-400">
           Varighet: {length} dager ({daysLeft} dager igjen)
         </p>
@@ -61,16 +68,47 @@ export default function TravelDetails({ trip, onClose }) {
           </div>
         )}
 
-        {/* Budsjettseksjon */}
+        {/* Budsjett-detaljer */}
         {budsjett && (
-          <div className="mt-4 p-3 bg-[#2a2a2a] border border-yellow-500 rounded-md">
-            <p className="mb-1 text-sm font-bold text-yellow-300">Budsjett</p>
-            <p className="text-sm text-gray-300">Total: {budsjett.amount} kr</p>
+          <div className="mt-4 p-3 border rounded border-yellow-500 bg-[#2a2a2a] space-y-1">
+            <p className="text-sm font-bold text-yellow-300">Budsjett</p>
+            <p className="text-sm text-gray-300">
+              Total: {budsjett.amount} {currency}
+            </p>
             {budsjett.daily && (
-              <p className="text-sm text-gray-300">Daglig: {budsjett.daily} kr</p>
+              <p className="text-sm text-gray-300">
+                Daglig: {budsjett.daily} {currency}
+              </p>
+            )}
+            {budsjett.transport && (
+              <p className="text-sm text-gray-300">
+                Transport: {budsjett.transport} {currency}
+              </p>
+            )}
+            {budsjett.accommodation && (
+              <p className="text-sm text-gray-300">
+                Hotell: {budsjett.accommodation} {currency}
+              </p>
+            )}
+            {budsjett.food && (
+              <p className="text-sm text-gray-300">
+                Mat: {budsjett.food} {currency}
+              </p>
+            )}
+            {budsjett.activities && (
+              <p className="text-sm text-gray-300">
+                Aktiviteter: {budsjett.activities} {currency}
+              </p>
+            )}
+            {budsjett.misc && (
+              <p className="text-sm text-gray-300">
+                Annet: {budsjett.misc} {currency}
+              </p>
             )}
             {budsjett.notes && (
-              <p className="text-sm italic text-gray-400">{budsjett.notes}</p>
+              <p className="text-sm italic text-gray-400">
+                {budsjett.notes}
+              </p>
             )}
           </div>
         )}
