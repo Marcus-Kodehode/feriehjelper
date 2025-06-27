@@ -29,8 +29,17 @@ export function BudgetProvider({ children }) {
     setBudgets((prev) => prev.filter((b) => b.id !== id));
   };
 
+  // Rediger budsjett
+  const updateBudget = (id, updatedData) => {
+    setBudgets((prev) =>
+      prev.map((b) => (b.id === id ? { ...b, ...updatedData } : b))
+    );
+  };
+
   return (
-    <BudgetContext.Provider value={{ budgets, addBudget, deleteBudget }}>
+    <BudgetContext.Provider
+      value={{ budgets, addBudget, deleteBudget, updateBudget }}
+    >
       {children}
     </BudgetContext.Provider>
   );
