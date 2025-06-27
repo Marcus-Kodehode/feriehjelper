@@ -1,5 +1,6 @@
 import "./../styles/globals.css";
 import { TravelProvider } from "@/components/context/TravelContext";
+import { BudgetProvider } from "@/components/context/BudgetContext";
 import Layout from "@/components/layout/Layout";
 
 export const metadata = {
@@ -11,7 +12,9 @@ export default function RootLayout({ children }) {
     <html lang="no">
       <body>
         <TravelProvider>
-          <Layout>{children}</Layout>
+          <BudgetProvider>
+            <Layout>{children}</Layout>
+          </BudgetProvider>
         </TravelProvider>
       </body>
     </html>
