@@ -1,5 +1,7 @@
 Feriehjelper – En nettbasert app for å organisere, planlegge og håndtere ferien din
 
+Figmalink: https://www.figma.com/design/Kwan0kW2iruFBvpFBPl7Ln/Sommerprosjekt-2025?node-id=0-1&t=pgXF24W2y5tx30Ge-1
+
 🧠 Formål og motivasjon
 Som reisende kan det være vanskelig å holde orden på alt som skjer før, under og etter en ferie. Derfor ønsker jeg å lage en praktisk og brukervennlig applikasjon som samler viktig informasjon, aktiviteter og budsjett på ett sted. Dette prosjektet er viktig for meg fordi det har en tydelig nytteverdi, og fordi jeg ønsker å bygge noe personlig og funksjonelt.
 ________________________________________
