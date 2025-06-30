@@ -2,12 +2,14 @@
 import { useState } from "react";
 import { useTravel } from "@/components/context/TravelContext";
 import { useBudget } from "@/components/context/BudgetContext";
+import { useActivity } from "@/components/context/ActivityContext";
 import TravelDetails from "@/components/travel/details/TravelDetails";
 import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
 
 export default function TravelCard({ trip, isNextTrip }) {
   const { deleteTrip } = useTravel();
   const { budgets } = useBudget();
+  const { activities } = useActivity();
   const [visDetaljer, setVisDetaljer] = useState(false);
 
   const daysLeft = Math.ceil(
@@ -20,6 +22,21 @@ export default function TravelCard({ trip, isNextTrip }) {
 
   const budsjett = budgets.find((b) => Number(b.tripId) === trip.id);
   const currency = budsjett?.currency || "kr";
+
+  // Finn neste kommende aktivitet for denne reisen
+  const upcomingActivities = activities
+    .filter(
+      (a) =>
+        Number(a.tripId) === trip.id &&
+        new Date(a.date + "T" + (a.time || "00:00")) >= new Date()
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.date + "T" + (a.time || "00:00")) -
+        new Date(b.date + "T" + (b.time || "00:00"))
+    );
+
+  const nextActivity = upcomingActivities[0];
 
   return (
     <>
@@ -89,9 +106,26 @@ export default function TravelCard({ trip, isNextTrip }) {
                   {budsjett.notes}
                 </p>
               )}
-
-              {/* Mini kakediagram */}
               <BudgetMiniChart budget={budsjett} />
+            </div>
+          )}
+
+          {/* Neste aktivitet hvis finnes */}
+          {nextActivity && (
+            <div className="mt-3 p-3 bg-[#2a2a2a] border border-green-500 rounded-md space-y-1">
+              <p className="text-sm font-bold text-green-300">
+                Neste aktivitet
+              </p>
+              <p className="text-sm text-white">{nextActivity.name}</p>
+              <p className="text-sm text-gray-400">
+                {nextActivity.date}
+                {nextActivity.time && ` kl. ${nextActivity.time}`}
+              </p>
+              {nextActivity.place && (
+                <p className="text-sm text-gray-300">
+                  Sted: {nextActivity.place}
+                </p>
+              )}
             </div>
           )}
 

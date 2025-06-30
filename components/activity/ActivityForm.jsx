@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useActivity } from "../context/ActivityContext";
 import { useTravel } from "../context/TravelContext";
 
-export default function ActivityForm() {
-  const { addActivity } = useActivity();
+export default function ActivityForm({ editData, clearEdit }) {
+  const { addActivity, updateActivity } = useActivity();
   const { trips } = useTravel();
 
   const [formData, setFormData] = useState({
@@ -19,6 +19,10 @@ export default function ActivityForm() {
     category: "",
   });
 
+  useEffect(() => {
+    if (editData) setFormData(editData);
+  }, [editData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -26,11 +30,17 @@ export default function ActivityForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newActivity = {
-      id: Date.now(),
-      ...formData,
-    };
-    addActivity(newActivity);
+    if (editData) {
+      updateActivity(formData);
+      clearEdit();
+    } else {
+      const newActivity = {
+        id: Date.now(),
+        ...formData,
+      };
+      addActivity(newActivity);
+    }
+
     setFormData({
       tripId: "",
       name: "",
@@ -45,7 +55,12 @@ export default function ActivityForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form
+      onSubmit={handleSubmit}
+      className="mt-6 p-4 bg-[#1f1f1f] border border-contrast rounded-lg space-y-3"
+    >
+      <h3 className="font-bold text-yellow-400 text-md">Legg til ny aktivitet</h3>
+
       <select
         name="tripId"
         value={formData.tripId}
@@ -71,22 +86,23 @@ export default function ActivityForm() {
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
       />
 
-      <input
-        type="date"
-        name="date"
-        value={formData.date}
-        onChange={handleChange}
-        required
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      />
-
-      <input
-        type="time"
-        name="time"
-        value={formData.time}
-        onChange={handleChange}
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      />
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <input
+          type="date"
+          name="date"
+          value={formData.date}
+          onChange={handleChange}
+          required
+          className="flex-1 p-2 text-white border rounded bg-zinc-900 border-contrast"
+        />
+        <input
+          type="time"
+          name="time"
+          value={formData.time}
+          onChange={handleChange}
+          className="flex-1 p-2 text-white border rounded bg-zinc-900 border-contrast"
+        />
+      </div>
 
       <input
         type="text"
@@ -137,12 +153,23 @@ export default function ActivityForm() {
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
       />
 
-      <button
-        type="submit"
-        className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
-      >
-        Legg til aktivitet
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
+        >
+          {editData ? "Oppdater aktivitet" : "Legg til aktivitet"}
+        </button>
+        {editData && (
+          <button
+            type="button"
+            onClick={clearEdit}
+            className="px-4 py-2 font-medium text-white bg-gray-600 rounded hover:bg-gray-700"
+          >
+            Avbryt
+          </button>
+        )}
+      </div>
     </form>
   );
 }
