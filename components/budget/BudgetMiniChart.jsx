@@ -9,33 +9,26 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function BudgetSummary({ budget }) {
+export default function BudgetMiniChart({ budget }) {
   const data = {
     labels: [],
     datasets: [
       {
-        label: 'Budsjett',
         data: [],
-        backgroundColor: [
-          '#facc15', // gul
-          '#f87171', // rød
-          '#34d399', // grønn
-          '#60a5fa', // blå
-        ],
+        backgroundColor: ['#facc15', '#f87171', '#34d399', '#60a5fa', '#a78bfa'],
         borderColor: '#1f1f1f',
         borderWidth: 1,
       },
     ],
   };
 
-  // Legg til poster dynamisk hvis de finnes
   if (budget.transport) {
     data.labels.push('Transport');
     data.datasets[0].data.push(Number(budget.transport));
   }
-  if (budget.hotel) {
-    data.labels.push('Hotell');
-    data.datasets[0].data.push(Number(budget.hotel));
+  if (budget.accommodation) {
+    data.labels.push('Overnatting');
+    data.datasets[0].data.push(Number(budget.accommodation));
   }
   if (budget.food) {
     data.labels.push('Mat');
@@ -45,13 +38,16 @@ export default function BudgetSummary({ budget }) {
     data.labels.push('Aktiviteter');
     data.datasets[0].data.push(Number(budget.activities));
   }
+  if (budget.other) {
+    data.labels.push('Annet');
+    data.datasets[0].data.push(Number(budget.other));
+  }
 
-  // Hvis ingen data, ikke vis diagram
   if (data.datasets[0].data.length === 0) return null;
 
   return (
-    <div className="w-full max-w-xs mx-auto mt-4">
-      <Pie data={data} />
+    <div className="w-40 mx-auto mt-2">
+      <Pie data={data} options={{ plugins: { legend: { display: false } } }} />
     </div>
   );
 }

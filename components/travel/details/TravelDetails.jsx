@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useBudget } from "@/components/context/BudgetContext";
+import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
 
 export default function TravelDetails({ trip, onClose }) {
   const { budgets } = useBudget();
@@ -14,15 +15,18 @@ export default function TravelDetails({ trip, onClose }) {
   if (!trip) return null;
 
   const length =
-    Math.ceil(
-      (new Date(trip.to) - new Date(trip.from)) / (1000 * 60 * 60 * 24)
-    ) + 1;
-  const daysLeft = Math.ceil(
-    (new Date(trip.from) - new Date()) / (1000 * 60 * 60 * 24)
-  );
+    Math.ceil((new Date(trip.to) - new Date(trip.from)) / (1000 * 60 * 60 * 24)) + 1;
+  const daysLeft = Math.ceil((new Date(trip.from) - new Date()) / (1000 * 60 * 60 * 24));
 
   const budsjett = budgets.find((b) => Number(b.tripId) === trip.id);
   const currency = budsjett?.currency || "kr";
+
+  const hasExpenses =
+    budsjett?.transport ||
+    budsjett?.accommodation ||
+    budsjett?.food ||
+    budsjett?.activities ||
+    budsjett?.misc;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
@@ -68,7 +72,6 @@ export default function TravelDetails({ trip, onClose }) {
           </div>
         )}
 
-        {/* Budsjett-detaljer */}
         {budsjett && (
           <div className="mt-4 p-3 border rounded border-yellow-500 bg-[#2a2a2a] space-y-1">
             <p className="text-sm font-bold text-yellow-300">Budsjett</p>
@@ -106,9 +109,14 @@ export default function TravelDetails({ trip, onClose }) {
               </p>
             )}
             {budsjett.notes && (
-              <p className="text-sm italic text-gray-400">
-                {budsjett.notes}
-              </p>
+              <p className="text-sm italic text-gray-400">{budsjett.notes}</p>
+            )}
+
+            {/* Mini-kakediagram */}
+            {hasExpenses && (
+              <div className="mt-3">
+                <BudgetMiniChart budget={budsjett} />
+              </div>
             )}
           </div>
         )}

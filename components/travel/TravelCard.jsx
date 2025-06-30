@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTravel } from "@/components/context/TravelContext";
 import { useBudget } from "@/components/context/BudgetContext";
 import TravelDetails from "@/components/travel/details/TravelDetails";
+import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
 
 export default function TravelCard({ trip, isNextTrip }) {
   const { deleteTrip } = useTravel();
@@ -46,7 +47,7 @@ export default function TravelCard({ trip, isNextTrip }) {
             )}
           </div>
 
-          {/* Budsjettinfo */}
+          {/* Budsjettinfo med minidiagram */}
           {budsjett && (
             <div className="mt-3 p-3 bg-[#2a2a2a] border border-yellow-500 rounded-md space-y-1">
               <p className="text-sm font-bold text-yellow-300">Budsjett</p>
@@ -88,6 +89,9 @@ export default function TravelCard({ trip, isNextTrip }) {
                   {budsjett.notes}
                 </p>
               )}
+
+              {/* Mini kakediagram */}
+              <BudgetMiniChart budget={budsjett} />
             </div>
           )}
 

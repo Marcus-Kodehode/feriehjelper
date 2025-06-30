@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useTravel } from "@/components/context/TravelContext";
 import { useBudget } from "@/components/context/BudgetContext";
+import BudgetSummary from "@/components/budget/BudgetSummary";
 
 export default function BudgetCard({ budget }) {
   const { trips } = useTravel();
@@ -68,6 +69,7 @@ export default function BudgetCard({ budget }) {
           {budget.notes && (
             <p className="mt-1 text-sm italic text-gray-400">{budget.notes}</p>
           )}
+          <BudgetSummary budget={budget} />
         </>
       ) : (
         <div className="mt-2 space-y-2">
