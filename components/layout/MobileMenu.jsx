@@ -1,19 +1,23 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { X, Menu } from "lucide-react"; // krever `lucide-react` (installer med: npm install lucide-react)
-
-const navLinks = [
-  { href: "/", label: "Dashbord" },
-  { href: "/reiser", label: "Reiser" },
-  { href: "/budsjett", label: "Budsjett" },
-  { href: "/aktiviteter", label: "Aktiviteter" },
-  { href: "/konto", label: "Min konto" },
-  { href: "/nødinformasjon", label: "Nødinformasjon", danger: true },
-];
+import { X, Menu } from "lucide-react";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const { language, toggleLanguage } = useLanguage();
+  const t = translations[language];
+
+  const navLinks = [
+    { href: "/", label: t.dashboard },
+    { href: "/reiser", label: t.trips },
+    { href: "/budsjett", label: t.budget },
+    { href: "/aktiviteter", label: t.activities },
+    { href: "/konto", label: t.account },
+    { href: "/nødinformasjon", label: t.emergency, danger: true },
+  ];
 
   return (
     <>
@@ -42,13 +46,26 @@ export default function MobileMenu() {
               key={href}
               href={href}
               className={`text-xl font-semibold px-4 py-2 rounded ${
-                danger ? "bg-red-600 hover:bg-red-700" : "bg-teal-700 hover:bg-teal-600"
+                danger
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-teal-700 hover:bg-teal-600"
               } transition`}
-              onClick={() => setOpen(false)} // lukk meny ved klikk
+              onClick={() => setOpen(false)}
             >
               {label}
             </Link>
           ))}
+
+          {/* Språkbytte-knapp */}
+          <button
+            onClick={() => {
+              toggleLanguage();
+              setOpen(false);
+            }}
+            className="px-4 py-2 mt-4 text-sm bg-gray-700 rounded hover:bg-gray-600"
+          >
+            {language === "no" ? "English" : "Norsk"}
+          </button>
         </div>
       )}
     </>
