@@ -1,10 +1,13 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useBudget } from "@/components/context/BudgetContext";
+import { useActivity } from "@/components/context/ActivityContext";
 import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
 
 export default function TravelDetails({ trip, onClose }) {
   const { budgets } = useBudget();
+  const { activities } = useActivity();
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     const handleEsc = (e) => e.key === "Escape" && onClose();
@@ -28,9 +31,19 @@ export default function TravelDetails({ trip, onClose }) {
     budsjett?.activities ||
     budsjett?.misc;
 
+  const allActivities = activities
+    .filter((a) => Number(a.tripId) === trip.id)
+    .sort(
+      (a, b) =>
+        new Date(a.date + "T" + (a.time || "00:00")) -
+        new Date(b.date + "T" + (b.time || "00:00"))
+    );
+
+  const visibleActivities = showAll ? allActivities : allActivities.slice(0, 2);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="relative w-full max-w-xl p-6 mx-4 border rounded-lg shadow-lg bg-dark border-contrast text-footerText">
+      <div className="relative w-full max-w-xl p-6 mx-4 border rounded-lg shadow-lg bg-dark border-contrast text-footerText max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute px-3 py-1 text-sm text-white bg-red-600 rounded top-4 right-4 hover:bg-red-700"
@@ -47,24 +60,22 @@ export default function TravelDetails({ trip, onClose }) {
           Varighet: {length} dager ({daysLeft} dager igjen)
         </p>
 
+        {/* Transport og info */}
         {trip.transport && (
           <p className="text-sm text-gray-300">
             <span className="font-semibold">Transport:</span> {trip.transport}
           </p>
         )}
-
         {trip.stay && (
           <p className="text-sm text-gray-300">
             <span className="font-semibold">Opphold:</span> {trip.stay}
           </p>
         )}
-
         {trip.travelers && (
           <p className="text-sm text-gray-300">
             <span className="font-semibold">Reisende:</span> {trip.travelers}
           </p>
         )}
-
         {trip.notes && (
           <div className="mt-2">
             <p className="text-sm font-semibold text-gray-300">Notater:</p>
@@ -72,6 +83,7 @@ export default function TravelDetails({ trip, onClose }) {
           </div>
         )}
 
+        {/* Budsjett */}
         {budsjett && (
           <div className="mt-4 p-3 border rounded border-yellow-500 bg-[#2a2a2a] space-y-1">
             <p className="text-sm font-bold text-yellow-300">Budsjett</p>
@@ -111,8 +123,6 @@ export default function TravelDetails({ trip, onClose }) {
             {budsjett.notes && (
               <p className="text-sm italic text-gray-400">{budsjett.notes}</p>
             )}
-
-            {/* Mini-kakediagram */}
             {hasExpenses && (
               <div className="mt-3">
                 <BudgetMiniChart budget={budsjett} />
@@ -120,6 +130,66 @@ export default function TravelDetails({ trip, onClose }) {
             )}
           </div>
         )}
+
+        {/* Aktiviteter */}
+        <div className="mt-6">
+          <h3 className="mb-2 text-lg font-bold text-green-400">
+            Planlagte aktiviteter
+          </h3>
+          {visibleActivities.length === 0 ? (
+            <p className="text-sm text-gray-400">Ingen aktiviteter registrert.</p>
+          ) : (
+            <>
+              <ul className="space-y-2">
+                {visibleActivities.map((a) => (
+                  <li
+                    key={a.id}
+                    className="p-3 border rounded border-contrast bg-zinc-900"
+                  >
+                    <p className="font-semibold text-primary">{a.name}</p>
+                    <p className="text-sm text-gray-400">
+                      {a.date}
+                      {a.time && ` kl. ${a.time}`}
+                    </p>
+                    {a.place && (
+                      <p className="text-sm text-gray-300">Sted: {a.place}</p>
+                    )}
+                    {a.cost && (
+                      <p className="text-sm text-gray-300">
+                        Kostnad: {a.cost} {currency}
+                      </p>
+                    )}
+                    {a.category && (
+                      <p className="text-sm italic text-gray-400">
+                        Kategori: {a.category}
+                      </p>
+                    )}
+                    {a.notes && (
+                      <p className="text-sm italic text-gray-400">📝 {a.notes}</p>
+                    )}
+                    {a.link && (
+                      <a
+                        href={a.link}
+                        target="_blank"
+                        className="text-sm text-pink-400 underline"
+                      >
+                        Mer info
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              {allActivities.length > 2 && (
+                <button
+                  onClick={() => setShowAll((prev) => !prev)}
+                  className="mt-3 text-sm underline text-accent"
+                >
+                  {showAll ? "Vis færre" : "Vis alle"}
+                </button>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
