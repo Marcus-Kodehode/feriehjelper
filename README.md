@@ -1,57 +1,110 @@
-Feriehjelper – En nettbasert app for å organisere, planlegge og håndtere ferien din
+<p align="center">
+  <img src="public/images/logo.png" alt="Feriehjelper Logo" width="200"/>
+</p>
 
-Figmalink: https://www.figma.com/design/Kwan0kW2iruFBvpFBPl7Ln/Sommerprosjekt-2025?node-id=0-1&t=pgXF24W2y5tx30Ge-1
+# 🏖️ Feriehjelper – Planlegg ferien din med oversikt og ro
 
-🧠 Formål og motivasjon
-Som reisende kan det være vanskelig å holde orden på alt som skjer før, under og etter en ferie. Derfor ønsker jeg å lage en praktisk og brukervennlig applikasjon som samler viktig informasjon, aktiviteter og budsjett på ett sted. Dette prosjektet er viktig for meg fordi det har en tydelig nytteverdi, og fordi jeg ønsker å bygge noe personlig og funksjonelt.
-________________________________________
-👤 Målgruppe
-Alle som reiser og ønsker struktur i ferien sin. Appen skal kunne brukes både til enkeltreiser og større turer, og være nyttig for både unge og voksne brukere.
-________________________________________
-🌍 Hva brukeren skal kunne gjøre (kjernefunksjoner)
-1.	Reisemål og oppholdssteder ✅
--	Legge til destinasjoner og opphold
--	Se tidligere og kommende reiser i oversikt
-2.	Budsjettstyring ✅
--	Sette opp totalbudsjett og dagsbudsjett
--	Registrere utgifter
--	Se hvor mye som er brukt og hva som gjenstår
-3.	Aktivitetsplanlegging
--	Lage dagsplaner og aktiviteter
--	Redigere eller slette aktiviteter
--	Ha en oversikt over planlagte dager
-4.	Viktig informasjon
--	Lagre nødnummer, adresser, ambassader og kontaktinfo
--	Rask tilgang via egen "nødsideseksjon"
-5.	Innlogging og personlig konto (planlagt)
--	Brukeren kan logge inn med Google (via Clerk)
--	Dataen knyttes til deres konto for personlig visning
-________________________________________
-🛠️ Teknisk oppsett (valgt stack)
-		Teknologi
-1. Frontend - Next.js.
-2. Stil/CSS - Tailwind CSS.
-3. Autentisering - Clerk + Google-login (senere).
-4. Data og lagring - Lokalt først, ev. Turso etter hvert.
-5. Designverktøy - Figma (for skisser og prototyp).
-________________________________________
-💡 Planlagte og mulige utvidelser
-Dersom tid og fremgang tillater det, ønsker jeg å inkludere noen eller flere av følgende funksjoner:
-Funksjon	Beskrivelse
-1. 📦 Pakkeliste	Brukeren lager en liste over ting å huske og kan sjekke av
-2. 🗺️ Kartintegrasjon	Viser reisemål og aktiviteter på kart (Google Maps/Leaflet)
-3. 📓 Feriedagbok	Brukeren kan skrive daglige notater og minner
-4. 💱 Valutakalkulator	Omregning av NOK til lokal valuta
-5. 🌦️ Værvisning	API-hentet værmelding for destinasjonen
-6. 📂 Dokumenter	Mulighet for å laste opp pass, billetter, osv.
-7. 🔔 Påminnelser	Varsel om dagsaktiviteter, budsjettgrenser m.m.
-8. 📤 Deling	Del reiseplan med familie eller venner (via link eller PDF)
-9. ❤️ Favoritter	Lagre steder man ønsker å besøke igjen
+**Feriehjelper** er en nettbasert app for å organisere, planlegge og håndtere ferien din.  
+Alt fra budsjett og destinasjoner til aktiviteter og nødinfo samles på ett sted – designet for reisende, av en reisende.
 
-🧩 Hvorfor dette prosjektet?
-Dette er et prosjekt jeg brenner for fordi det kombinerer praktisk nytte, god struktur, og moderne teknologi. Det lar meg trene på ferdigheter innen webutvikling på en måte som føles ekte og relevant, og gir rom for kreativitet og vekst i eget tempo.
-________________________________________
-✅ Mål med prosjektet:
-•	Lage en fungerende og oversiktlig webapp innen slutten av sommeren
-•	Lære Next.js, Tailwind, UI-design, og (etter hvert) autentisering
-•	Ha et personlig og nyttig prosjekt jeg kan vise til videre
+---
+
+## 🧠 Formål og motivasjon
+
+Som reisende kan det være vanskelig å holde orden på alt før, under og etter en ferie.  
+Denne appen skal gjøre det lettere å holde styr på reiseplaner, utgifter, viktige kontakter og daglige aktiviteter – alt i én app.
+
+Dette er et personlig og viktig prosjekt for meg, med høy nytteverdi og stor læringsverdi.
+
+---
+
+## 👤 Målgruppe
+
+Alle som reiser og ønsker struktur i ferien sin – både for korte turer og store eventyr.  
+Appen skal være nyttig for både unge og voksne brukere.
+
+---
+
+## 🌍 Kjernefunksjoner
+
+- ✈️ **Reisemål og oppholdssteder**
+  - Legg til destinasjoner og opphold
+  - Se tidligere og kommende reiser
+- 💸 **Budsjettstyring**
+  - Total- og dagsbudsjett
+  - Registrer utgifter og se status
+- 🗓️ **Aktivitetsplanlegging**
+  - Lag og rediger dagsplaner
+- 🚨 **Viktig informasjon**
+  - Nødnummer, adresser, ambassader
+  - Tilgjengelig på egen "nødsideseksjon"
+- 🔐 **Innlogging (planlagt)**
+  - Google-login via Clerk
+  - Data kobles til brukerens konto
+
+---
+
+## 🛠️ Teknologi brukt
+
+- **Next.js** – React-basert frontendrammeverk
+- **Tailwind CSS** – Moderne stilsett
+- **Clerk (planlagt)** – Autentisering
+- **Lagring** – Lokalt først, vurderer Turso
+- **Figma** – Design og prototyping  
+  🔗 [Se Figma-design](https://www.figma.com/design/Kwan0kW2iruFBvpFBPl7Ln/Sommerprosjekt-2025?node-id=0-1&t=pgXF24W2y5tx30Ge-1)
+
+---
+
+## 🗂️ Prosjektstruktur
+
+```
+feriehjelper/
+├── public/             # Bilder og logo
+├── src/                # Kodebase
+│   ├── components/     # UI-komponenter
+│   ├── pages/          # Sider og ruter
+│   ├── styles/         # Globale stilark
+│   └── app/            # Hovedlayout (Next.js App Router)
+├── package.json        # Scripts og avhengigheter
+└── tailwind.config.js  # Tailwind-oppsett
+```
+
+---
+
+## 📸 Eksempel på appen
+
+<p align="center">
+  <img src="public/images/skjermbilde-feriehjelper.png" alt="Feriehjelper Skjermbilde" width="400"/>
+</p>
+
+---
+
+## 💡 Planlagte og mulige utvidelser
+
+- 📦 Pakkeliste – huk av ting du må ha med
+- 🗺️ Kart – vis reisemål og aktiviteter
+- 📓 Feriedagbok – skriv notater og minner
+- 💱 Valutakalkulator – NOK til lokal valuta
+- 🌦️ Værmelding – via API
+- 📂 Dokumenter – last opp pass/billetter
+- 🔔 Påminnelser – f.eks. dagsaktiviteter
+- 📤 Deling – send plan til familie/venner
+- ❤️ Favoritter – steder du vil besøke igjen
+
+---
+
+## ✍️ Signatur
+
+```
+//  One bug to find them,
+//  One fix to bring them all,
+//  And in the darkness bind them.
+```
+
+---
+
+## 📬 Kontakt
+
+Har du forslag eller innspill? Ta kontakt – prosjektet er aktivt under utvikling!
+
+---
