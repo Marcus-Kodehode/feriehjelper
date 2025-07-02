@@ -2,11 +2,13 @@
 import { useEffect, useState } from "react";
 import { useBudget } from "@/components/context/BudgetContext";
 import { useActivity } from "@/components/context/ActivityContext";
+import { useEmergency } from "@/components/context/EmergencyContext";
 import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
 
 export default function TravelDetails({ trip, onClose }) {
   const { budgets } = useBudget();
   const { activities } = useActivity();
+  const { emergencies } = useEmergency();
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export default function TravelDetails({ trip, onClose }) {
 
   const budsjett = budgets.find((b) => Number(b.tripId) === trip.id);
   const currency = budsjett?.currency || "kr";
+  const emergency = emergencies.find((e) => Number(e.tripId) === trip.id);
 
   const hasExpenses =
     budsjett?.transport ||
@@ -60,7 +63,6 @@ export default function TravelDetails({ trip, onClose }) {
           Varighet: {length} dager ({daysLeft} dager igjen)
         </p>
 
-        {/* Transport og info */}
         {trip.transport && (
           <p className="text-sm text-gray-300">
             <span className="font-semibold">Transport:</span> {trip.transport}
@@ -133,9 +135,7 @@ export default function TravelDetails({ trip, onClose }) {
 
         {/* Aktiviteter */}
         <div className="mt-6">
-          <h3 className="mb-2 text-lg font-bold text-green-400">
-            Planlagte aktiviteter
-          </h3>
+          <h3 className="mb-2 text-lg font-bold text-green-400">Planlagte aktiviteter</h3>
           {visibleActivities.length === 0 ? (
             <p className="text-sm text-gray-400">Ingen aktiviteter registrert.</p>
           ) : (
@@ -148,8 +148,7 @@ export default function TravelDetails({ trip, onClose }) {
                   >
                     <p className="font-semibold text-primary">{a.name}</p>
                     <p className="text-sm text-gray-400">
-                      {a.date}
-                      {a.time && ` kl. ${a.time}`}
+                      {a.date} {a.time && `kl. ${a.time}`}
                     </p>
                     {a.place && (
                       <p className="text-sm text-gray-300">Sted: {a.place}</p>
@@ -190,6 +189,37 @@ export default function TravelDetails({ trip, onClose }) {
             </>
           )}
         </div>
+
+        {/* Nødinformasjon */}
+        {emergency && (
+          <div className="mt-6 p-3 border rounded border-red-500 bg-[#2a2a2a] space-y-1">
+            <h3 className="text-sm font-bold text-red-400">Nødinformasjon</h3>
+            {emergency.embassy && (
+              <p className="text-sm text-gray-300">Ambassade: {emergency.embassy}</p>
+            )}
+            {emergency.police && (
+              <p className="text-sm text-gray-300">Politi: {emergency.police}</p>
+            )}
+            {emergency.ambulance && (
+              <p className="text-sm text-gray-300">Ambulanse: {emergency.ambulance}</p>
+            )}
+            {emergency.fire && (
+              <p className="text-sm text-gray-300">Brann: {emergency.fire}</p>
+            )}
+            {emergency.insurance && (
+              <p className="text-sm text-gray-300">Forsikring: {emergency.insurance}</p>
+            )}
+            {emergency.policyNumber && (
+              <p className="text-sm text-gray-300">Polisenummer: {emergency.policyNumber}</p>
+            )}
+            {emergency.contactPerson && (
+              <p className="text-sm text-gray-300">Kontaktperson: {emergency.contactPerson}</p>
+            )}
+            {emergency.notes && (
+              <p className="text-sm italic text-gray-400">{emergency.notes}</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

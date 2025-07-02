@@ -1,7 +1,8 @@
 import "@/styles/globals.css";
 import { TravelProvider } from "@/components/context/TravelContext";
 import { BudgetProvider } from "@/components/context/BudgetContext";
-import { ActivityProvider } from "@/components/context/ActivityContext"; // 👈 denne må inn
+import { ActivityProvider } from "@/components/context/ActivityContext";
+import { EmergencyProvider } from "@/components/context/EmergencyContext"; // 👈 ny
 import Layout from "@/components/layout/Layout";
 
 export const metadata = {
@@ -14,8 +15,10 @@ export default function RootLayout({ children }) {
       <body className="bg-[#121212] text-white">
         <TravelProvider>
           <BudgetProvider>
-            <ActivityProvider> {/* 👈 pakket rundt Layout */}
-              <Layout>{children}</Layout>
+            <ActivityProvider>
+              <EmergencyProvider> {/* 👈 Nødinformasjon rundt Layout */}
+                <Layout>{children}</Layout>
+              </EmergencyProvider>
             </ActivityProvider>
           </BudgetProvider>
         </TravelProvider>

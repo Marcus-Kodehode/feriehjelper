@@ -35,9 +35,10 @@ export default function Header() {
           <Link href="/budsjett" className="nav-btn">{t.budget}</Link>
           <Link href="/aktiviteter" className="nav-btn">{t.activities}</Link>
           <Link href="/konto" className="nav-btn">{t.account}</Link>
-          <Link href="/nødinformasjon" className="bg-red-600 nav-btn hover:bg-red-700">
+          <Link href="/emergency" className="bg-red-600 nav-btn hover:bg-red-700">
             {t.emergency}
           </Link>
+
 
           {/* Bytt språk knapp */}
           <button
