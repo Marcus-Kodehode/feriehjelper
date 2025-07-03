@@ -150,7 +150,8 @@ const translations = {
     },
     submitTrip: "Lagre reise",
     haveUpcomingTrip: "Du har en kommende reise til",
-
+    rightsReserved: "Alle rettigheter reservert.",
+    builtWith: "Laget med",
   },
   en: {
     dashboard: "Dashboard",
@@ -303,7 +304,8 @@ const translations = {
     },
     submitTrip: "Save trip",
     haveUpcomingTrip: "You have an upcoming trip to",
-
+    rightsReserved: "All rights reserved.",
+    builtWith: "Built with",
   },
 };
 
