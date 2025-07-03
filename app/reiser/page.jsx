@@ -2,13 +2,17 @@
 import { useState } from "react";
 import TravelForm from "@/components/travel/TravelForm";
 import TravelSummary from "@/components/dashboard/TravelSummary";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
 export default function ReiserPage() {
   const [visSkjema, setVisSkjema] = useState(false);
+  const { language } = useLanguage();
+  const t = translations[language];
 
   return (
     <div className="max-w-4xl p-6 mx-auto">
-      <h1 className="mb-4 text-2xl font-bold text-primary">Mine reiser</h1>
+      <h1 className="mb-4 text-2xl font-bold text-primary">{t.myTrips}</h1>
 
       {/* VIS ALLE REISEKORT */}
       <TravelSummary />
@@ -19,7 +23,7 @@ export default function ReiserPage() {
           onClick={() => setVisSkjema(!visSkjema)}
           className="px-4 py-2 text-white transition rounded bg-accent hover:bg-pink-500"
         >
-          {visSkjema ? "Skjul skjema" : "Legg til ny reise"}
+          {visSkjema ? t.hideForm : t.addTrip}
         </button>
       </div>
 

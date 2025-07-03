@@ -16,12 +16,11 @@ export default function MobileMenu() {
     { href: "/budsjett", label: t.budget },
     { href: "/aktiviteter", label: t.activities },
     { href: "/konto", label: t.account },
-    { href: "/nødinformasjon", label: t.emergency, danger: true },
+    { href: "/emergency", label: t.emergency, danger: true },
   ];
 
   return (
     <>
-      {/* Hamburger Icon */}
       <button
         onClick={() => setOpen(true)}
         className="p-2 text-white md:hidden"
@@ -30,7 +29,6 @@ export default function MobileMenu() {
         <Menu size={28} />
       </button>
 
-      {/* Fullscreen Overlay Menu */}
       {open && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 text-white bg-header">
           <button
@@ -56,7 +54,6 @@ export default function MobileMenu() {
             </Link>
           ))}
 
-          {/* Språkbytte-knapp */}
           <button
             onClick={() => {
               toggleLanguage();
