@@ -1,50 +1,51 @@
 "use client";
 import { useTravel } from "@/components/context/TravelContext";
 import { useActivity } from "@/components/context/ActivityContext";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
 export default function ActivityCard({ activity, onEdit }) {
   const { trips } = useTravel();
   const { deleteActivity } = useActivity();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const trip = trips.find((t) => t.id === Number(activity.tripId));
 
   return (
     <div className="relative bg-[#1f1f1f] text-footerText p-4 rounded-lg border border-contrast shadow mb-4">
-      {/* Rediger og slett-knapper øverst til høyre */}
       <div className="absolute space-x-2 text-sm top-2 right-3">
         <button
           onClick={() => onEdit(activity)}
           className="text-blue-400 hover:underline"
         >
-          Rediger
+          {t.edit}
         </button>
         <button
           onClick={() => deleteActivity(activity.id)}
           className="text-red-500 hover:underline"
         >
-          Slett
+          {t.delete}
         </button>
       </div>
 
       <h3 className="text-lg font-semibold text-yellow-300">{activity.name}</h3>
       <p className="text-sm text-gray-400">
-        For: {trip ? trip.title : "Ukjent reise"}
+        {t.forTrip}: {trip ? trip.title : t.unknownTrip}
       </p>
       {activity.date && activity.time && (
         <p className="text-sm text-gray-400">
-          {activity.date} kl. {activity.time}
+          {activity.date} {t.at} {activity.time}
         </p>
       )}
       {activity.place && (
-        <p className="text-sm text-gray-400">Sted: {activity.place}</p>
+        <p className="text-sm text-gray-400">{t.place}: {activity.place}</p>
       )}
       {activity.cost && (
-        <p className="text-sm text-gray-400">Kostnad: {activity.cost} kr</p>
+        <p className="text-sm text-gray-400">{t.cost}: {activity.cost} {activity.currency || "kr"}</p>
       )}
       {activity.category && (
-        <p className="text-sm italic text-gray-400">
-          Kategori: {activity.category}
-        </p>
+        <p className="text-sm italic text-gray-400">{t.category}: {activity.category}</p>
       )}
       {activity.notes && (
         <p className="text-sm italic text-gray-500">{activity.notes}</p>
@@ -56,7 +57,7 @@ export default function ActivityCard({ activity, onEdit }) {
           rel="noopener noreferrer"
           className="text-xs text-pink-400 underline"
         >
-          Mer info
+          {t.moreInfo}
         </a>
       )}
     </div>

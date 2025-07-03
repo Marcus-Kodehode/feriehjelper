@@ -2,11 +2,16 @@
 import { useState } from "react";
 import { useTravel } from "@/components/context/TravelContext";
 import { useActivity } from "@/components/context/ActivityContext";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
+
 import ActivityCard from "./ActivityCard";
 
 export default function GroupedActivityCard({ onEdit }) {
   const { trips } = useTravel();
   const { activities } = useActivity();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const grouped = trips
     .map((trip) => {
@@ -37,20 +42,21 @@ export default function GroupedActivityCard({ onEdit }) {
           trip={trip}
           activities={activities}
           onEdit={onEdit}
+          t={t}
         />
       ))}
     </div>
   );
 }
 
-function TripActivityGroup({ trip, activities, onEdit }) {
+function TripActivityGroup({ trip, activities, onEdit, t }) {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? activities : activities.slice(0, 3);
 
   return (
     <div className="bg-[#1f1f1f] border border-contrast rounded-lg p-4">
       <h3 className="mb-3 text-lg font-bold text-yellow-300">
-        Aktiviteter for: {trip.title}
+        {t.activitiesFor}: {trip.title}
       </h3>
 
       <div className="space-y-3">
@@ -69,7 +75,7 @@ function TripActivityGroup({ trip, activities, onEdit }) {
             onClick={() => setShowAll(!showAll)}
             className="text-sm font-medium text-red-400 hover:underline"
           >
-            {showAll ? "Vis færre" : "Vis alle"}
+            {showAll ? t.showLess : t.showAll}
           </button>
         </div>
       )}
