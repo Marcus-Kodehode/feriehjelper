@@ -2,10 +2,14 @@
 import { useState } from "react";
 import { useTravel } from "@/components/context/TravelContext";
 import { useEmergency } from "@/components/context/EmergencyContext";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
 export default function EmergencyForm() {
   const { trips } = useTravel();
   const { addEmergency } = useEmergency();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const [formData, setFormData] = useState({
     tripId: "",
@@ -32,7 +36,6 @@ export default function EmergencyForm() {
     };
     addEmergency(newEmergency);
 
-    // Nullstill skjema
     setFormData({
       tripId: "",
       embassy: "",
@@ -52,7 +55,7 @@ export default function EmergencyForm() {
       className="p-4 space-y-4 border rounded border-contrast bg-zinc-900"
     >
       <h2 className="text-lg font-semibold text-yellow-400">
-        Legg til nødinformasjon
+        {t.addEmergencyInfo}
       </h2>
 
       <select
@@ -62,7 +65,7 @@ export default function EmergencyForm() {
         required
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
       >
-        <option value="">Velg tilhørende reise</option>
+        <option value="">{t.selectTrip}</option>
         {trips.map((trip) => (
           <option key={trip.id} value={trip.id}>
             {trip.title}
@@ -73,7 +76,7 @@ export default function EmergencyForm() {
       <input
         type="text"
         name="embassy"
-        placeholder="Adresse til ambassade / konsulat"
+        placeholder={t.embassyPlaceholder}
         value={formData.embassy}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -82,7 +85,7 @@ export default function EmergencyForm() {
       <input
         type="text"
         name="police"
-        placeholder="Nødnummer politi"
+        placeholder={t.policePlaceholder}
         value={formData.police}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -91,7 +94,7 @@ export default function EmergencyForm() {
       <input
         type="text"
         name="ambulance"
-        placeholder="Nødnummer ambulanse"
+        placeholder={t.ambulancePlaceholder}
         value={formData.ambulance}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -100,7 +103,7 @@ export default function EmergencyForm() {
       <input
         type="text"
         name="fire"
-        placeholder="Nødnummer brann"
+        placeholder={t.firePlaceholder}
         value={formData.fire}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -109,7 +112,7 @@ export default function EmergencyForm() {
       <input
         type="text"
         name="insurance"
-        placeholder="Forsikringsselskap"
+        placeholder={t.insurancePlaceholder}
         value={formData.insurance}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -118,7 +121,7 @@ export default function EmergencyForm() {
       <input
         type="text"
         name="policyNumber"
-        placeholder="Polisenummer"
+        placeholder={t.policyNumberPlaceholder}
         value={formData.policyNumber}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -127,7 +130,7 @@ export default function EmergencyForm() {
       <input
         type="text"
         name="contactPerson"
-        placeholder="Kontaktperson (navn og nummer)"
+        placeholder={t.contactPersonPlaceholder}
         value={formData.contactPerson}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -135,7 +138,7 @@ export default function EmergencyForm() {
 
       <textarea
         name="notes"
-        placeholder="Tilleggsinfo / notater"
+        placeholder={t.notesPlaceholder}
         value={formData.notes}
         onChange={handleChange}
         rows={3}
@@ -146,7 +149,7 @@ export default function EmergencyForm() {
         type="submit"
         className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
       >
-        Lagre nødinformasjon
+        {t.saveEmergency}
       </button>
     </form>
   );
