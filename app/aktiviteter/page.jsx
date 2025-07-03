@@ -21,12 +21,13 @@ export default function ActivityPage() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="mb-4 text-2xl font-bold text-primary">{t.myActivities}</h1>
+    <div className="flex justify-center px-4">
+      <div className="w-full max-w-4xl p-6">
+        <h1 className="mb-4 text-2xl font-bold text-primary">{t.myActivities}</h1>
 
-      <GroupedActivityList onEdit={handleEdit} />
-
-      <ActivityForm editData={editData} clearEdit={clearEdit} />
+        <GroupedActivityList onEdit={handleEdit} />
+        <ActivityForm editData={editData} clearEdit={clearEdit} />
+      </div>
     </div>
   );
 }

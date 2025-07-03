@@ -2,10 +2,14 @@
 import { useState, useEffect } from "react";
 import { useActivity } from "../context/ActivityContext";
 import { useTravel } from "../context/TravelContext";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
 
 export default function ActivityForm({ editData, clearEdit }) {
   const { addActivity, updateActivity } = useActivity();
   const { trips } = useTravel();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const [formData, setFormData] = useState({
     tripId: "",
@@ -59,106 +63,144 @@ export default function ActivityForm({ editData, clearEdit }) {
       onSubmit={handleSubmit}
       className="mt-6 p-4 bg-[#1f1f1f] border border-contrast rounded-lg space-y-3"
     >
-      <h3 className="font-bold text-yellow-400 text-md">Legg til ny aktivitet</h3>
+      <h3 className="font-bold text-yellow-400 text-md">
+        {editData ? t.updateActivity : t.addNewActivity}
+      </h3>
 
-      <select
-        name="tripId"
-        value={formData.tripId}
-        onChange={handleChange}
-        required
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      >
-        <option value="">Velg reise</option>
-        {trips.map((trip) => (
-          <option key={trip.id} value={trip.id}>
-            {trip.title}
-          </option>
-        ))}
-      </select>
-
-      <input
-        type="text"
-        name="name"
-        placeholder="Navn på aktivitet"
-        value={formData.name}
-        onChange={handleChange}
-        required
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      />
-
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <input
-          type="date"
-          name="date"
-          value={formData.date}
+      {/* Reisevalg */}
+      <div>
+        <label className="block mb-1 text-sm text-gray-400">{t.selectTrip}</label>
+        <select
+          name="tripId"
+          value={formData.tripId}
           onChange={handleChange}
           required
-          className="flex-1 p-2 text-white border rounded bg-zinc-900 border-contrast"
-        />
+          className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+        >
+          <option value="">{t.chooseTrip}</option>
+          {trips.map((trip) => (
+            <option key={trip.id} value={trip.id}>
+              {trip.title}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Navn */}
+      <div>
+        <label className="block mb-1 text-sm text-gray-400">{t.activityName}</label>
         <input
-          type="time"
-          name="time"
-          value={formData.time}
+          type="text"
+          name="name"
+          placeholder={t.activityName}
+          value={formData.name}
           onChange={handleChange}
-          className="flex-1 p-2 text-white border rounded bg-zinc-900 border-contrast"
+          required
+          className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
         />
       </div>
 
-      <input
-        type="text"
-        name="place"
-        placeholder="Sted"
-        value={formData.place}
-        onChange={handleChange}
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      />
+      {/* Dato og tid */}
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col flex-1">
+          <label className="mb-1 text-sm text-gray-400">{t.date}</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            className="p-2 text-white border rounded bg-zinc-900 border-contrast [&::-webkit-calendar-picker-indicator]:invert"
+          />
+        </div>
+        <div className="flex flex-col flex-1">
+          <label className="mb-1 text-sm text-gray-400">{t.time}</label>
+          <input
+            type="time"
+            name="time"
+            value={formData.time}
+            onChange={handleChange}
+            className="p-2 text-white border rounded bg-zinc-900 border-contrast [&::-webkit-calendar-picker-indicator]:invert"
+          />
+        </div>
+      </div>
 
-      <input
-        type="number"
-        name="cost"
-        placeholder="Kostnad (valgfritt)"
-        value={formData.cost}
-        onChange={handleChange}
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      />
+      {/* Sted */}
+      <div>
+        <label className="block mb-1 text-sm text-gray-400">{t.place}</label>
+        <input
+          type="text"
+          name="place"
+          placeholder={t.place}
+          value={formData.place}
+          onChange={handleChange}
+          className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+        />
+      </div>
 
-      <input
-        type="text"
-        name="link"
-        placeholder="Lenke (valgfritt)"
-        value={formData.link}
-        onChange={handleChange}
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      />
+      {/* Kostnad */}
+      <div>
+        <label className="block mb-1 text-sm text-gray-400">{t.cost}</label>
+        <input
+          type="number"
+          name="cost"
+          placeholder={`${t.cost} (${t.optional})`}
+          value={formData.cost}
+          onChange={handleChange}
+          className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+        />
+      </div>
 
-      <select
-        name="category"
-        value={formData.category}
-        onChange={handleChange}
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      >
-        <option value="">Kategori (valgfritt)</option>
-        <option value="Severdighet">Severdighet</option>
-        <option value="Restaurant">Restaurant</option>
-        <option value="Utflukt">Utflukt</option>
-        <option value="Transport">Transport</option>
-        <option value="Annet">Annet</option>
-      </select>
+      {/* Lenke */}
+      <div>
+        <label className="block mb-1 text-sm text-gray-400">{t.link}</label>
+        <input
+          type="text"
+          name="link"
+          placeholder={`${t.link} (${t.optional})`}
+          value={formData.link}
+          onChange={handleChange}
+          className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+        />
+      </div>
 
-      <textarea
-        name="notes"
-        placeholder="Notater"
-        value={formData.notes}
-        onChange={handleChange}
-        className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
-      />
+      {/* Kategori */}
+      <div>
+        <label className="block mb-1 text-sm text-gray-400">{t.category}</label>
+        <select
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+        >
+          <option value="">{t.optional}</option>
+          <option value="Severdighet">{t.sight}</option>
+          <option value="Restaurant">{t.restaurant}</option>
+          <option value="Utflukt">{t.excursion}</option>
+          <option value="Transport">{t.transport}</option>
+          <option value="Annet">{t.other}</option>
+        </select>
+      </div>
 
+      {/* Notater */}
+      <div>
+        <label className="block mb-1 text-sm text-gray-400">{t.notes}</label>
+        <textarea
+          name="notes"
+          placeholder={t.notes}
+          value={formData.notes}
+          onChange={handleChange}
+          className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
+        />
+      </div>
+
+      {/* Knapper */}
       <div className="flex gap-3">
         <button
           type="submit"
           className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
         >
-          {editData ? "Oppdater aktivitet" : "Legg til aktivitet"}
+          {editData ? t.updateActivity : t.addActivity}
         </button>
         {editData && (
           <button
@@ -166,7 +208,7 @@ export default function ActivityForm({ editData, clearEdit }) {
             onClick={clearEdit}
             className="px-4 py-2 font-medium text-white bg-gray-600 rounded hover:bg-gray-700"
           >
-            Avbryt
+            {t.cancel}
           </button>
         )}
       </div>
