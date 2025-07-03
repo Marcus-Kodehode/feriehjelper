@@ -53,74 +53,112 @@ export default function TravelForm() {
       className="p-6 space-y-4 border rounded-lg bg-dark border-contrast"
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <input
-          type="text"
-          name="title"
-          placeholder={t.tripTitlePlaceholder}
-          value={formData.title}
-          onChange={handleChange}
-          required
-          className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        <input
-          type="text"
-          name="destination"
-          placeholder={t.destinationPlaceholder}
-          value={formData.destination}
-          onChange={handleChange}
-          required
-          className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        <input
-          type="date"
-          name="from"
-          value={formData.from}
-          onChange={handleChange}
-          required
-          className="p-2 rounded bg-zinc-900 border border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent [&::-webkit-calendar-picker-indicator]:invert"
-        />
-        <input
-          type="date"
-          name="to"
-          value={formData.to}
-          onChange={handleChange}
-          required
-          className="p-2 rounded bg-zinc-900 border border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent [&::-webkit-calendar-picker-indicator]:invert"
-        />
-        <input
-          type="text"
-          name="transport"
-          placeholder={t.transportPlaceholder}
-          value={formData.transport}
-          onChange={handleChange}
-          className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        <input
-          type="text"
-          name="stay"
-          placeholder={t.stayPlaceholder}
-          value={formData.stay}
-          onChange={handleChange}
-          className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
-        />
-        <input
-          type="number"
-          name="travelers"
-          placeholder={t.travelersPlaceholder}
-          min="1"
-          value={formData.travelers}
-          onChange={handleChange}
-          className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
-        />
+        {/* Tittel */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm text-gray-400">{t.tripTitleLabel}</label>
+          <input
+            type="text"
+            name="title"
+            placeholder={t.tripTitlePlaceholder}
+            value={formData.title}
+            onChange={handleChange}
+            required
+            className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText"
+          />
+        </div>
+
+        {/* Destinasjon */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm text-gray-400">{t.destinationLabel}</label>
+          <input
+            type="text"
+            name="destination"
+            placeholder={t.destinationPlaceholder}
+            value={formData.destination}
+            onChange={handleChange}
+            required
+            className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText"
+          />
+        </div>
+
+        {/* Startdato */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm text-gray-400">{t.startDate}</label>
+          <input
+            type="date"
+            name="from"
+            value={formData.from}
+            onChange={handleChange}
+            required
+            className="p-2 rounded bg-zinc-900 border border-contrast text-footerText [&::-webkit-calendar-picker-indicator]:invert"
+          />
+        </div>
+
+        {/* Sluttdato */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm text-gray-400">{t.endDate}</label>
+          <input
+            type="date"
+            name="to"
+            value={formData.to}
+            onChange={handleChange}
+            required
+            className="p-2 rounded bg-zinc-900 border border-contrast text-footerText [&::-webkit-calendar-picker-indicator]:invert"
+          />
+        </div>
+
+        {/* Transport */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm text-gray-400">{t.transportLabel}</label>
+          <input
+            type="text"
+            name="transport"
+            placeholder={t.transportPlaceholder}
+            value={formData.transport}
+            onChange={handleChange}
+            className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText"
+          />
+        </div>
+
+        {/* Overnatting */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm text-gray-400">{t.stayLabel}</label>
+          <input
+            type="text"
+            name="stay"
+            placeholder={t.stayPlaceholder}
+            value={formData.stay}
+            onChange={handleChange}
+            className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText"
+          />
+        </div>
+
+        {/* Antall reisende */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm text-gray-400">{t.travelersLabel}</label>
+          <input
+            type="number"
+            name="travelers"
+            placeholder={t.travelersPlaceholder}
+            min="1"
+            value={formData.travelers}
+            onChange={handleChange}
+            className="p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText"
+          />
+        </div>
       </div>
 
-      <textarea
-        name="notes"
-        placeholder={t.notesPlaceholder}
-        value={formData.notes}
-        onChange={handleChange}
-        className="w-full p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText focus:outline-none focus:ring-2 focus:ring-accent"
-      />
+      {/* Notater */}
+      <div className="flex flex-col">
+        <label className="mb-1 text-sm text-gray-400">{t.notesLabel}</label>
+        <textarea
+          name="notes"
+          placeholder={t.notesPlaceholder}
+          value={formData.notes}
+          onChange={handleChange}
+          className="w-full p-2 placeholder-gray-400 border rounded bg-zinc-900 border-contrast text-footerText"
+        />
+      </div>
 
       <button
         type="submit"

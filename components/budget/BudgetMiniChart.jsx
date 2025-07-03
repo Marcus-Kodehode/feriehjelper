@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -6,10 +6,15 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function BudgetMiniChart({ budget }) {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   const data = {
     labels: [],
     datasets: [
@@ -23,24 +28,24 @@ export default function BudgetMiniChart({ budget }) {
   };
 
   if (budget.transport) {
-    data.labels.push('Transport');
+    data.labels.push(t.transport);
     data.datasets[0].data.push(Number(budget.transport));
   }
   if (budget.accommodation) {
-    data.labels.push('Overnatting');
+    data.labels.push(t.accommodation);
     data.datasets[0].data.push(Number(budget.accommodation));
   }
   if (budget.food) {
-    data.labels.push('Mat');
+    data.labels.push(t.food);
     data.datasets[0].data.push(Number(budget.food));
   }
   if (budget.activities) {
-    data.labels.push('Aktiviteter');
+    data.labels.push(t.activities);
     data.datasets[0].data.push(Number(budget.activities));
   }
-  if (budget.other) {
-    data.labels.push('Annet');
-    data.datasets[0].data.push(Number(budget.other));
+  if (budget.other || budget.misc) {
+    data.labels.push(t.other);
+    data.datasets[0].data.push(Number(budget.other || budget.misc));
   }
 
   if (data.datasets[0].data.length === 0) return null;

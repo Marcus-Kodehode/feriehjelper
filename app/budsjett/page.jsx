@@ -1,19 +1,24 @@
 "use client";
-import { useBudget } from "@/components/context/BudgetContext"; // ✅ Korrekt hook
+import { useBudget } from "@/components/context/BudgetContext";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
+
 import BudgetForm from "@/components/budget/BudgetForm";
 import BudgetCard from "@/components/budget/BudgetCard";
 
 export default function BudsjettPage() {
-  const { budgets } = useBudget(); // ✅ Riktig context
+  const { budgets } = useBudget();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   return (
     <div className="max-w-4xl p-6 mx-auto">
-      <h1 className="mb-4 text-2xl font-bold text-primary">Mitt budsjett</h1>
+      <h1 className="mb-4 text-2xl font-bold text-primary">{t.myBudget}</h1>
 
       {/* Vis budsjetter først */}
       <div className="mb-8">
         {budgets.length === 0 ? (
-          <p className="text-gray-400">Ingen budsjetter lagt til ennå.</p>
+          <p className="text-gray-400">{t.noBudgets}</p>
         ) : (
           budgets.map((budget) => <BudgetCard key={budget.id} budget={budget} />)
         )}

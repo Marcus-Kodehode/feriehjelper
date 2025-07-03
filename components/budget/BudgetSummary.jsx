@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -6,47 +6,45 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function BudgetSummary({ budget }) {
+  const { language } = useLanguage();
+  const t = translations[language];
+
   const data = {
     labels: [],
     datasets: [
       {
-        label: 'Budsjett',
+        label: t.budget,
         data: [],
-        backgroundColor: [
-          '#facc15', // gul
-          '#f87171', // rød
-          '#34d399', // grønn
-          '#60a5fa', // blå
-        ],
+        backgroundColor: ['#facc15', '#f87171', '#34d399', '#60a5fa'],
         borderColor: '#1f1f1f',
         borderWidth: 1,
       },
     ],
   };
 
-  // Legg til poster dynamisk hvis de finnes
   if (budget.transport) {
-    data.labels.push('Transport');
+    data.labels.push(t.transport);
     data.datasets[0].data.push(Number(budget.transport));
   }
-  if (budget.hotel) {
-    data.labels.push('Hotell');
-    data.datasets[0].data.push(Number(budget.hotel));
+  if (budget.hotel || budget.accommodation) {
+    data.labels.push(t.accommodation);
+    data.datasets[0].data.push(Number(budget.hotel || budget.accommodation));
   }
   if (budget.food) {
-    data.labels.push('Mat');
+    data.labels.push(t.food);
     data.datasets[0].data.push(Number(budget.food));
   }
   if (budget.activities) {
-    data.labels.push('Aktiviteter');
+    data.labels.push(t.activities);
     data.datasets[0].data.push(Number(budget.activities));
   }
 
-  // Hvis ingen data, ikke vis diagram
   if (data.datasets[0].data.length === 0) return null;
 
   return (

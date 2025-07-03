@@ -2,10 +2,14 @@
 import { useState } from "react";
 import { useBudget } from "@/components/context/BudgetContext";
 import { useTravel } from "@/components/context/TravelContext";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
 export default function BudgetForm() {
   const { addBudget } = useBudget();
   const { trips } = useTravel();
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const [formData, setFormData] = useState({
     tripId: "",
@@ -30,15 +34,9 @@ export default function BudgetForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    addBudget({ id: Date.now(), ...formData });
 
-    const newBudget = {
-      id: Date.now(),
-      ...formData,
-    };
-
-    addBudget(newBudget);
-
-    // Tilbakestill
+    // Nullstill skjema
     setFormData({
       tripId: "",
       currency: "NOK",
@@ -63,7 +61,7 @@ export default function BudgetForm() {
         required
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
       >
-        <option value="">Velg tilhørende reise</option>
+        <option value="">{t.selectTrip}</option>
         {trips.map((trip) => (
           <option key={trip.id} value={trip.id}>
             {trip.title}
@@ -88,7 +86,7 @@ export default function BudgetForm() {
       <input
         type="number"
         name="amount"
-        placeholder="Totalbudsjett"
+        placeholder={t.totalBudget}
         value={formData.amount}
         onChange={handleChange}
         required
@@ -99,7 +97,7 @@ export default function BudgetForm() {
       <input
         type="number"
         name="daily"
-        placeholder="Daglig budsjett (valgfritt)"
+        placeholder={t.dailyBudgetOpt}
         value={formData.daily}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -108,7 +106,7 @@ export default function BudgetForm() {
       <input
         type="number"
         name="transport"
-        placeholder="Fly / Transport (valgfritt)"
+        placeholder={t.transportOpt}
         value={formData.transport}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -117,7 +115,7 @@ export default function BudgetForm() {
       <input
         type="number"
         name="accommodation"
-        placeholder="Hotell / Overnatting (valgfritt)"
+        placeholder={t.accommodationOpt}
         value={formData.accommodation}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -126,7 +124,7 @@ export default function BudgetForm() {
       <input
         type="number"
         name="food"
-        placeholder="Mat (valgfritt)"
+        placeholder={t.foodOpt}
         value={formData.food}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -135,7 +133,7 @@ export default function BudgetForm() {
       <input
         type="number"
         name="activities"
-        placeholder="Aktiviteter (valgfritt)"
+        placeholder={t.activitiesOpt}
         value={formData.activities}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -144,7 +142,7 @@ export default function BudgetForm() {
       <input
         type="number"
         name="misc"
-        placeholder="Annet (valgfritt)"
+        placeholder={t.otherOpt}
         value={formData.misc}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -152,7 +150,7 @@ export default function BudgetForm() {
 
       <textarea
         name="notes"
-        placeholder="Notater (valgfritt)"
+        placeholder={t.notesOpt}
         value={formData.notes}
         onChange={handleChange}
         className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
@@ -162,7 +160,7 @@ export default function BudgetForm() {
         type="submit"
         className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
       >
-        Lagre budsjett
+        {t.saveBudget}
       </button>
     </form>
   );
