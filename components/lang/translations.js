@@ -136,6 +136,18 @@ const translations = {
     delete: "Slett",
     accountTitle: "Min konto",
     accountComing: "Kontosiden er under utvikling. Kommer snart!",
+    welcomeTitle: "Velkommen til VacationHelper",
+    welcomeMessage: "Det ser ut som du ikke har noen planlagte reiser enda. Kom i gang ved å planlegge din første tur!",
+    planYourFirstTrip: "Planlegg din første reise",
+    welcomeTitle: "Velkommen til VacationHelper",
+    welcomeMessage: "Det ser ut som du ikke har noen planlagte reiser enda. Kom i gang ved å planlegge din første tur!",
+    planYourFirstTrip: "Planlegg din første reise",
+    nextStepsTitle: "Hva kan du gjøre videre?",
+    nextSteps: {
+      activities: "Legg til aktiviteter i reisen din",
+      budget: "Sett opp et budsjett for å holde oversikt",
+      emergency: "Legg til nødinformasjon for trygghet",
+  },
   },
   en: {
     dashboard: "Dashboard",
@@ -274,6 +286,18 @@ const translations = {
     delete: "Delete",
     accountTitle: "My Account",
     accountComing: "The account page is under development. Coming soon!",
+    welcomeTitle: "Welcome to VacationHelper",
+    welcomeMessage: "It looks like you haven’t planned any trips yet. Get started by planning your first adventure!",
+    planYourFirstTrip: "Plan your first trip",
+    welcomeTitle: "Welcome to VacationHelper",
+    welcomeMessage: "It looks like you haven’t planned any trips yet. Get started by planning your first adventure!",
+    planYourFirstTrip: "Plan your first trip",
+    nextStepsTitle: "What’s next?",
+    nextSteps: {
+      activities: "Add activities to your trip",
+      budget: "Create a budget to stay on track",
+      emergency: "Add emergency info for safety",
+  },
   },
 };
 
