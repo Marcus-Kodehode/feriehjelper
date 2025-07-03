@@ -144,10 +144,11 @@ const translations = {
     planYourFirstTrip: "Planlegg din første reise",
     nextStepsTitle: "Hva kan du gjøre videre?",
     nextSteps: {
-      activities: "Legg til aktiviteter i reisen din",
-      budget: "Sett opp et budsjett for å holde oversikt",
-      emergency: "Legg til nødinformasjon for trygghet",
-  },
+      activities: "...",
+      budget: "...",
+      emergency: "..."
+    },
+    submitTrip: "Lagre reise", // ✅ riktig plassering!
   },
   en: {
     dashboard: "Dashboard",
@@ -294,10 +295,11 @@ const translations = {
     planYourFirstTrip: "Plan your first trip",
     nextStepsTitle: "What’s next?",
     nextSteps: {
-      activities: "Add activities to your trip",
-      budget: "Create a budget to stay on track",
-      emergency: "Add emergency info for safety",
-  },
+      activities: "...",
+      budget: "...",
+      emergency: "..."
+    },
+    submitTrip: "Save trip"
   },
 };
 
