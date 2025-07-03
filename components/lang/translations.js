@@ -144,9 +144,9 @@ const translations = {
     planYourFirstTrip: "Planlegg din første reise",
     nextStepsTitle: "Hva kan du gjøre videre?",
     nextSteps: {
-      activities: "...",
-      budget: "...",
-      emergency: "..."
+      activities: "Legg til aktiviteter i reisen din",
+      budget: "Sett opp et budsjett for å holde oversikt",
+      emergency: "Legg til nødinformasjon for trygghet"
     },
     submitTrip: "Lagre reise", // ✅ riktig plassering!
   },
@@ -295,9 +295,9 @@ const translations = {
     planYourFirstTrip: "Plan your first trip",
     nextStepsTitle: "What’s next?",
     nextSteps: {
-      activities: "...",
-      budget: "...",
-      emergency: "..."
+      activities: "Add activities to your trip",
+      budget: "Create a budget to stay on track",
+      emergency: "Add emergency info for safety"
     },
     submitTrip: "Save trip"
   },
