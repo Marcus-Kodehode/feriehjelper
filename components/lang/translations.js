@@ -148,7 +148,9 @@ const translations = {
       budget: "Sett opp et budsjett for å holde oversikt",
       emergency: "Legg til nødinformasjon for trygghet"
     },
-    submitTrip: "Lagre reise", // ✅ riktig plassering!
+    submitTrip: "Lagre reise",
+    haveUpcomingTrip: "Du har en kommende reise til",
+
   },
   en: {
     dashboard: "Dashboard",
@@ -299,7 +301,9 @@ const translations = {
       budget: "Create a budget to stay on track",
       emergency: "Add emergency info for safety"
     },
-    submitTrip: "Save trip"
+    submitTrip: "Save trip",
+    haveUpcomingTrip: "You have an upcoming trip to",
+
   },
 };
 

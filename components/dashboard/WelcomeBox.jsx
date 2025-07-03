@@ -1,36 +1,40 @@
 "use client";
 import Link from "next/link";
-import { useTravel } from "@/components/context/TravelContext";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
 
-export default function WelcomeBox() {
-  const { trips } = useTravel();
+export default function WelcomeBox({ nextTrip }) {
   const { language } = useLanguage();
   const t = translations[language];
 
+  const noTripsYet = !nextTrip;
+
   return (
-    <div className="p-6 bg-[#1f1f1f] border border-contrast rounded-lg shadow-md space-y-4">
-      <h2 className="text-xl font-bold text-accent">{t.welcomeTitle}</h2>
-      <p className="text-gray-300">{t.welcomeMessage}</p>
-
-      {!trips.length && (
-        <Link href="/reiser#travel-form">
-          <button className="px-4 py-2 font-medium text-white bg-pink-500 rounded-md hover:bg-pink-600">
+    <div className="p-6 border rounded-lg shadow bg-zinc-900 border-contrast">
+      {noTripsYet ? (
+        <>
+          <h2 className="mb-2 text-xl font-bold text-accent">{t.welcomeTitle}</h2>
+          <p className="mb-4 text-gray-300">{t.welcomeMessage}</p>
+          <Link
+            href="/reiser#reise-skjema"
+            className="inline-block px-4 py-2 text-sm font-medium text-white transition rounded bg-accent hover:bg-pink-500"
+          >
             {t.planYourFirstTrip}
-          </button>
-        </Link>
+          </Link>
+        </>
+      ) : (
+        <>
+          <h2 className="mb-2 text-xl font-bold text-green-400">{t.nextStepsTitle}</h2>
+          <p className="mb-4 text-gray-300">
+            {t.haveUpcomingTrip} <strong className="text-primary">{nextTrip.title}</strong>!
+          </p>
+          <ul className="pl-5 space-y-1 text-sm text-gray-400 list-disc">
+            <li>{t.nextSteps.activities}</li>
+            <li>{t.nextSteps.budget}</li>
+            <li>{t.nextSteps.emergency}</li>
+          </ul>
+        </>
       )}
-
-      {/* Neste steg / tips */}
-      <div className="pt-4 mt-4 border-t border-gray-700">
-        <h3 className="font-semibold text-yellow-400">{t.nextStepsTitle}</h3>
-        <ul className="pl-4 space-y-1 text-sm text-gray-400 list-disc">
-          <li>{t.nextSteps.activities}</li>
-          <li>{t.nextSteps.budget}</li>
-          <li>{t.nextSteps.emergency}</li>
-        </ul>
-      </div>
     </div>
   );
 }
