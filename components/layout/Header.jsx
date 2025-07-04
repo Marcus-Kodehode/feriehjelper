@@ -1,4 +1,4 @@
-"use client"; // 👈 Denne må med øverst!
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -55,3 +55,7 @@ export default function Header() {
     </header>
   );
 }
+// Header-komponenten viser topplinjen på siden med logo, navigasjonslenker og språkvelger.
+// Den bruker valgt språk fra LanguageContext til å vise oversatte lenketitler.
+// På større skjermer vises en full meny, mens MobileMenu brukes for mobilvisning.
+// Logoen er klikkbar og går tilbake til forsiden. Styling gjøres med Tailwind CSS.

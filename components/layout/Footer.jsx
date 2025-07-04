@@ -34,3 +34,7 @@ export default function Footer() {
     </footer>
   );
 }
+// Footer-komponenten viser bunnteksten for nettsiden.
+// Den bruker valgt språk fra LanguageContext for å vise oversatt tekst,
+// og viser logo, navn på appen, opphavsrett og informasjon om teknologier brukt.
+// Styling gjøres med Tailwind CSS, og komponenten kjøres i klienten ("use client").
