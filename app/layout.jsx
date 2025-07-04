@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
         <TravelProvider>
           <BudgetProvider>
             <ActivityProvider>
-              <EmergencyProvider> {/* 👈 Nødinformasjon rundt Layout */}
+              <EmergencyProvider>
                 <Layout>{children}</Layout>
               </EmergencyProvider>
             </ActivityProvider>
@@ -26,3 +26,8 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+// RootLayout definerer den overordnede strukturen for hele applikasjonen.
+// Den inkluderer globale CSS-stiler og pakker inn appen i flere "Context Providers"
+// for å gi tilgang til data som reiser, budsjett, aktiviteter og nødinformasjon.
+// Layout-komponenten brukes som ramme rundt alt innhold (children).
+// Denne filen brukes som rot-layout i Next.js og gjelder hele appen.

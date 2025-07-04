@@ -14,3 +14,8 @@ export default function Home() {
     </div>
   );
 }
+// Denne komponenten er hovedsiden for brukerens dashboard.
+// Den henter valgt språk fra LanguageContext, og bruker dette
+// til å vise oversatt tittel. Komponentens innhold består av en overskrift
+// og en TravelSummary-komponent som viser reiserelatert informasjon.
+// Styling gjøres med Tailwind CSS, og komponenten er en Client Component.
