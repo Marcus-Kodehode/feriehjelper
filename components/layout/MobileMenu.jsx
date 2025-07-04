@@ -68,3 +68,7 @@ export default function MobileMenu() {
     </>
   );
 }
+// MobileMenu er en responsiv meny for mobilvisning.
+// Den viser en hamburgermeny som åpner en fullskjerms navigasjon med lenker og språkvelger.
+// Menyvalgene hentes dynamisk med oversettelser fra LanguageContext.
+// Lucide-ikonene brukes for å åpne/lukke menyen. Tailwind CSS brukes til styling og animasjon.

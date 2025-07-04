@@ -13,3 +13,7 @@ export default function Layout({ children }) {
     </LanguageProvider>
   );
 }
+// Denne Layout-komponenten definerer struktur for sider i appen med felles Header og Footer.
+// Innholdet mellom disse pakkes inn i <main>, og alt er omgitt av LanguageProvider
+// slik at språkvalg er tilgjengelig for komponenter under.
+// Brukes til å gi en enhetlig layout på tvers av forskjellige sider i applikasjonen.
