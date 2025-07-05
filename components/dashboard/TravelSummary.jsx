@@ -32,3 +32,9 @@ export default function TravelSummary() {
     </div>
   );
 }
+// TravelSummary viser en oversikt over alle registrerte reiser i appen.
+// Reiser hentes fra TravelContext og sorteres etter startdato.
+// Hvis det ikke finnes noen reiser, vises en velkomstboks (WelcomeBox) med introduksjon.
+// Hvis det finnes reiser, vises WelcomeBox med informasjon om neste planlagte reise,
+// etterfulgt av alle TravelCard-komponenter for hver reise, der neste reise markeres spesielt.
+// Språktilpasning gjøres med LanguageContext, og layouten bruker Tailwind CSS.

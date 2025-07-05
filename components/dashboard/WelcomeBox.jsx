@@ -38,3 +38,8 @@ export default function WelcomeBox({ nextTrip }) {
     </div>
   );
 }
+// WelcomeBox viser en velkomst- eller informasjonsboks øverst i dashbordet.
+// Hvis brukeren ikke har noen reiser, vises en introduksjon med knapp for å planlegge sin første tur.
+// Hvis en fremtidig reise finnes (nextTrip), vises en guide til neste steg: aktiviteter, budsjett og nødinformasjon.
+// Tekster hentes dynamisk fra LanguageContext for støtte for flere språk.
+// Layouten bruker Tailwind CSS for en moderne og responsiv utforming.
