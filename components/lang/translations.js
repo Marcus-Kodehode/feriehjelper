@@ -310,3 +310,9 @@ const translations = {
 };
 
 export default translations;
+
+// translations.js inneholder alle oversettelser som brukes i appen for språkstøtte (i18n).
+// Objektet `translations` er delt opp i to språk: "no" (norsk) og "en" (engelsk).
+// Hver nøkkel representerer en tekststreng brukt i UI, og oversettelsene er strukturert tematisk.
+// Brukes sammen med LanguageContext for å vise korrekt språk i hele applikasjonen.
+// Eksempler: navigasjon, knapper, skjemaetiketter, meldinger, og instruksjoner.
