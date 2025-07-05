@@ -169,3 +169,10 @@ export default function TravelForm() {
     </form>
   );
 }
+// TravelForm er et skjema for å registrere en ny reise.
+// Den bruker konteksten fra TravelContext for å legge til reisen i global tilstand (addTrip).
+// Brukeren fyller inn felter som tittel, destinasjon, datoer, transport, overnatting, antall reisende og notater.
+// Feltene er knyttet til lokal state (formData) og oppdateres ved input-endringer.
+// Når skjemaet sendes inn, opprettes en ny reise med unik ID, og skjemaet tømmes.
+// Oversettelser hentes fra LanguageContext slik at alle felter og knapper vises på valgt språk.
+// Designet bruker Tailwind CSS for et mørkt og ryddig uttrykk.

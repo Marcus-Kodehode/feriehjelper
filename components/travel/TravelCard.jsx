@@ -123,3 +123,10 @@ export default function TravelCard({ trip, isNextTrip }) {
     </>
   );
 }
+// TravelCard er en sentral komponent som viser én enkelt reise i en oversikt.
+// Den henter og viser relatert informasjon som budsjett, neste aktivitet og nødinformasjon
+// ved hjelp av ulike kontekster (Travel, Budget, Activity, Emergency).
+// Kortet viser også antall dager igjen til reisen starter og reiselengde,
+// og gir mulighet for å vise flere detaljer via TravelDetails-komponenten.
+// Brukeren kan også slette reisen direkte fra kortet.
+// Komponentens innhold er dynamisk basert på hva slags data som finnes for reisen.
