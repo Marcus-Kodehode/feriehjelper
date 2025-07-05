@@ -28,7 +28,8 @@ export function TravelProvider({ children }) {
 export function useTravel() {
   return useContext(TravelContext);
 }
-
-
-
-// Dette gir deg en global "reisestorage" du kan bruke på tvers av Dashboard, TravelForm, osv.
+// TravelContext håndterer global tilstand for alle registrerte reiser i appen.
+// Reiser lagres i localStorage, og hentes ved lasting av komponenten (via useEffect).
+// Brukeren kan legge til og slette reiser med funksjonene addTrip og deleteTrip.
+// Tilstanden deles globalt via TravelProvider, og hentes lokalt med useTravel().
+// Dette gir enkel og sentralisert håndtering av reisedata på tvers av komponenter.

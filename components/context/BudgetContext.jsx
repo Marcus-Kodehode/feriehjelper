@@ -47,3 +47,8 @@ export function BudgetProvider({ children }) {
 
 // Hook for å bruke context
 export const useBudget = () => useContext(BudgetContext);
+
+// BudgetContext håndterer budsjetter knyttet til reiser i appen.
+// Budsjettene lastes inn og lagres automatisk i localStorage.
+// Funksjoner: addBudget (legg til), deleteBudget (fjern), updateBudget (rediger).
+// Data er tilgjengelig globalt via BudgetProvider og kan brukes med useBudget().

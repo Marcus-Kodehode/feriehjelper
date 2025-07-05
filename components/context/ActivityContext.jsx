@@ -40,3 +40,8 @@ export function ActivityProvider({ children }) {
 }
 
 export const useActivity = () => useContext(ActivityContext);
+
+// ActivityContext lagrer og organiserer alle brukerens aktiviteter per reise.
+// Aktivitetene synkroniseres med localStorage automatisk.
+// Funksjoner inkluderer: addActivity, deleteActivity og updateActivity.
+// Tilgangen deles via ActivityProvider og brukes med useActivity().
