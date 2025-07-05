@@ -56,3 +56,8 @@ export default function BudgetMiniChart({ budget }) {
     </div>
   );
 }
+// BudgetMiniChart viser et lite kakediagram over fordelingen i et budsjett.
+// Den bruker Chart.js (Pie-diagram) og henter språk via LanguageContext for å oversette etiketter.
+// Den inkluderer typiske budsjettkategorier: transport, overnatting, mat, aktiviteter og diverse (other/misc).
+// Hvis ingen verdier er satt i budsjettet, returnerer komponenten null og vises ikke.
+// Diagrammet har et enkelt design uten forklaring (legend), og passer godt inne i kortvisning.

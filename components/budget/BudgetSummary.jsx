@@ -53,3 +53,8 @@ export default function BudgetSummary({ budget }) {
     </div>
   );
 }
+// BudgetSummary viser en større og mer informativ versjon av budsjettfordelingen i et Pie-diagram.
+// Den bruker Chart.js og inkluderer samme kategorier som MiniChart, men med en synlig tittel/label.
+// Komponentens data hentes fra et `budget`-objekt, og etikettene oversettes via LanguageContext.
+// Den støtter både `hotel` og `accommodation` for overnatting, og ignorerer visning hvis ingen data finnes.
+// Designet er større og mer sentrert, og brukes typisk i full visning eller redigeringsmodus.
