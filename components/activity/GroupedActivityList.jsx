@@ -82,3 +82,8 @@ function TripActivityGroup({ trip, activities, onEdit, t }) {
     </div>
   );
 }
+// GroupedActivityCard viser aktiviteter gruppert etter reise, sortert etter dato og tid.
+// Den henter reiser og aktiviteter fra TravelContext og ActivityContext, og bruker LanguageContext for oversettelser.
+// Hver gruppe (TripActivityGroup) viser maks 3 aktiviteter, med mulighet for å vise alle.
+// Aktivitetene vises med ActivityCard, og en redigeringsfunksjon sendes videre via onEdit.
+// Dette gir brukeren en ryddig og kronologisk oversikt over aktiviteter per reise.
