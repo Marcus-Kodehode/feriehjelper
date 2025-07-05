@@ -164,3 +164,9 @@ export default function BudgetCard({ budget }) {
     </div>
   );
 }
+// BudgetCard viser et budsjett koblet til en spesifikk reise, hentet fra TravelContext.
+// Brukeren kan se budsjettinfo, som totalbeløp, daglig forbruk og kategorier (mat, aktiviteter osv).
+// Det er støtte for å redigere budsjettet direkte i kortet med inline input-felter,
+// eller slette det helt ved hjelp av funksjoner fra BudgetContext.
+// Språk tilpasses automatisk med LanguageContext, og budsjettet vises også visuelt via BudgetSummary.
+// Alt er pakket inn i en mørk, stilig layout med Tailwind CSS.

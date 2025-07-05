@@ -165,3 +165,9 @@ export default function BudgetForm() {
     </form>
   );
 }
+// BudgetForm lar brukeren opprette et nytt budsjett knyttet til en eksisterende reise.
+// Data sendes til BudgetContext via addBudget, og skjemaet nullstilles etter innsending.
+// Skjemaet inneholder både påkrevde og valgfrie felter: reise, valuta, totalbudsjett, samt kategorier som mat og aktiviteter.
+// Tilgjengelige reiser hentes fra TravelContext for å koble budsjettet riktig.
+// Tekster og plassholdere oversettes via LanguageContext, og layouten bruker Tailwind CSS.
+// Enkelt og brukervennlig skjema for å gjøre budsjettering lett og oversiktlig.

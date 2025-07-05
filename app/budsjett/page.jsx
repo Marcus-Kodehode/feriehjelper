@@ -29,3 +29,8 @@ export default function BudsjettPage() {
     </div>
   );
 }
+// BudsjettPage viser en oversikt over alle budsjetter knyttet til brukerens reiser.
+// Den henter data fra BudgetContext og bruker LanguageContext for oversettelser.
+// Hvis det ikke finnes noen budsjetter, vises en melding – ellers vises én BudgetCard per budsjett.
+// Nederst vises alltid BudgetForm, som lar brukeren registrere et nytt budsjett.
+// Layouten er sentrert og responsiv, med styling via Tailwind CSS.
