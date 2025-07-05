@@ -63,3 +63,8 @@ export default function ActivityCard({ activity, onEdit }) {
     </div>
   );
 }
+// ActivityCard viser en enkelt aktivitet med all viktig info: navn, reise, tid, sted, kostnad osv.
+// Brukeren kan redigere eller slette aktiviteten via knappene øverst i kortet.
+// Henter reisetittel fra TravelContext og tekstoversettelser fra LanguageContext.
+// Visningen tilpasses automatisk ut fra hvilke felter som er fylt ut.
+// Designet med mørk bakgrunn og kontrastfarger for tydelig visning.

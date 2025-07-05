@@ -215,3 +215,8 @@ export default function ActivityForm({ editData, clearEdit }) {
     </form>
   );
 }
+// ActivityForm lar brukeren legge til eller redigere en aktivitet knyttet til en reise.
+// Når `editData` finnes, fylles skjemaet automatisk ut og kan redigeres, ellers brukes det som nytt skjema.
+// Skjemaet støtter flere felt: navn, dato/tid, sted, kostnad, kategori, notater og lenke.
+// Ved innsending lagres data via addActivity eller updateActivity fra ActivityContext.
+// Bruker også TravelContext for å knytte aktiviteten til en reise, og LanguageContext for oversettelser.
