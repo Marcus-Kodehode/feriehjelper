@@ -183,3 +183,10 @@ export default function TravelDetails({ trip, onClose }) {
     </div>
   );
 }
+// TravelDetails viser en detaljert popup-visning av en valgt reise.
+// Den henter og viser relaterte data fra Budsjett-, Aktivitet- og Nødinformasjon-contextene,
+// samt oversettelser fra LanguageContext basert på valgt språk.
+// Innholdet inkluderer reisedetaljer, budsjettoversikt (med diagram), planlagte aktiviteter
+// og nødkontakt-informasjon. Det vises også antall dager igjen og lengden på reisen.
+// ESC-tasten lukker popupen, og brukeren kan vise alle aktiviteter eller kun de to første.
+// Designet er optimalisert for fokusert visning med mørkt tema og responsive elementer.

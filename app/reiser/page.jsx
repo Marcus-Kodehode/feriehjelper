@@ -36,3 +36,8 @@ export default function ReiserPage() {
     </div>
   );
 }
+// ReiserPage viser oversikten over brukerens reiser og lar brukeren legge til nye.
+// Den bruker språkvalg fra LanguageContext for å vise tekst på valgt språk.
+// TravelSummary viser alle registrerte reiser, og en knapp lar brukeren vise/skjule TravelForm.
+// TravelForm vises kun når "visSkjema" er aktivert, og lar brukeren registrere en ny reise.
+// Designet er sentrert og responsivt, med Tailwind CSS for styling.
