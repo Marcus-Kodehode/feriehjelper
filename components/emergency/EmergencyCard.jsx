@@ -86,3 +86,8 @@ export default function EmergencyCard() {
     </div>
   );
 }
+// EmergencyCard viser en oversikt over lagret nødinformasjon per reise.
+// Data hentes fra EmergencyContext, og reisetitler kobles via TravelContext.
+// Hver kortseksjon viser kun feltene som faktisk er fylt ut, og inkluderer mulighet for å slette (og etter hvert redigere).
+// Språk og etiketter hentes fra LanguageContext for støtte for flere språk.
+// Brukervennlig layout med god kontrast og tydelig gruppering av informasjon.

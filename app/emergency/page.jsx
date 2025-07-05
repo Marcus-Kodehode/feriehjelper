@@ -23,3 +23,8 @@ export default function EmergencyPage() {
     </div>
   );
 }
+// EmergencyPage viser nødinformasjon knyttet til brukerens reiser, f.eks. politi, ambulanse, forsikring og kontaktperson.
+// Den bruker LanguageContext for å oversette innhold basert på valgt språk.
+// EmergencyCard viser lagrede nødinformasjoner, og EmergencyForm brukes for å legge til eller redigere dem.
+// Alt er pakket inn i en responsiv layout med fokus på oversikt og brukervennlighet.
+// Dette gir brukeren enkel tilgang til viktig informasjon i krisesituasjoner.

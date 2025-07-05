@@ -154,3 +154,8 @@ export default function EmergencyForm() {
     </form>
   );
 }
+// EmergencyForm lar brukeren registrere nødinformasjon for en spesifikk reise.
+// Skjemaet inkluderer felt som ambassade, politi, brannvesen, forsikring, kontaktperson og notater.
+// Data lagres via addEmergency fra EmergencyContext og knyttes til valgt reise fra TravelContext.
+// Etter innsending nullstilles skjemaet. Alle feltnavn og plassholdere oversettes via LanguageContext.
+// Designet er brukervennlig og stilrent med Tailwind CSS.
