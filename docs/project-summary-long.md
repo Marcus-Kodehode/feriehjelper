@@ -1,0 +1,9 @@
+Utviklingen av Feriehjelper har vært et omfattende og givende frontend-prosjekt hvor jeg har fått brukt, testet og videreutviklet mine ferdigheter i moderne webteknologier – spesielt Next.js, React og Tailwind CSS. Målet med prosjektet var å lage en komplett og brukervennlig reiseassistent der man kan planlegge og administrere alle aspekter av en reise: fra reisemål og datoer til budsjettoversikt, daglige aktiviteter og nødinformasjon – alt tilgjengelig på både norsk og engelsk.
+
+Jeg har strukturert prosjektet med en modulær og skalerbar arkitektur, og brukt React Context API for å organisere og dele data på tvers av applikasjonen. Brukerdata lagres lokalt med localStorage, og oppdateres sømløst via tilkoblede skjemaer. Jeg har utviklet gjenbrukbare og semantiske komponenter med høy grad av fleksibilitet, og lagt stor vekt på visuell konsistens, god kontrast og responsivt design – tilpasset både desktop og mobil.
+
+Språkstøtte ble løst med et manuelt oversettelsessystem som gjør det enkelt å utvide med nye språk. Jeg bygget også inn støtte for automatisk visning av velkomstmeldinger og tilpasset informasjon basert på brukerens data, samt CTA-knapper som veileder brukeren videre i prosessen. I budsjettseksjonen brukes en minigraf for å visualisere kostnadsfordelingen.
+
+Underveis møtte jeg utfordringer knyttet til håndtering av global state, navigasjonsflyt, datoformatering og det å holde oversikten i et voksende komponenthierarki. Jeg lærte mye om strukturering av mapper, effektiv bruk av hooks, og hvordan små UI-forbedringer kan ha stor innvirkning på brukeropplevelsen. Alt er bygget med tanke på enkel videreutvikling.
+
+Prosjektet har styrket min forståelse for praktisk frontend-arkitektur, gitt meg dypere innsikt i brukerfokusert utvikling, og lært meg viktigheten av tydelig datastruktur og vedlikeholdbar kode. Jeg er stolt av resultatet, og ser på Feriehjelper som et konkret bevis på hva jeg har lært – og hvor jeg er på vei som utvikler.
