@@ -152,6 +152,11 @@ const translations = {
     haveUpcomingTrip: "Du har en kommende reise til",
     rightsReserved: "Alle rettigheter reservert.",
     builtWith: "Laget med",
+    stay: "Overnatting",
+    emergencyInfo: "Nødinformasjon",
+    insurance: "Forsikring",
+    policyNumber: "Polisenummer",
+    contactPerson: "Kontaktperson",
   },
   en: {
     dashboard: "Dashboard",
@@ -306,6 +311,11 @@ const translations = {
     haveUpcomingTrip: "You have an upcoming trip to",
     rightsReserved: "All rights reserved.",
     builtWith: "Built with",
+    stay: "Accommodation",
+    emergencyInfo: "Emergency Info",
+    insurance: "Insurance",
+    policyNumber: "Policy number",
+    contactPerson: "Contact person",
   },
 };
 
