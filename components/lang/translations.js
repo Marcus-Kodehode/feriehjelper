@@ -157,6 +157,7 @@ const translations = {
     insurance: "Forsikring",
     policyNumber: "Polisenummer",
     contactPerson: "Kontaktperson",
+    embassy: "Ambassade",
   },
   en: {
     dashboard: "Dashboard",
@@ -316,6 +317,8 @@ const translations = {
     insurance: "Insurance",
     policyNumber: "Policy number",
     contactPerson: "Contact person",
+    embassy: "Embassy",
+
   },
 };
 
