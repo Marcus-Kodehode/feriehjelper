@@ -16,10 +16,19 @@ export function TravelProvider({ children }) {
   }, [trips]);
 
   const addTrip = (trip) => setTrips((prev) => [...prev, trip]);
-  const deleteTrip = (id) => setTrips((prev) => prev.filter((trip) => trip.id !== id));
+
+  const deleteTrip = (id) =>
+    setTrips((prev) => prev.filter((trip) => trip.id !== id));
+
+  const editTrip = (updatedTrip) =>
+    setTrips((prev) =>
+      prev.map((trip) =>
+        trip.id === updatedTrip.id ? updatedTrip : trip
+      )
+    );
 
   return (
-    <TravelContext.Provider value={{ trips, addTrip, deleteTrip }}>
+    <TravelContext.Provider value={{ trips, addTrip, deleteTrip, editTrip }}>
       {children}
     </TravelContext.Provider>
   );
@@ -28,6 +37,7 @@ export function TravelProvider({ children }) {
 export function useTravel() {
   return useContext(TravelContext);
 }
+
 // TravelContext håndterer global tilstand for alle registrerte reiser i appen.
 // Reiser lagres i localStorage, og hentes ved lasting av komponenten (via useEffect).
 // Brukeren kan legge til og slette reiser med funksjonene addTrip og deleteTrip.

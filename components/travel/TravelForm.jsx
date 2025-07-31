@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTravel } from "@/components/context/TravelContext";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
 
-export default function TravelForm() {
-  const { addTrip } = useTravel();
+export default function TravelForm({ editData, onCancel }) {
+  const { addTrip, editTrip } = useTravel();
   const { language } = useLanguage();
   const t = translations[language];
 
@@ -20,6 +20,10 @@ export default function TravelForm() {
     travelers: "",
   });
 
+  useEffect(() => {
+    if (editData) setFormData(editData);
+  }, [editData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -30,11 +34,18 @@ export default function TravelForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const nyReise = {
-      id: Date.now(),
-      ...formData,
-    };
-    addTrip(nyReise);
+
+    if (editData) {
+      editTrip(formData);
+      onCancel?.();
+    } else {
+      const nyReise = {
+        id: Date.now(),
+        ...formData,
+      };
+      addTrip(nyReise);
+    }
+
     setFormData({
       title: "",
       destination: "",
@@ -53,7 +64,6 @@ export default function TravelForm() {
       className="p-6 space-y-4 border rounded-lg bg-dark border-contrast"
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {/* Tittel */}
         <div className="flex flex-col">
           <label className="mb-1 text-sm text-gray-400">{t.tripTitleLabel}</label>
           <input
@@ -67,7 +77,6 @@ export default function TravelForm() {
           />
         </div>
 
-        {/* Destinasjon */}
         <div className="flex flex-col">
           <label className="mb-1 text-sm text-gray-400">{t.destinationLabel}</label>
           <input
@@ -81,7 +90,6 @@ export default function TravelForm() {
           />
         </div>
 
-        {/* Startdato */}
         <div className="flex flex-col">
           <label className="mb-1 text-sm text-gray-400">{t.startDate}</label>
           <input
@@ -94,7 +102,6 @@ export default function TravelForm() {
           />
         </div>
 
-        {/* Sluttdato */}
         <div className="flex flex-col">
           <label className="mb-1 text-sm text-gray-400">{t.endDate}</label>
           <input
@@ -107,7 +114,6 @@ export default function TravelForm() {
           />
         </div>
 
-        {/* Transport */}
         <div className="flex flex-col">
           <label className="mb-1 text-sm text-gray-400">{t.transportLabel}</label>
           <input
@@ -120,7 +126,6 @@ export default function TravelForm() {
           />
         </div>
 
-        {/* Overnatting */}
         <div className="flex flex-col">
           <label className="mb-1 text-sm text-gray-400">{t.stayLabel}</label>
           <input
@@ -133,7 +138,6 @@ export default function TravelForm() {
           />
         </div>
 
-        {/* Antall reisende */}
         <div className="flex flex-col">
           <label className="mb-1 text-sm text-gray-400">{t.travelersLabel}</label>
           <input
@@ -148,7 +152,6 @@ export default function TravelForm() {
         </div>
       </div>
 
-      {/* Notater */}
       <div className="flex flex-col">
         <label className="mb-1 text-sm text-gray-400">{t.notesLabel}</label>
         <textarea
@@ -160,15 +163,27 @@ export default function TravelForm() {
         />
       </div>
 
-      <button
-        type="submit"
-        className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
-      >
-        {t.submitTrip}
-      </button>
+      <div className="flex gap-3">
+        <button
+          type="submit"
+          className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
+        >
+          {editData ? t.updateTrip || "Oppdater reise" : t.submitTrip}
+        </button>
+        {editData && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 font-medium text-white bg-gray-600 rounded hover:bg-gray-700"
+          >
+            {t.cancel}
+          </button>
+        )}
+      </div>
     </form>
   );
 }
+
 // TravelForm er et skjema for å registrere en ny reise.
 // Den bruker konteksten fra TravelContext for å legge til reisen i global tilstand (addTrip).
 // Brukeren fyller inn felter som tittel, destinasjon, datoer, transport, overnatting, antall reisende og notater.

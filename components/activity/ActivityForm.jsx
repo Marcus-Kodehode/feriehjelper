@@ -35,9 +35,10 @@ export default function ActivityForm({ editData, clearEdit }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editData) {
-      updateActivity(formData);
+      updateActivity(editData.id, formData);
       clearEdit();
-    } else {
+    }
+    else {
       const newActivity = {
         id: Date.now(),
         ...formData,
