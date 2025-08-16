@@ -1,86 +1,73 @@
 "use client";
-import { useEmergency } from "../context/EmergencyContext";
-import { useTravel } from "../context/TravelContext";
-import { useLanguage } from "../context/LanguageContext";
-import translations from "../lang/translations";
+import { useTravel } from "@/components/context/TravelContext";
+import { useLanguage } from "@/components/context/LanguageContext";
+import translations from "@/components/lang/translations";
 
-export default function EmergencyCard() {
-  const { emergencies, deleteEmergency } = useEmergency();
+export default function EmergencyCard({ data, onEdit, onDelete }) {
   const { trips } = useTravel();
   const { language } = useLanguage();
   const t = translations[language];
 
-  if (!emergencies.length)
-    return <p className="text-gray-400">{t.noEmergencyInfo}</p>;
+  const trip = trips.find((tr) => tr.id === Number(data.tripId));
 
   return (
-    <div className="space-y-4">
-      {emergencies.map((e) => {
-        const trip = trips.find((t) => t.id === Number(e.tripId));
+    <div className="relative p-4 border rounded-lg border-contrast bg-[#1f1f1f]">
+      {/* actions – same look as budget header */}
+      <div className="absolute flex gap-2 top-2 right-3">
+        <button onClick={() => onEdit?.(data)} className="btn-edit">
+          {t.edit}
+        </button>
+        <button onClick={() => onDelete?.(data.id)} className="btn-delete">
+          {t.delete}
+        </button>
+      </div>
 
-        return (
-          <div
-            key={e.id}
-            className="relative p-4 border rounded-lg border-contrast bg-[#1f1f1f]"
-          >
-            <h3 className="mb-1 text-lg font-semibold text-primary">
-              {trip ? trip.title : t.unknownTrip}
-            </h3>
+      <h3 className="mb-1 text-lg font-semibold text-primary">
+        {trip ? trip.title : t.unknownTrip}
+      </h3>
 
-            {e.embassy && (
-              <p className="text-sm text-gray-300">
-                {t.embassyLabel}: {e.embassy}
-              </p>
-            )}
-            {e.police && (
-              <p className="text-sm text-gray-300">
-                {t.policeLabel}: {e.police}
-              </p>
-            )}
-            {e.ambulance && (
-              <p className="text-sm text-gray-300">
-                {t.ambulanceLabel}: {e.ambulance}
-              </p>
-            )}
-            {e.fire && (
-              <p className="text-sm text-gray-300">
-                {t.fireLabel}: {e.fire}
-              </p>
-            )}
-            {e.insuranceCompany && (
-              <p className="text-sm text-gray-300">
-                {t.insuranceLabel}: {e.insuranceCompany}
-              </p>
-            )}
-            {e.policyNumber && (
-              <p className="text-sm text-gray-300">
-                {t.policyLabel}: {e.policyNumber}
-              </p>
-            )}
-            {e.emergencyContact && (
-              <p className="text-sm text-gray-300">
-                {t.contactPersonLabel}: {e.emergencyContact}
-              </p>
-            )}
-            {e.notes && (
-              <p className="mt-1 text-sm italic text-gray-400">📝 {e.notes}</p>
-            )}
-
-            <div className="absolute flex gap-2 top-2 right-3">
-              <button onClick={() => onEdit(e)} className="btn-edit">
-                {t.edit}
-              </button>
-              <button onClick={() => deleteEmergency(e.id)} className="btn-delete">
-                {t.delete}
-              </button>
-            </div>
-
-          </div>
-        );
-      })}
+      {data.embassy && (
+        <p className="text-sm text-gray-300">
+          {t.embassyLabel}: {data.embassy}
+        </p>
+      )}
+      {data.police && (
+        <p className="text-sm text-gray-300">
+          {t.policeLabel}: {data.police}
+        </p>
+      )}
+      {data.ambulance && (
+        <p className="text-sm text-gray-300">
+          {t.ambulanceLabel}: {data.ambulance}
+        </p>
+      )}
+      {data.fire && (
+        <p className="text-sm text-gray-300">
+          {t.fireLabel}: {data.fire}
+        </p>
+      )}
+      {data.insurance && (
+        <p className="text-sm text-gray-300">
+          {t.insuranceLabel}: {data.insurance}
+        </p>
+      )}
+      {data.policyNumber && (
+        <p className="text-sm text-gray-300">
+          {t.policyLabel}: {data.policyNumber}
+        </p>
+      )}
+      {data.contactPerson && (
+        <p className="text-sm text-gray-300">
+          {t.contactPersonLabel}: {data.contactPerson}
+        </p>
+      )}
+      {data.notes && (
+        <p className="mt-1 text-sm italic text-gray-400">📝 {data.notes}</p>
+      )}
     </div>
   );
 }
+
 // EmergencyCard viser en oversikt over lagret nødinformasjon per reise.
 // Data hentes fra EmergencyContext, og reisetitler kobles via TravelContext.
 // Hver kortseksjon viser kun feltene som faktisk er fylt ut, og inkluderer mulighet for å slette (og etter hvert redigere).
