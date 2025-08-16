@@ -36,21 +36,16 @@ export default function BudgetCard({ budget }) {
           {t.budgetFor}: {trip ? trip.title : t.unknownTrip}
         </h2>
         <div className="flex gap-2">
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="text-sm underline text-accent"
-            >
-              {t.edit}
-            </button>
-          )}
-          <button
-            onClick={() => deleteBudget(budget.id)}
-            className="text-sm text-red-500 underline"
-          >
-            {t.delete}
+        {!isEditing && (
+          <button onClick={() => setIsEditing(true)} className="btn-edit">
+            {t.edit}
           </button>
-        </div>
+        )}
+        <button onClick={() => deleteBudget(budget.id)} className="btn-delete">
+          {t.delete}
+        </button>
+      </div>
+
       </div>
 
       {!isEditing ? (

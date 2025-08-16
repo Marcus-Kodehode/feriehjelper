@@ -67,19 +67,14 @@ export default function EmergencyCard() {
             )}
 
             <div className="flex gap-2 mt-3">
-              <button
-                onClick={() => alert("Redigering kommer snart!")}
-                className="px-2 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700"
-              >
+              <button onClick={() => onEdit(e)} className="btn-edit">
                 {t.edit}
               </button>
-              <button
-                onClick={() => deleteEmergency(e.id)}
-                className="px-2 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700"
-              >
+              <button onClick={() => deleteEmergency(e.id)} className="btn-delete">
                 {t.delete}
               </button>
             </div>
+
           </div>
         );
       })}

@@ -14,20 +14,14 @@ export default function ActivityCard({ activity, onEdit }) {
 
   return (
     <div className="relative bg-[#1f1f1f] text-footerText p-4 rounded-lg border border-contrast shadow mb-4">
-      <div className="absolute space-x-2 text-sm top-2 right-3">
-        <button
-          onClick={() => onEdit(activity)}
-          className="text-blue-400 hover:underline"
-        >
-          {t.edit}
-        </button>
-        <button
-          onClick={() => deleteActivity(activity.id)}
-          className="text-red-500 hover:underline"
-        >
-          {t.delete}
-        </button>
-      </div>
+    <div className="absolute flex gap-2 top-2 right-3">
+      <button onClick={() => onEdit(activity)} className="btn-edit">
+        {t.edit}
+      </button>
+      <button onClick={() => deleteActivity(activity.id)} className="btn-delete">
+        {t.delete}
+      </button>
+    </div>
 
       <h3 className="text-lg font-semibold text-yellow-300">{activity.name}</h3>
       <p className="text-sm text-gray-400">

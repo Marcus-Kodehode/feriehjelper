@@ -15,4 +15,26 @@ html, body {
   .nav-btn {
     @apply px-3 py-1 text-white transition bg-teal-700 rounded hover:bg-teal-600;
   }
+
+  /* Felles grunnstil for knapper (samme følelse som nav-btn) */
+  .btn {
+    @apply px-3 py-1 text-sm font-medium transition rounded;
+  }
+
+  /* Varianter */
+  .btn-edit {
+    @apply text-white bg-blue-600 btn hover:bg-blue-700;
+  }
+
+  .btn-delete {
+    @apply text-white bg-red-600 btn hover:bg-red-700;
+  }
+
+  /* (Valgfritt) link-variant hvis du noen steder vil ha “lenke-look” */
+  .btn-link-accent {
+    @apply text-sm underline text-accent hover:opacity-90;
+  }
+  .btn-link-danger {
+    @apply text-sm text-red-500 underline hover:text-red-400;
+  }
 }
