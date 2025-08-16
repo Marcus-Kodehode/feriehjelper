@@ -1,6 +1,9 @@
 <p align="center">
-  <img src="public/images/logo.png" alt="Marcus's Logo" width="200"/>
-  <img src="public/images/logoT.png" alt="Feriehjelper Logo" width="200"/>
+  <img src="public/images/logo.png" alt="Marcus Logo" width="200"/>
+</p>
+
+<p align="center">
+  <img src="public/images/logoT.png" alt="VacationHelper Logo" width="200"/>
 </p>
 
 # 🏖️ Feriehjelper – Planlegg ferien din med oversikt og ro
