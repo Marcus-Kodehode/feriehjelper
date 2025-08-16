@@ -8,7 +8,7 @@ const LANGS = {
   no: { name: "Norsk", flag: "/images/flags/no.png" },
   en: { name: "English", flag: "/images/flags/en.png" },
   es: { name: "Español", flag: "/images/flags/es.png" },
-  // zh: { name: "中文", flag: "/images/flags/zh.png" },
+  zh: { name: "中文", flag: "/images/flags/zh.png" },
 };
 
 export default function LanguageMenu({ compact = false }) {

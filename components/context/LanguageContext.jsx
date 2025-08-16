@@ -8,7 +8,7 @@ const LanguageContext = createContext({
   available: [],
 });
 
-const ORDER = ["no", "en", "es"]; // legg til "zh" senere
+const ORDER = ["no", "en", "es", "zh"];
 const DEFAULT_LANG = "no";
 
 export function LanguageProvider({ children }) {
