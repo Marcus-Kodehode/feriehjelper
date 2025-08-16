@@ -12,8 +12,9 @@ export default function BudgetCard({ budget }) {
   const { language } = useLanguage();
   const t = translations[language];
 
-  const trip = trips.find((t) => t.id === Number(budget.tripId));
+  if (!budget) return null;
 
+  const trip = trips.find((tt) => tt.id === Number(budget.tripId));
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ ...budget });
 
@@ -27,26 +28,11 @@ export default function BudgetCard({ budget }) {
     setIsEditing(false);
   };
 
-  if (!budget) return null;
-
   return (
-    <div className="bg-[#1f1f1f] text-footerText p-4 rounded-lg shadow-lg border border-contrast mb-4">
-      <div className="flex items-start justify-between mb-2">
-        <h2 className="text-lg font-semibold text-primary">
-          {t.budgetFor}: {trip ? trip.title : t.unknownTrip}
-        </h2>
-        <div className="flex gap-2">
-        {!isEditing && (
-          <button onClick={() => setIsEditing(true)} className="btn-edit">
-            {t.edit}
-          </button>
-        )}
-        <button onClick={() => deleteBudget(budget.id)} className="btn-delete">
-          {t.delete}
-        </button>
-      </div>
-
-      </div>
+    <div className="relative bg-[#1f1f1f] text-footerText p-4 rounded-lg shadow-lg border border-contrast mb-4">
+      <h2 className="mb-2 text-lg font-semibold text-primary">
+        {t.budgetFor}: {trip ? trip.title : t.unknownTrip}
+      </h2>
 
       {!isEditing ? (
         <>
@@ -141,24 +127,37 @@ export default function BudgetCard({ budget }) {
             className="w-full p-1 text-sm border rounded bg-zinc-800 border-contrast"
           />
           <div className="flex gap-2">
-            <button
-              onClick={handleSave}
-              className="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700"
-            >
+            <button onClick={handleSave} className="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700">
               {t.save}
             </button>
-            <button
-              onClick={() => setIsEditing(false)}
-              className="px-3 py-1 text-sm text-white bg-gray-600 rounded hover:bg-gray-700"
-            >
+            <button onClick={() => setIsEditing(false)} className="px-3 py-1 text-sm text-white bg-gray-600 rounded hover:bg-gray-700">
               {t.cancel}
             </button>
           </div>
         </div>
       )}
+
+      {/* Knappene: nederst-høyre på mobil, øverst-høyre på desktop */}
+      <div className="flex justify-end w-full gap-2 mt-3 sm:w-auto sm:justify-start sm:mt-0 sm:absolute sm:top-2 sm:right-3">
+        {!isEditing && (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="px-2 py-1 text-xs btn-edit sm:px-3 sm:py-1 sm:text-sm"
+          >
+            {t.edit}
+          </button>
+        )}
+        <button
+          onClick={() => deleteBudget(budget.id)}
+          className="px-2 py-1 text-xs btn-delete sm:px-3 sm:py-1 sm:text-sm"
+        >
+          {t.delete}
+        </button>
+      </div>
     </div>
   );
 }
+
 // BudgetCard viser et budsjett koblet til en spesifikk reise, hentet fra TravelContext.
 // Brukeren kan se budsjettinfo, som totalbeløp, daglig forbruk og kategorier (mat, aktiviteter osv).
 // Det er støtte for å redigere budsjettet direkte i kortet med inline input-felter,

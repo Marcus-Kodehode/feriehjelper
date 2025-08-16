@@ -5,7 +5,7 @@ import WelcomeBox from "./WelcomeBox";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
 
-export default function TravelSummary({ onEditTrip }) {
+export default function TravelSummary({ onEditTrip }) {  // ← ta imot handler
   const { trips } = useTravel();
   const { language } = useLanguage();
   const t = translations[language];
@@ -26,7 +26,7 @@ export default function TravelSummary({ onEditTrip }) {
           key={trip.id}
           trip={trip}
           isNextTrip={trip.id === nextTrip?.id}
-          onEdit={onEditTrip}     /* 👈 viktig */
+          onEditTrip={onEditTrip}  // ← send den videre til hvert kort
         />
       ))}
     </div>
