@@ -49,6 +49,24 @@ export default function TravelDetails({ trip, onClose }) {
 
   const visibleActivities = showAll ? allActivities : allActivities.slice(0, 2);
 
+  // map enum/legacy-kategori -> oversatt nøkkel
+  const codeToLabelKey = (codeOrLegacy) => {
+    const map = {
+      sight: "sight",
+      restaurant: "restaurant",
+      excursion: "excursion",
+      transport: "transport",
+      other: "other",
+      // legacy norsk
+      Severdighet: "sight",
+      Restaurant: "restaurant",
+      Utflukt: "excursion",
+      Transport: "transport",
+      Annet: "other",
+    };
+    return map[codeOrLegacy] || "other";
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div className="relative w-full max-w-xl p-6 mx-4 border rounded-lg shadow-lg bg-dark border-contrast text-footerText max-h-[90vh] overflow-y-auto">
@@ -134,14 +152,16 @@ export default function TravelDetails({ trip, onClose }) {
                   <li key={a.id} className="p-3 border rounded border-contrast bg-zinc-900">
                     <p className="font-semibold text-primary">{a.name}</p>
                     <p className="text-sm text-gray-400">
-                      {a.date} {a.time && `kl. ${a.time}`}
+                      {a.date} {a.time && `${t.at} ${a.time}`}
                     </p>
                     {a.place && <p className="text-sm text-gray-300">{t.place}: {a.place}</p>}
                     {a.cost && (
                       <p className="text-sm text-gray-300">{t.cost}: {a.cost} {currency}</p>
                     )}
                     {a.category && (
-                      <p className="text-sm italic text-gray-400">{t.category}: {a.category}</p>
+                      <p className="text-sm italic text-gray-400">
+                        {t.category}: {t[codeToLabelKey(a.category)]}
+                      </p>
                     )}
                     {a.notes && (
                       <p className="text-sm italic text-gray-400">📝 {a.notes}</p>
@@ -183,6 +203,7 @@ export default function TravelDetails({ trip, onClose }) {
     </div>
   );
 }
+
 // TravelDetails viser en detaljert popup-visning av en valgt reise.
 // Den henter og viser relaterte data fra Budsjett-, Aktivitet- og Nødinformasjon-contextene,
 // samt oversettelser fra LanguageContext basert på valgt språk.

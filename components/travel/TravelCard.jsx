@@ -9,7 +9,6 @@ import translations from "@/components/lang/translations";
 import TravelDetails from "@/components/travel/details/TravelDetails";
 import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
 
-
 export default function TravelCard({ trip, isNextTrip }) {
   const { deleteTrip } = useTravel();
   const { budgets } = useBudget();
@@ -26,16 +25,15 @@ export default function TravelCard({ trip, isNextTrip }) {
   const currency = budsjett?.currency || "kr";
   const emergency = emergencies.find((e) => Number(e.tripId) === trip.id);
 
+  // Robust sammenligning: hvis tid mangler, bruk 23:59 slik at dagens aktivitet fortsatt regnes som kommende
+  const activityDate = (a) => {
+    const time = a.time && a.time.trim() ? a.time : "23:59";
+    return new Date(`${a.date}T${time}`);
+  };
+
   const upcomingActivities = activities
-    .filter(
-      (a) =>
-        Number(a.tripId) === trip.id &&
-        new Date(a.date + "T" + (a.time || "00:00")) >= new Date()
-    )
-    .sort(
-      (a, b) =>
-        new Date(a.date + "T" + (a.time || "00:00")) - new Date(b.date + "T" + (b.time || "00:00"))
-    );
+    .filter((a) => Number(a.tripId) === trip.id && activityDate(a) >= new Date())
+    .sort((a, b) => activityDate(a) - activityDate(b));
 
   const nextActivity = upcomingActivities[0];
 
@@ -78,7 +76,7 @@ export default function TravelCard({ trip, isNextTrip }) {
               <p className="text-sm text-white">{nextActivity.name}</p>
               <p className="text-sm text-gray-400">
                 {nextActivity.date}
-                {nextActivity.time && ` kl. ${nextActivity.time}`}
+                {nextActivity.time && ` ${t.at} ${nextActivity.time}`}
               </p>
               {nextActivity.place && (
                 <p className="text-sm text-gray-300">{t.place}: {nextActivity.place}</p>
@@ -124,6 +122,7 @@ export default function TravelCard({ trip, isNextTrip }) {
     </>
   );
 }
+
 // TravelCard er en sentral komponent som viser én enkelt reise i en oversikt.
 // Den henter og viser relatert informasjon som budsjett, neste aktivitet og nødinformasjon
 // ved hjelp av ulike kontekster (Travel, Budget, Activity, Emergency).

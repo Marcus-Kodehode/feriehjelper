@@ -23,8 +23,23 @@ export default function ActivityForm({ editData, clearEdit }) {
     category: "",
   });
 
+  // map gamle (norske) kategoritekster -> nye enum-koder
+  const legacyToCode = (v) => ({
+    Severdighet: "sight",
+    Restaurant: "restaurant",
+    Utflukt: "excursion",
+    Transport: "transport",
+    Annet: "other",
+  }[v] || v);
+
   useEffect(() => {
-    if (editData) setFormData(editData);
+    if (editData) {
+      setFormData({
+        ...editData,
+        // normaliser kategori dersom gamle data har norsk tekst
+        category: legacyToCode(editData.category || ""),
+      });
+    }
   }, [editData]);
 
   const handleChange = (e) => {
@@ -37,8 +52,7 @@ export default function ActivityForm({ editData, clearEdit }) {
     if (editData) {
       updateActivity(editData.id, formData);
       clearEdit();
-    }
-    else {
+    } else {
       const newActivity = {
         id: Date.now(),
         ...formData,
@@ -175,11 +189,11 @@ export default function ActivityForm({ editData, clearEdit }) {
           className="w-full p-2 text-white border rounded bg-zinc-900 border-contrast"
         >
           <option value="">{t.optional}</option>
-          <option value="Severdighet">{t.sight}</option>
-          <option value="Restaurant">{t.restaurant}</option>
-          <option value="Utflukt">{t.excursion}</option>
-          <option value="Transport">{t.transport}</option>
-          <option value="Annet">{t.other}</option>
+          <option value="sight">{t.sight}</option>
+          <option value="restaurant">{t.restaurant}</option>
+          <option value="excursion">{t.excursion}</option>
+          <option value="transport">{t.transport}</option>
+          <option value="other">{t.other}</option>
         </select>
       </div>
 
@@ -216,6 +230,7 @@ export default function ActivityForm({ editData, clearEdit }) {
     </form>
   );
 }
+
 // ActivityForm lar brukeren legge til eller redigere en aktivitet knyttet til en reise.
 // Når `editData` finnes, fylles skjemaet automatisk ut og kan redigeres, ellers brukes det som nytt skjema.
 // Skjemaet støtter flere felt: navn, dato/tid, sted, kostnad, kategori, notater og lenke.
