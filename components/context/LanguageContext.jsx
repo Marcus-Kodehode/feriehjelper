@@ -9,23 +9,32 @@ const LanguageContext = createContext({
 });
 
 const ORDER = ["no", "en", "es"]; // legg til "zh" senere
+const DEFAULT_LANG = "no";
 
 export function LanguageProvider({ children }) {
-  const [language, setLanguage] = useState(() => {
-    if (typeof window === "undefined") return "no";
-    return localStorage.getItem("vh_lang") || "no";
-  });
+  // Viktig: ikke les localStorage her!
+  const [language, setLanguage] = useState(DEFAULT_LANG);
 
+  // Les localStorage ETTER hydrering
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("vh_lang");
+      if (stored && ORDER.includes(stored)) {
+        setLanguage(stored);
+      }
+    } catch {}
+  }, []);
+
+  // Persistér når språk endres
   useEffect(() => {
     try {
       localStorage.setItem("vh_lang", language);
     } catch {}
   }, [language]);
 
-  // Behold toggle, men gjør den flerspråklig (no -> en -> es -> no)
   const toggleLanguage = () => {
     const i = ORDER.indexOf(language);
-    const next = ORDER[(i + 1) % ORDER.length] || "no";
+    const next = ORDER[(i + 1) % ORDER.length] || DEFAULT_LANG;
     setLanguage(next);
   };
 
@@ -42,6 +51,7 @@ export function LanguageProvider({ children }) {
 export function useLanguage() {
   return useContext(LanguageContext);
 }
+
 
 // LanguageContext styrer hvilket språk som er aktivt i appen (norsk eller engelsk).
 // Brukeren kan bytte språk med toggleLanguage, som veksler mellom "no" og "en".
