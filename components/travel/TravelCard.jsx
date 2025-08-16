@@ -38,23 +38,46 @@ export default function TravelCard({ trip, isNextTrip, defaultOpen = true, onEdi
   const upcomingActivities = activities
     .filter((a) => Number(a.tripId) === trip.id && activityDate(a) >= new Date())
     .sort((a, b) => activityDate(a) - activityDate(b));
-
   const nextActivity = upcomingActivities[0];
 
   const cardBodyId = `trip-body-${trip.id}`;
 
   return (
     <div className="relative rounded-lg shadow-lg mb-4 border border-contrast bg-[#1f1f1f] text-footerText overflow-hidden">
-      {/* Header */}
-      <div className="relative flex items-center justify-between gap-3 px-4 py-3 pr-20 sm:pr-4">
-        {/* Mobil: “Neste reise” i hjørnet */}
-        {isNextTrip && (
-          <span className="absolute px-2 py-1 text-xs font-bold text-green-400 border border-green-500 rounded sm:hidden right-3 top-3">
-            {t.nextTrip}
+      {/* HEADER */}
+      <div className="relative px-4 pt-4 pb-12 sm:pb-8">
+        {/* ØVRE HØYRE: Neste reise over – dager igjen under */}
+        <div className="absolute flex flex-col items-end gap-1 top-3 right-3">
+          {isNextTrip && (
+            <span className="px-2 py-1 text-xs font-bold text-green-400 border border-green-500 rounded">
+              {t.nextTrip}
+            </span>
+          )}
+          <span className="text-xs font-semibold text-pink-400 whitespace-nowrap">
+            {daysLeft} {t.daysLeft}
           </span>
-        )}
+        </div>
 
-        {/* Venstre: toggle + tittel */}
+
+        {/* NEDRE HØYRE: Rediger / Slett (alltid i bunnen av header) */}
+        <div className="absolute flex gap-2 right-3 bottom-3">
+          {onEditTrip && (
+            <button
+              onClick={() => onEditTrip(trip)}
+              className="px-3 py-1 text-xs btn-edit"
+            >
+              {t.edit}
+            </button>
+          )}
+          <button
+            onClick={() => deleteTrip(trip.id)}
+            className="px-3 py-1 text-xs btn-delete"
+          >
+            {t.delete}
+          </button>
+        </div>
+
+        {/* Venstresiden: toggle + tittel/datoer */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
@@ -65,7 +88,6 @@ export default function TravelCard({ trip, isNextTrip, defaultOpen = true, onEdi
           <span className="inline-flex items-center justify-center w-6 h-6 mt-1 border rounded bg-zinc-800 border-contrast">
             <ChevronDown className={`h-4 w-4 transition-transform ${open ? "" : "-rotate-90"}`} />
           </span>
-
           <div>
             <h2 className="text-lg font-semibold text-primary">{trip.title}</h2>
             <p className="text-xs text-gray-300 sm:text-sm">{trip.destination}</p>
@@ -74,41 +96,22 @@ export default function TravelCard({ trip, isNextTrip, defaultOpen = true, onEdi
             </p>
           </div>
         </button>
-
-        {/* Høyre: badges/knapper (desktop viser “Neste reise” her) */}
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {/* Desktop: Neste reise inline */}
-          {isNextTrip && (
-            <span className="hidden px-2 py-1 text-xs font-bold text-green-400 border border-green-500 rounded sm:inline-flex">
-              {t.nextTrip}
-            </span>
-          )}
-          <span className="px-2 py-1 text-xs font-semibold text-pink-400">
-            {daysLeft} {t.daysLeft}
-          </span>
-
-          {/* Rediger vises bare hvis onEditTrip er sendt inn (dashboard) */}
-          {onEditTrip && (
-            <button onClick={() => onEditTrip(trip)} className="btn-edit">
-              {t.edit}
-            </button>
-          )}
-          <button onClick={() => deleteTrip(trip.id)} className="btn-delete">
-            {t.delete}
-          </button>
-        </div>
       </div>
 
-      {/* Kollapsbart innhold */}
+      {/* KOLLAPS-INNHOLD */}
       {open && (
         <div id={cardBodyId} className="px-4 pb-4">
           <div className="flex flex-col justify-between gap-4 sm:flex-row">
+            {/* Venstre kolonne */}
             <div className="flex flex-col flex-1 gap-2">
               {trip.notes && <p className="mt-1 text-sm italic text-gray-400">{trip.notes}</p>}
               {trip.travelers && (
-                <p className="text-sm italic text-gray-400">{trip.travelers} {t.travelers}</p>
+                <p className="text-sm italic text-gray-400">
+                  {trip.travelers} {t.travelers}
+                </p>
               )}
 
+              {/* Budsjett */}
               {budsjett && (
                 <div className="mt-3 p-3 bg-[#2a2a2a] border border-yellow-500 rounded-md space-y-1">
                   <p className="text-sm font-bold text-yellow-300">{t.budget}</p>
@@ -132,6 +135,7 @@ export default function TravelCard({ trip, isNextTrip, defaultOpen = true, onEdi
                 </div>
               )}
 
+              {/* Neste aktivitet */}
               {nextActivity && (
                 <div className="mt-3 p-3 bg-[#2a2a2a] border border-green-500 rounded-md space-y-1">
                   <p className="text-sm font-bold text-green-300">{t.nextActivity}</p>
@@ -146,6 +150,7 @@ export default function TravelCard({ trip, isNextTrip, defaultOpen = true, onEdi
                 </div>
               )}
 
+              {/* Nødinformasjon (utdrag) */}
               {emergency && (
                 <div className="mt-3 p-3 bg-[#2a2a2a] border border-red-500 rounded-md space-y-1">
                   <p className="text-sm font-bold text-red-400">{t.emergency}</p>
