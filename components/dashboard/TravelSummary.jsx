@@ -5,7 +5,7 @@ import WelcomeBox from "./WelcomeBox";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
 
-export default function TravelSummary() {
+export default function TravelSummary({ onEditTrip }) {
   const { trips } = useTravel();
   const { language } = useLanguage();
   const t = translations[language];
@@ -14,7 +14,6 @@ export default function TravelSummary() {
   const sortedTrips = trips.slice().sort((a, b) => new Date(a.from) - new Date(b.from));
   const nextTrip = sortedTrips.find((trip) => new Date(trip.from) > today);
 
-  // 👉 Hvis ingen reiser: vis velkomstboks
   if (trips.length === 0) {
     return <WelcomeBox />;
   }
@@ -27,11 +26,13 @@ export default function TravelSummary() {
           key={trip.id}
           trip={trip}
           isNextTrip={trip.id === nextTrip?.id}
+          onEdit={onEditTrip}     /* 👈 viktig */
         />
       ))}
     </div>
   );
 }
+
 // TravelSummary viser en oversikt over alle registrerte reiser i appen.
 // Reiser hentes fra TravelContext og sorteres etter startdato.
 // Hvis det ikke finnes noen reiser, vises en velkomstboks (WelcomeBox) med introduksjon.
