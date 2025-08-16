@@ -4,10 +4,11 @@ import { useState } from "react";
 import { X, Menu } from "lucide-react";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
+import LanguageMenu from "@/components/shared/LanguageMenu";
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
   const t = translations[language];
 
   const navLinks = [
@@ -43,31 +44,25 @@ export default function MobileMenu() {
             <Link
               key={href}
               href={href}
-              className={`text-xl font-semibold px-4 py-2 rounded ${
-                danger
-                  ? "bg-red-600 hover:bg-red-700"
-                  : "bg-teal-700 hover:bg-teal-600"
-              } transition`}
+              className={`text-xl font-semibold px-4 py-2 rounded transition ${
+                danger ? "bg-red-600 hover:bg-red-700" : "bg-teal-700 hover:bg-teal-600"
+              }`}
               onClick={() => setOpen(false)}
             >
               {label}
             </Link>
           ))}
 
-          <button
-            onClick={() => {
-              toggleLanguage();
-              setOpen(false);
-            }}
-            className="px-4 py-2 mt-4 text-sm bg-gray-700 rounded hover:bg-gray-600"
-          >
-            {language === "no" ? "English" : "Norsk"}
-          </button>
+          {/* Språkvalg (kompakt) */}
+          <div className="mt-2">
+            <LanguageMenu compact />
+          </div>
         </div>
       )}
     </>
   );
 }
+
 // MobileMenu er en responsiv meny for mobilvisning.
 // Den viser en hamburgermeny som åpner en fullskjerms navigasjon med lenker og språkvelger.
 // Menyvalgene hentes dynamisk med oversettelser fra LanguageContext.

@@ -5,9 +5,10 @@ import Image from "next/image";
 import MobileMenu from "./MobileMenu";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
+import LanguageMenu from "@/components/shared/LanguageMenu";
 
 export default function Header() {
-  const { language, toggleLanguage } = useLanguage();
+  const { language } = useLanguage();
   const t = translations[language];
 
   return (
@@ -39,14 +40,8 @@ export default function Header() {
             {t.emergency}
           </Link>
 
-
-          {/* Bytt språk knapp */}
-          <button
-            onClick={toggleLanguage}
-            className="px-2 py-1 text-xs text-white border rounded border-contrast hover:bg-gray-800"
-          >
-            {language === "no" ? "English" : "Norsk"}
-          </button>
+          {/* Språkmeny (flagg + navn) */}
+          <LanguageMenu />
         </nav>
 
         {/* Mobilmeny */}
@@ -55,6 +50,7 @@ export default function Header() {
     </header>
   );
 }
+
 // Header-komponenten viser topplinjen på siden med logo, navigasjonslenker og språkvelger.
 // Den bruker valgt språk fra LanguageContext til å vise oversatte lenketitler.
 // På større skjermer vises en full meny, mens MobileMenu brukes for mobilvisning.
