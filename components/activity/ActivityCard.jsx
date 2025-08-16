@@ -3,6 +3,8 @@ import { useTravel } from "@/components/context/TravelContext";
 import { useActivity } from "@/components/context/ActivityContext";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
+import { categoryLabel } from "@/components/utils/category";
+
 
 export default function ActivityCard({ activity, onEdit }) {
   const { trips } = useTravel();
@@ -36,11 +38,11 @@ export default function ActivityCard({ activity, onEdit }) {
         </p>
       )}
 
-      {activity.category && (
-        <p className="text-sm italic text-gray-400">
-          {t.category}: {activity.category}
-        </p>
-      )}
+       {activity.category && (
+         <p className="text-sm italic text-gray-400">
+           {t.category}: {categoryLabel(activity.category, t)}
+         </p>
+       )}
 
       {activity.notes && (
         <p className="text-sm italic text-gray-500">{activity.notes}</p>
