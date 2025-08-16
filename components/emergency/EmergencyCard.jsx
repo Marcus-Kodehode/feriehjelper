@@ -66,7 +66,7 @@ export default function EmergencyCard() {
               <p className="mt-1 text-sm italic text-gray-400">📝 {e.notes}</p>
             )}
 
-            <div className="flex gap-2 mt-3">
+            <div className="absolute flex gap-2 top-2 right-3">
               <button onClick={() => onEdit(e)} className="btn-edit">
                 {t.edit}
               </button>
