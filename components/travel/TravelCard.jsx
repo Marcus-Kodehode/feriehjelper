@@ -9,6 +9,7 @@ import translations from "@/components/lang/translations";
 import TravelDetails from "@/components/travel/details/TravelDetails";
 import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
 
+
 export default function TravelCard({ trip, isNextTrip }) {
   const { deleteTrip } = useTravel();
   const { budgets } = useBudget();
