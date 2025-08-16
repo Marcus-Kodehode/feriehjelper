@@ -1,59 +1,57 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 
-// 1. Opprett context
 const EmergencyContext = createContext();
 
-// 2. Provider-komponent
 export function EmergencyProvider({ children }) {
   const [emergencies, setEmergencies] = useState([]);
 
-  // Hent fra localStorage ved oppstart
+  // load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("emergencyData");
-    if (stored) {
-      setEmergencies(JSON.parse(stored));
-    }
+    if (stored) setEmergencies(JSON.parse(stored));
   }, []);
 
-  // Lagre til localStorage ved endring
+  // persist to localStorage
   useEffect(() => {
     localStorage.setItem("emergencyData", JSON.stringify(emergencies));
   }, [emergencies]);
 
-  // Legg til eller oppdater nødinformasjon
+  // add or replace by tripId
   const addEmergency = (newData) => {
-    const parsedData = {
+    const parsed = {
       ...newData,
-      id: newData.id || Date.now(), // 👈 genererer unik ID hvis den mangler
-      tripId: Number(newData.tripId), // sikre talltype
+      id: newData.id || Date.now(),
+      tripId: Number(newData.tripId),
     };
-
     setEmergencies((prev) => {
-      const updated = prev.filter((e) => e.tripId !== parsedData.tripId);
-      return [...updated, parsedData];
+      const updated = prev.filter((e) => e.tripId !== parsed.tripId);
+      return [...updated, parsed];
     });
   };
 
-  // Slett etter ID
+  // 👇 edit by id (used when you click “Rediger”)
+  const updateEmergency = (id, patch) => {
+    setEmergencies((prev) =>
+      prev.map((e) =>
+        e.id === id ? { ...e, ...patch, tripId: Number(patch.tripId ?? e.tripId) } : e
+      )
+    );
+  };
+
   const deleteEmergency = (id) => {
     setEmergencies((prev) => prev.filter((e) => e.id !== id));
   };
 
   return (
     <EmergencyContext.Provider
-      value={{
-        emergencies,
-        addEmergency,
-        deleteEmergency, // 👈 husk å eksponere den!
-      }}
+      value={{ emergencies, addEmergency, updateEmergency, deleteEmergency }}
     >
       {children}
     </EmergencyContext.Provider>
   );
 }
 
-// 3. Custom hook
 export const useEmergency = () => useContext(EmergencyContext);
 
 // EmergencyContext håndterer nødinformasjon for hver reise (ambassade, politi, forsikring osv).
