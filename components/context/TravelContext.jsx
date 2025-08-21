@@ -148,23 +148,25 @@ export function TravelProvider({ children }) {
 
   const deleteTrip = async (id) => {
     const target = trips.find((t) => t.id === id);
+
+    // Optimistisk lokalt
     setTrips((prev) => prev.filter((t) => t.id !== id));
 
-    if (!target?.mongoId) return; // kun lokal sletting hvis ingen server-id
-
     try {
-      const res = await fetch(`/api/trips/${target.mongoId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("DELETE failed");
+      if (target?.mongoId) {
+        // Vanlig sletting via MongoDB ObjectId
+        const res = await fetch(`/api/trips/${target.mongoId}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("DELETE by mongoId failed");
+      } else {
+        // Fallback: slett dokumentet i DB som har din lokale numeriske id
+        const res = await fetch(`/api/trips/local/${id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error("DELETE by localId failed");
+      }
     } catch (e) {
-      console.error("deleteTrip: server failed, but removed locally", e);
+      console.error("deleteTrip: server delete failed, but removed locally", e);
     }
   };
 
-  return (
-    <TravelContext.Provider value={{ trips, addTrip, deleteTrip, editTrip }}>
-      {children}
-    </TravelContext.Provider>
-  );
 }
 
 export function useTravel() {
