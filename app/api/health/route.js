@@ -42,3 +42,38 @@ export async function GET(req) {
     );
   }
 }
+/*
+  Health Route – status og DB-ping
+
+  Hva:
+  - Endepunkt for å sjekke at server fungerer, og (valgfritt) at MongoDB svarer.
+
+  URL-er:
+  - GET /api/health              → "shallow" helsesjekk (ingen DB-tilkobling)
+  - GET /api/health?deep=1       → "deep" helsesjekk med MongoDB ping
+
+  Sikkerhet:
+  - Sett HEALTH_TOKEN i env (f.eks. i Vercel) for å kreve ?token=<verdi>.
+    Uten token i prod vil svaret bli 403 forbidden.
+    I utvikling kan HEALTH_TOKEN droppes.
+
+  Svarformat:
+  - 200 OK:
+      {
+        ok: true,
+        env: "development" | "production",
+        dbOk: null | true | false   // null: shallow, ellers resultat av DB-ping
+      }
+  - 500 Error:
+      I dev: inkluderer feilmelding og stack.
+      I prod: skjuler detaljer ("internal error").
+
+  Caching/Runtime:
+  - revalidate = 0 → alltid ferskt svar (ingen cache).
+  - runtime = "nodejs" → kjører som server-endepunkt.
+
+  Eksempler:
+  - curl http://localhost:3000/api/health
+  - curl "http://localhost:3000/api/health?deep=1"
+  - curl "https://din-app.vercel.app/api/health?deep=1&token=DIN_TOKEN"
+*/
