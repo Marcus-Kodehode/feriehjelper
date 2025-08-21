@@ -172,7 +172,43 @@ export function ActivityProvider({ children }) {
 
 export const useActivity = () => useContext(ActivityContext);
 
-// ActivityContext lagrer og organiserer alle brukerens aktiviteter per reise.
-// Aktivitetene synkroniseres med localStorage automatisk.
-// Funksjoner inkluderer: addActivity, deleteActivity og updateActivity.
-// Tilgangen deles via ActivityProvider og brukes med useActivity().
+/*
+ActivityContext — offline-først og robust synk
+
+• Kilde for alle aktiviteter (per reise). Alltid lagret i localStorage.
+• Ved mount:
+   1) Hydrer fra localStorage.
+   2) Hent fra /api/activities og MERGE inn (beholder lokale felter, tar med mongoId m.m.).
+   3) Synk alle lokale elementer som mangler mongoId via POST (engang etter merge).
+• addActivity(input):
+   – Optimistisk legg til (id = Date.now() hvis mangler, tripId castes til Number).
+   – POST til /api/activities, lagrer mongoId ved suksess.
+• updateActivity(id, patch):
+   – Optimistisk oppdater lokalt.
+   – PUT til /api/activities/:mongoId hvis vi har mongoId.
+   – Ellers POST (upsert) til /api/activities og lagre mongoId i state.
+• deleteActivity(id):
+   – Optimistisk slett lokalt.
+   – DELETE til /api/activities/:mongoId hvis vi har mongoId.
+   – Fallback: DELETE til /api/activities/local/:id (slett på numerisk id).
+• Sortering:
+   – Aktivitetene sorteres på dato+tid (mangler tid => "23:59") for stabil “neste aktivitet”.
+
+Bruk:
+  const { activities, addActivity, updateActivity, deleteActivity } = useActivity();
+
+Forventet shape:
+  {
+    id: number,           // din stabile, numeriske id (beholdes)
+    mongoId?: string,     // MongoDB ObjectId (settes av server)
+    tripId: number,
+    name: string,
+    date: 'YYYY-MM-DD',
+    time?: 'HH:mm',
+    place?: string,
+    cost?: number,
+    category?: string,    // lagres som kode; oversettes i UI
+    notes?: string,
+    link?: string
+  }
+*/

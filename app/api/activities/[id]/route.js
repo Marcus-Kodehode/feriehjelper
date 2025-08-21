@@ -29,3 +29,15 @@ export async function DELETE(_req, { params }) {
     return Response.json({ error: "Failed to delete activity" }, { status: 500 });
   }
 }
+/**
+ * /api/activities/:id  (id = MongoDB ObjectId)
+ *
+ * PUT
+ *  - Oppdaterer aktivitet med gitt ObjectId.
+ *
+ * DELETE
+ *  - Sletter aktivitet med gitt ObjectId.
+ *
+ * Merk
+ *  - Dette er "normal sti" når elementet allerede har mongoId i klient-state.
+ */

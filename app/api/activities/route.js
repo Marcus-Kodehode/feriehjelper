@@ -36,3 +36,19 @@ export async function POST(req) {
     return Response.json({ error: "Failed to create activity" }, { status: 500 });
   }
 }
+/**
+ * /api/activities
+ *
+ * GET
+ *  - Returnerer alle aktiviteter fra MongoDB.
+ *  - Mapper {_id} -> mongoId:string og beholder din egen numeriske id.
+ *
+ * POST
+ *  - Oppretter ny aktivitet.
+ *  - Body må inkludere `id` (number) og `tripId` (number). Øvrige felter er valgfrie.
+ *  - Returnerer dokumentet + mongoId (ObjectId som string).
+ *
+ * Notat
+ *  - Brukes også til å synkronisere lokale elementer som mangler mongoId
+ *    (ActivityContext poster hele objektet slik det ligger lokalt).
+ */
