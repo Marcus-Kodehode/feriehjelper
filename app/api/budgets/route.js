@@ -37,3 +37,18 @@ export async function POST(req) {
     return Response.json({ error: "Failed to create budget" }, { status: 500 });
   }
 }
+/**
+ * /api/budgets
+ *
+ * GET
+ *  - Leser alle budsjetter fra MongoDB.
+ *  - Mapper {_id} -> mongoId:string og beholder din egen numeriske id.
+ *
+ * POST
+ *  - Oppretter nytt budsjett.
+ *  - Body bør inkludere `id` (number) og `tripId` (number). Øvrige felter er valgfrie.
+ *  - Returnerer dokumentet + mongoId (ObjectId som string).
+ *
+ * Merk
+ *  - Brukes også som upsert-synk for lokale elementer som mangler mongoId.
+ */

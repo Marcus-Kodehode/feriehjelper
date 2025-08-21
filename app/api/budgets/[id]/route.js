@@ -29,3 +29,15 @@ export async function DELETE(_req, { params }) {
     return Response.json({ error: "Failed to delete budget" }, { status: 500 });
   }
 }
+/**
+ * /api/budgets/:id  (id = MongoDB ObjectId)
+ *
+ * PUT
+ *  - Oppdaterer budsjett med gitt ObjectId (payload = patch/hele objektet).
+ *
+ * DELETE
+ *  - Sletter budsjett med gitt ObjectId.
+ *
+ * Merk
+ *  - Standard sti når elementet allerede har mongoId i klient-state.
+ */

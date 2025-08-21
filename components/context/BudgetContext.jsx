@@ -165,8 +165,47 @@ export function BudgetProvider({ children }) {
 }
 
 export const useBudget = () => useContext(BudgetContext);
+/*
+BudgetContext — offline-først budsjett med trygg synk
 
-// BudgetContext håndterer budsjetter knyttet til reiser i appen.
-// Budsjettene lastes inn og lagres automatisk i localStorage.
-// Funksjoner: addBudget (legg til), deleteBudget (fjern), updateBudget (rediger).
-// Data er tilgjengelig globalt via BudgetProvider og kan brukes med useBudget().
+• Kilde for alle budsjetter (typisk 1 pr. tripId). Lagres alltid i localStorage.
+• Ved mount:
+   1) Hydrer fra localStorage.
+   2) Hent fra /api/budgets og MERGE inn (behold din numeriske id, ta med mongoId/oppdaterte felter).
+   3) Synk alle lokale budsjett som mangler mongoId via POST (engang etter merge).
+
+• addBudget(input)
+   – Optimistisk legg til (id = Date.now() hvis mangler, tripId castes til Number).
+   – POST til /api/budgets, lagre mongoId i state ved suksess.
+
+• updateBudget(id, patch)
+   – Optimistisk oppdater lokalt.
+   – PUT til /api/budgets/:mongoId når vi har mongoId.
+   – Ellers POST (upsert) til /api/budgets og lagre mongoId i state.
+
+• deleteBudget(id)
+   – Optimistisk slett lokalt.
+   – Hvis mongoId finnes: DELETE /api/budgets/:mongoId (ellers kun lokal sletting).
+
+Forventet shape:
+{
+  id: number,            // din stabile, numeriske id
+  mongoId?: string,      // MongoDB ObjectId (fra server)
+  tripId: number,        // hvilket reisekort dette budsjettet tilhører
+  amount?: number,       // totalbudsjett
+  daily?: number,        // daglig budsjett (valgfritt)
+  transport?: number,
+  accommodation?: number,
+  food?: number,
+  activities?: number,
+  other?: number,
+  currency?: string,     // f.eks. 'NOK'
+  notes?: string
+}
+
+Bruk:
+  const { budgets, addBudget, updateBudget, deleteBudget } = useBudget();
+
+Sorterings-/unikhetslogikk håndteres i UI (f.eks. én pr. tripId), mens Context sørger for
+robust offline-først flyt og sikker server-synk når nett finnes.
+*/
