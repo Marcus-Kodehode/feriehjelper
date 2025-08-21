@@ -42,3 +42,19 @@ export async function POST(req) {
     );
   }
 }
+/**
+ * /api/trips
+ *
+ * GET
+ *  - Henter alle reiser sortert på startdato (from).
+ *  - Beholder din egen numeriske `id` som UI-nøkkel.
+ *  - Mapper MongoDBs `_id` til `mongoId` (string) i svaret.
+ *
+ * POST
+ *  - Tar imot hele trip-objektet (inkl. din numeriske `id`).
+ *  - Lagrer dokumentet, setter `createdAt` på server, og returnerer `mongoId`.
+ *
+ * Notater
+ *  - `export const runtime = "nodejs"` og `revalidate = 0` gir forutsigbar server-runtime og ferske data i dev.
+ *  - Ved feil returneres JSON (ikke HTML) med `message` og `stack` for enklere feilsøk.
+ */
