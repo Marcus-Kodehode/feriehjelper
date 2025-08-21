@@ -4,9 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 const TravelContext = createContext();
 
 function saveLS(trips) {
-  try {
-    localStorage.setItem("trips", JSON.stringify(trips));
-  } catch {}
+  try { localStorage.setItem("trips", JSON.stringify(trips)); } catch {}
 }
 function loadLS() {
   try {
@@ -38,31 +36,25 @@ export function TravelProvider({ children }) {
       try {
         const res = await fetch("/api/trips", { cache: "no-store" });
         if (!res.ok) throw new Error("Fetch trips failed");
-        const server = await res.json(); // [{..., id (din numeriske hvis du lagret den), mongoId }]
+        const server = await res.json(); // [{..., id, mongoId }]
         setTrips((prev) => {
-          // Slå sammen: behold numerisk id; ta inn mongoId/oppdaterte felt fra server
           const byId = new Map(prev.map((t) => [t.id, t]));
           server.forEach((s) => {
             const current = byId.get(s.id);
-            if (current) {
-              byId.set(s.id, { ...current, ...s }); // tar med mongoId uten å miste lokale felter
-            } else {
-              byId.set(s.id, s); // ny fra server
-            }
+            if (current) byId.set(s.id, { ...current, ...s });
+            else byId.set(s.id, s);
           });
-          const merged = Array.from(byId.values()).sort(
+          return Array.from(byId.values()).sort(
             (a, b) => new Date(a.from) - new Date(b.from)
           );
-          return merged;
         });
       } catch (e) {
-        // stille fallback: behold localStorage-verdier
         console.warn("Using local trips only (API offline?)", e);
       }
     })();
   }, []);
 
-  // 4) Sync opp lokale trips som mangler mongoId (engang etter mount/merge)
+  // 4) Sync opp lokale trips som mangler mongoId
   useEffect(() => {
     (async () => {
       const toSync = trips.filter((t) => t && t.id && !t.mongoId);
@@ -72,10 +64,10 @@ export function TravelProvider({ children }) {
           const res = await fetch("/api/trips", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(t), // inkluderer din numeriske id
+            body: JSON.stringify(t),
           });
           if (!res.ok) throw new Error("sync POST failed");
-          const saved = await res.json(); // forventer { ...t, mongoId }
+          const saved = await res.json();
           setTrips((prev) =>
             prev.map((x) => (x.id === t.id ? { ...x, mongoId: saved.mongoId } : x))
           );
@@ -84,16 +76,12 @@ export function TravelProvider({ children }) {
         }
       }
     })();
-    // Kjør når trips endres (typisk etter server-merge)
   }, [trips]);
 
   // API helpers (optimistic)
-
   const addTrip = async (tripInput) => {
-    // sørg for numerisk id lokalt
     const trip = { id: tripInput.id || Date.now(), ...tripInput };
     setTrips((prev) => [...prev, trip]);
-
     try {
       const res = await fetch("/api/trips", {
         method: "POST",
@@ -101,7 +89,7 @@ export function TravelProvider({ children }) {
         body: JSON.stringify(trip),
       });
       if (!res.ok) throw new Error("POST failed");
-      const saved = await res.json(); // { ...trip, mongoId }
+      const saved = await res.json();
       setTrips((prev) =>
         prev.map((t) => (t.id === trip.id ? { ...t, mongoId: saved.mongoId } : t))
       );
@@ -114,11 +102,8 @@ export function TravelProvider({ children }) {
     setTrips((prev) =>
       prev.map((t) => (t.id === updatedTrip.id ? { ...t, ...updatedTrip } : t))
     );
-
-    // Hvis vi har mongoId -> PUT, ellers prøv å sync’e ved å POST’e (upsert-løst)
     const target = trips.find((t) => t.id === updatedTrip.id);
     const mongoId = target?.mongoId;
-
     try {
       if (mongoId) {
         const res = await fetch(`/api/trips/${mongoId}`, {
@@ -148,17 +133,13 @@ export function TravelProvider({ children }) {
 
   const deleteTrip = async (id) => {
     const target = trips.find((t) => t.id === id);
-
-    // Optimistisk lokalt
-    setTrips((prev) => prev.filter((t) => t.id !== id));
+    setTrips((prev) => prev.filter((t) => t.id !== id)); // optimistisk
 
     try {
       if (target?.mongoId) {
-        // Vanlig sletting via MongoDB ObjectId
         const res = await fetch(`/api/trips/${target.mongoId}`, { method: "DELETE" });
         if (!res.ok) throw new Error("DELETE by mongoId failed");
       } else {
-        // Fallback: slett dokumentet i DB som har din lokale numeriske id
         const res = await fetch(`/api/trips/local/${id}`, { method: "DELETE" });
         if (!res.ok) throw new Error("DELETE by localId failed");
       }
@@ -167,11 +148,18 @@ export function TravelProvider({ children }) {
     }
   };
 
+  // 🔧 DENNE MÅ VÆRE MED
+  return (
+    <TravelContext.Provider value={{ trips, addTrip, deleteTrip, editTrip }}>
+      {children}
+    </TravelContext.Provider>
+  );
 }
 
 export function useTravel() {
   return useContext(TravelContext);
 }
+
 
 // TravelContext håndterer global tilstand for alle registrerte reiser i appen.
 // Reiser lagres i localStorage, og hentes ved lasting av komponenten (via useEffect).
