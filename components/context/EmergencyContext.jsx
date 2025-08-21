@@ -165,9 +165,51 @@ export function EmergencyProvider({ children }) {
 }
 
 export const useEmergency = () => useContext(EmergencyContext);
+/*
+EmergencyContext — én nødinfo per reise, offline-først med trygg synk
 
-// EmergencyContext håndterer nødinformasjon for hver reise (ambassade, politi, forsikring osv).
-// Data lagres og hentes automatisk til/fra localStorage for vedvarende tilgang.
-// addEmergency oppdaterer eller legger til info per reise (basert på tripId).
-// deleteEmergency fjerner en post basert på ID.
-// Tilstanden deles globalt via EmergencyProvider og brukes med useEmergency().
+• Kilde for all nødinformasjon. Lagrer alltid i localStorage.
+• Forventet modell (én rad per tripId):
+  {
+    id: number,           // din stabile, numeriske id
+    mongoId?: string,     // MongoDB ObjectId (fra server)
+    tripId: number,       // hvilken reise dette gjelder (unik per reise)
+    embassy?: string,     // adresse til ambassade/konsulat
+    police?: string,
+    ambulance?: string,
+    fire?: string,
+    insurance?: string,   // selskap
+    policyNumber?: string,
+    contactPerson?: string, // navn / nummer
+    notes?: string,
+    createdAt?: string,   // satt server-side
+    updatedAt?: string    // satt server-side
+  }
+
+• Ved mount:
+   1) Hydrer fra localStorage.
+   2) Hent fra /api/emergencies og MERGE inn (behold din numeriske id, ta mongoId/oppdaterte felt).
+   3) Synk lokale elementer som mangler mongoId via POST (engang etter merge).
+
+• addEmergency(data)
+   – Normaliserer tripId til Number.
+   – Lokalt: “én per tripId” (erstatter eksisterende for samme tripId).
+   – POST til /api/emergencies (API upserter basert på tripId).
+   – Lagrer mongoId i state ved suksess.
+
+• updateEmergency(id, patch)
+   – Optimistisk oppdater lokalt (normaliserer tripId om det endres).
+   – PUT til /api/emergencies/:mongoId når vi har mongoId.
+   – Ellers POST (upsert) til /api/emergencies og lagre mongoId.
+
+• deleteEmergency(id)
+   – Optimistisk slett lokalt.
+   – Hvis mongoId finnes: DELETE /api/emergencies/:mongoId (ellers kun lokal sletting).
+
+Bruk:
+  const { emergencies, addEmergency, updateEmergency, deleteEmergency } = useEmergency();
+
+Merk:
+  – API’et er designet slik at det kun finnes én rad per tripId. Det gir enklere UI og rask tilgang
+    til “alt du trenger hvis noe skjer” for en valgt reise.
+*/

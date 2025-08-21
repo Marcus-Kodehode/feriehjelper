@@ -29,3 +29,16 @@ export async function DELETE(_req, { params }) {
     return Response.json({ error: "Failed to delete emergency" }, { status: 500 });
   }
 }
+/**
+ * /api/emergencies/:id  (id = MongoDB ObjectId)
+ *
+ * PUT
+ *  - Oppdaterer dokument med gitt ObjectId.
+ *  - Legger på updatedAt på server.
+ *
+ * DELETE
+ *  - Sletter dokument med gitt ObjectId.
+ *
+ * Merk
+ *  - Dette er “vanlig” edit/slett når klienten allerede kjenner mongoId på elementet.
+ */

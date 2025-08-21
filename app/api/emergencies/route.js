@@ -40,3 +40,22 @@ export async function POST(req) {
     return Response.json({ error: "Failed to upsert emergency" }, { status: 500 });
   }
 }
+/**
+ * /api/emergencies
+ *
+ * GET
+ *  - Leser alle nødinfo-dokumenter.
+ *  - Mapper {_id} -> mongoId:string og beholder din numeriske id.
+ *
+ * POST (upsert by tripId)
+ *  - Body bør inneholde: { id:number, tripId:number, ...felter }
+ *  - Upserter (update/insert) én rad per tripId:
+ *      filter: { tripId }
+ *      $set:   alle felter + updatedAt
+ *      $setOnInsert: createdAt
+ *  - Returnerer det lagrede dokumentet + mongoId (ObjectId som string).
+ *
+ * Merk
+ *  - Én forekomst per reise (tripId). Klienten kan trygt poste samme tripId flere ganger
+ *    uten å få duplikater.
+ */
