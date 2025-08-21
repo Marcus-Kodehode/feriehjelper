@@ -159,10 +159,50 @@ export function TravelProvider({ children }) {
 export function useTravel() {
   return useContext(TravelContext);
 }
+/*
+TravelContext — reiser, offline-først med trygg synk mot MongoDB
 
+• Kilde for alle reiser (trips). Lagrer alltid i localStorage for kjapp oppstart/offline.
+• Forventet modell:
+  {
+    id: number,         // din stabile, numeriske id (brukes som nøkkel i UI)
+    mongoId?: string,   // MongoDB ObjectId (fra server)
+    title: string,
+    destination: string,
+    from: string,       // ISO yyyy-mm-dd
+    to: string,         // ISO yyyy-mm-dd
+    transport?: string,
+    stay?: string,
+    travelers?: string|number,
+    notes?: string,
+    createdAt?: string, // satt server-side
+    updatedAt?: string  // ev. satt server-side
+  }
 
-// TravelContext håndterer global tilstand for alle registrerte reiser i appen.
-// Reiser lagres i localStorage, og hentes ved lasting av komponenten (via useEffect).
-// Brukeren kan legge til og slette reiser med funksjonene addTrip og deleteTrip.
-// Tilstanden deles globalt via TravelProvider, og hentes lokalt med useTravel().
-// Dette gir enkel og sentralisert håndtering av reisedata på tvers av komponenter.
+• Ved mount:
+   1) Hydrer fra localStorage (rask og offline).
+   2) Hent fra /api/trips og MERGE inn (behold din numeriske id; ta inn mongoId/oppdaterte felter).
+   3) Synk lokale som mangler mongoId via POST (engangs etter merge).
+
+• addTrip(input)
+   – Gir elementet en lokal numerisk id hvis mangler.
+   – Optimistisk legg til i state + POST /api/trips.
+   – Ved suksess: lagre mongoId i state.
+
+• editTrip(updated)
+   – Optimistisk oppdater lokalt.
+   – PUT /api/trips/:mongoId når vi kjenner mongoId.
+   – Hvis ikke: POST /api/trips (opprett) og lagre mongoId.
+
+• deleteTrip(id)
+   – Optimistisk slett lokalt.
+   – Hvis mongoId finnes: DELETE /api/trips/:mongoId.
+   – Ellers (før synk): valgfri fallback DELETE /api/trips/local/:id (hvis endepunkt er implementert).
+
+Bruk:
+  const { trips, addTrip, editTrip, deleteTrip } = useTravel();
+
+Merk:
+  – “id” er din stabile nøkkel i UI. Server eksponerer MongoDBs _id som egen “mongoId”.
+  – revalidate=0 + cache:"no-store" sikrer ferske API-data i utvikling.
+*/
