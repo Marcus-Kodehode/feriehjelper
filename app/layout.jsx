@@ -4,6 +4,7 @@ import { BudgetProvider } from "@/components/context/BudgetContext";
 import { ActivityProvider } from "@/components/context/ActivityContext";
 import { EmergencyProvider } from "@/components/context/EmergencyContext"; // 👈 ny
 import Layout from "@/components/layout/Layout";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
   title: "VacationHelper",
@@ -22,6 +23,7 @@ export default function RootLayout({ children }) {
             </ActivityProvider>
           </BudgetProvider>
         </TravelProvider>
+        <Analytics />
       </body>
     </html>
   );
