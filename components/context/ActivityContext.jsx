@@ -1,38 +1,55 @@
 "use client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 const ActivityContext = createContext();
 
-function saveLS(list) {
-  try { localStorage.setItem("activities", JSON.stringify(list)); } catch {}
-}
-function loadLS() {
+// LS helpers med dynamisk nøkkel
+function saveLS(key, list) {
   try {
-    const s = localStorage.getItem("activities");
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch {}
+}
+function loadLS(key) {
+  try {
+    const s = localStorage.getItem(key);
     return s ? JSON.parse(s) : [];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
 
 export function ActivityProvider({ children }) {
+  const { isLoaded, isSignedIn, userId } = useAuth();
+  const storageKey =
+    isLoaded && isSignedIn ? `activities:${userId}` : "activities:guest";
+
   const [activities, setActivities] = useState([]);
   const hasHydrated = useRef(false);
 
-  // 1) Hydrer fra localStorage
+  // 1) Hydrer fra localStorage når nøkkelen endres (inn/ut av bruker)
   useEffect(() => {
-    setActivities(loadLS());
+    if (!isLoaded) return;
+    setActivities(loadLS(storageKey));
     hasHydrated.current = true;
-  }, []);
+  }, [isLoaded, storageKey]);
 
   // 2) Persistér til localStorage
   useEffect(() => {
-    if (hasHydrated.current) saveLS(activities);
-  }, [activities]);
+    if (hasHydrated.current) saveLS(storageKey, activities);
+  }, [storageKey, activities]);
 
-  // 3) Hent fra API og MERGE inn (behold lokale hvis server er nede)
+  // 3) Hent fra API (kun innlogget) og MERGE inn
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+    const ac = new AbortController();
+
     (async () => {
       try {
-        const res = await fetch("/api/activities", { cache: "no-store" });
+        const res = await fetch("/api/activities", {
+          cache: "no-store",
+          signal: ac.signal,
+        });
         if (!res.ok) throw new Error("Fetch activities failed");
         const server = await res.json(); // [{..., id, mongoId}]
         setActivities((prev) => {
@@ -42,20 +59,26 @@ export function ActivityProvider({ children }) {
             if (cur) byId.set(s.id, { ...cur, ...s });
             else byId.set(s.id, s);
           });
-          return Array.from(byId.values()).sort((a, b) => {
-            // robust sort: dato + tid (mangler tid => 23:59)
-            const t = (x) => (x.time && x.time.trim() ? x.time : "23:59");
-            return new Date(`${a.date}T${t(a)}`) - new Date(`${b.date}T${t(b)}`);
-          });
+          const list = Array.from(byId.values());
+          // robust sort: dato + tid (mangler tid => 23:59)
+          const t = (x) => (x.time && x.time.trim() ? x.time : "23:59");
+          return list.sort(
+            (a, b) =>
+              new Date(`${a.date}T${t(a)}`) - new Date(`${b.date}T${t(b)}`)
+          );
         });
       } catch (e) {
-        console.warn("Using local activities only (API offline?)", e);
+        if (e.name !== "AbortError")
+          console.warn("Using local activities only (API offline?)", e);
       }
     })();
-  }, []);
 
-  // 4) Sync lokale uten mongoId (engangs etter merge)
+    return () => ac.abort();
+  }, [isLoaded, isSignedIn, storageKey]);
+
+  // 4) Sync lokale uten mongoId (kun innlogget)
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
     (async () => {
       const toSync = activities.filter((a) => a && a.id && !a.mongoId);
       if (!toSync.length) return;
@@ -69,14 +92,16 @@ export function ActivityProvider({ children }) {
           if (!res.ok) throw new Error("sync POST failed");
           const saved = await res.json(); // { ...a, mongoId }
           setActivities((prev) =>
-            prev.map((x) => (x.id === a.id ? { ...x, mongoId: saved.mongoId } : x))
+            prev.map((x) =>
+              x.id === a.id ? { ...x, mongoId: saved.mongoId } : x
+            )
           );
         } catch (e) {
           console.warn("Sync activity failed", a.id, e);
         }
       }
     })();
-  }, [activities]);
+  }, [isLoaded, isSignedIn, activities]);
 
   // --------- API helpers (optimistisk) ---------
 
@@ -88,6 +113,8 @@ export function ActivityProvider({ children }) {
     };
     setActivities((prev) => [...prev, activity]);
 
+    if (!isLoaded || !isSignedIn) return; // gjest: ikke kall server
+
     try {
       const res = await fetch("/api/activities", {
         method: "POST",
@@ -97,7 +124,9 @@ export function ActivityProvider({ children }) {
       if (!res.ok) throw new Error("POST failed");
       const saved = await res.json();
       setActivities((prev) =>
-        prev.map((a) => (a.id === activity.id ? { ...a, mongoId: saved.mongoId } : a))
+        prev.map((a) =>
+          a.id === activity.id ? { ...a, mongoId: saved.mongoId } : a
+        )
       );
     } catch (e) {
       console.error("addActivity: server failed, kept locally", e);
@@ -105,9 +134,15 @@ export function ActivityProvider({ children }) {
   };
 
   const updateActivity = async (id, patch) => {
+    const norm = {
+      ...patch,
+      ...(patch.tripId != null ? { tripId: Number(patch.tripId) } : {}),
+    };
     setActivities((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, ...patch } : a))
+      prev.map((a) => (a.id === id ? { ...a, ...norm } : a))
     );
+
+    if (!isLoaded || !isSignedIn) return;
 
     const target = activities.find((a) => a.id === id);
     const mongoId = target?.mongoId;
@@ -117,15 +152,14 @@ export function ActivityProvider({ children }) {
         const res = await fetch(`/api/activities/${mongoId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...target, ...patch }),
+          body: JSON.stringify({ ...target, ...norm }),
         });
         if (!res.ok) throw new Error("PUT failed");
       } else {
-        // opprett på server hvis den ikke finnes der ennå
         const res = await fetch("/api/activities", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...target, ...patch }),
+          body: JSON.stringify({ ...target, ...norm }),
         });
         if (!res.ok) throw new Error("POST (no mongoId) failed");
         const saved = await res.json();
@@ -140,22 +174,16 @@ export function ActivityProvider({ children }) {
 
   const deleteActivity = async (id) => {
     const target = activities.find((a) => a.id === id);
-
     // optimistisk lokalt
     setActivities((prev) => prev.filter((a) => a.id !== id));
 
+    if (!isLoaded || !isSignedIn || !target?.mongoId) return;
+
     try {
-      if (target?.mongoId) {
-        const res = await fetch(`/api/activities/${target.mongoId}`, {
-          method: "DELETE",
-        });
-        if (!res.ok) throw new Error("DELETE by mongoId failed");
-      } else {
-        const res = await fetch(`/api/activities/local/${id}`, {
-          method: "DELETE",
-        });
-        if (!res.ok) throw new Error("DELETE by localId failed");
-      }
+      const res = await fetch(`/api/activities/${target.mongoId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("DELETE failed");
     } catch (e) {
       console.error("deleteActivity: server delete failed, removed locally", e);
     }

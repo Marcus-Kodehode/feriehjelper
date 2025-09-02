@@ -1,16 +1,18 @@
 "use client";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 const BudgetContext = createContext();
 
-function saveLS(budgets) {
+// LS helpers m/ nøkkel
+function saveLS(key, budgets) {
   try {
-    localStorage.setItem("budgets", JSON.stringify(budgets));
+    localStorage.setItem(key, JSON.stringify(budgets));
   } catch {}
 }
-function loadLS() {
+function loadLS(key) {
   try {
-    const s = localStorage.getItem("budgets");
+    const s = localStorage.getItem(key);
     return s ? JSON.parse(s) : [];
   } catch {
     return [];
@@ -18,27 +20,38 @@ function loadLS() {
 }
 
 export function BudgetProvider({ children }) {
+  const { isLoaded, isSignedIn, userId } = useAuth();
+  const storageKey =
+    isLoaded && isSignedIn ? `budgets:${userId}` : "budgets:guest";
+
   const [budgets, setBudgets] = useState([]);
   const hasHydrated = useRef(false);
 
-  // 1) Hydrer fra localStorage
+  // 1) Hydrer når nøkkel endres (inn/ut av konto)
   useEffect(() => {
-    setBudgets(loadLS());
+    if (!isLoaded) return;
+    setBudgets(loadLS(storageKey));
     hasHydrated.current = true;
-  }, []);
+  }, [isLoaded, storageKey]);
 
   // 2) Persistér til localStorage
   useEffect(() => {
-    if (hasHydrated.current) saveLS(budgets);
-  }, [budgets]);
+    if (hasHydrated.current) saveLS(storageKey, budgets);
+  }, [storageKey, budgets]);
 
-  // 3) Hent fra API og merg inn (behold din egen numeriske id; ta inn mongoId/felt fra server)
+  // 3) Hent fra API (kun innlogget) og merg inn
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+    const ac = new AbortController();
+
     (async () => {
       try {
-        const res = await fetch("/api/budgets", { cache: "no-store" });
+        const res = await fetch("/api/budgets", {
+          cache: "no-store",
+          signal: ac.signal,
+        });
         if (!res.ok) throw new Error("Fetch budgets failed");
-        const server = await res.json(); // [{..., id (din numeriske), mongoId }]
+        const server = await res.json(); // [{..., id (din numeriske), mongoId}]
         setBudgets((prev) => {
           const byId = new Map(prev.map((b) => [b.id, b]));
           server.forEach((s) => {
@@ -49,13 +62,17 @@ export function BudgetProvider({ children }) {
           return Array.from(byId.values());
         });
       } catch (e) {
-        console.warn("Using local budgets only (API offline?)", e);
+        if (e.name !== "AbortError")
+          console.warn("Using local budgets only (API offline?)", e);
       }
     })();
-  }, []);
 
-  // 4) Sync opp lokale som mangler mongoId (engangs etter merge)
+    return () => ac.abort();
+  }, [isLoaded, isSignedIn, storageKey]);
+
+  // 4) Sync lokale som mangler mongoId (kun innlogget)
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
     (async () => {
       const toSync = budgets.filter((b) => b && b.id && !b.mongoId);
       if (!toSync.length) return;
@@ -64,32 +81,35 @@ export function BudgetProvider({ children }) {
           const res = await fetch("/api/budgets", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(b), // inkluderer din numeriske id
+            body: JSON.stringify(b),
           });
           if (!res.ok) throw new Error("sync POST failed");
-          const saved = await res.json(); // { ...b, mongoId }
+          const saved = await res.json();
           setBudgets((prev) =>
-            prev.map((x) => (x.id === b.id ? { ...x, mongoId: saved.mongoId } : x))
+            prev.map((x) =>
+              x.id === b.id ? { ...x, mongoId: saved.mongoId } : x
+            )
           );
         } catch (e) {
           console.warn("Sync of budget failed", b.id, e);
         }
       }
     })();
-  }, [budgets]);
+  }, [isLoaded, isSignedIn, budgets]);
 
-  // ==== API helpers (optimistic) ====
-
-  // Legg til nytt budsjett
+  // ===== API helpers (optimistic) =====
   const addBudget = async (budgetInput) => {
-    // egen numerisk id lokalt + sørg for numeric tripId om du bruker det
     const budget = {
       id: budgetInput.id || Date.now(),
       ...budgetInput,
-      tripId: Number(budgetInput.tripId ?? budgetInput.tripId),
+      ...(budgetInput.tripId != null
+        ? { tripId: Number(budgetInput.tripId) }
+        : {}),
     };
 
     setBudgets((prev) => [...prev, budget]);
+
+    if (!isLoaded || !isSignedIn) return; // ingen nett-kall som gjest
 
     try {
       const res = await fetch("/api/budgets", {
@@ -98,20 +118,30 @@ export function BudgetProvider({ children }) {
         body: JSON.stringify(budget),
       });
       if (!res.ok) throw new Error("POST failed");
-      const saved = await res.json(); // { ...budget, mongoId }
+      const saved = await res.json();
       setBudgets((prev) =>
-        prev.map((b) => (b.id === budget.id ? { ...b, mongoId: saved.mongoId } : b))
+        prev.map((b) =>
+          b.id === budget.id ? { ...b, mongoId: saved.mongoId } : b
+        )
       );
     } catch (e) {
       console.error("addBudget: server failed, kept locally", e);
     }
   };
 
-  // Rediger budsjett
   const updateBudget = async (id, updatedData) => {
+    const patch = {
+      ...updatedData,
+      ...(updatedData.tripId != null
+        ? { tripId: Number(updatedData.tripId) }
+        : {}),
+    };
+
     setBudgets((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updatedData } : b))
+      prev.map((b) => (b.id === id ? { ...b, ...patch } : b))
     );
+
+    if (!isLoaded || !isSignedIn) return;
 
     const target = budgets.find((b) => b.id === id);
     const mongoId = target?.mongoId;
@@ -121,14 +151,14 @@ export function BudgetProvider({ children }) {
         const res = await fetch(`/api/budgets/${mongoId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...target, ...updatedData }),
+          body: JSON.stringify({ ...target, ...patch }),
         });
         if (!res.ok) throw new Error("PUT failed");
       } else {
         const res = await fetch("/api/budgets", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...target, ...updatedData }),
+          body: JSON.stringify({ ...target, ...patch }),
         });
         if (!res.ok) throw new Error("POST (no mongoId) failed");
         const saved = await res.json();
@@ -141,14 +171,16 @@ export function BudgetProvider({ children }) {
     }
   };
 
-  // Slett budsjett
   const deleteBudget = async (id) => {
     const target = budgets.find((b) => b.id === id);
     setBudgets((prev) => prev.filter((b) => b.id !== id));
-    if (!target?.mongoId) return;
+
+    if (!isLoaded || !isSignedIn || !target?.mongoId) return;
 
     try {
-      const res = await fetch(`/api/budgets/${target.mongoId}`, { method: "DELETE" });
+      const res = await fetch(`/api/budgets/${target.mongoId}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("DELETE failed");
     } catch (e) {
       console.error("deleteBudget: server failed, but removed locally", e);
