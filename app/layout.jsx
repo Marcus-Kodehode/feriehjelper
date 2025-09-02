@@ -2,7 +2,7 @@ import "@/styles/globals.css";
 import { TravelProvider } from "@/components/context/TravelContext";
 import { BudgetProvider } from "@/components/context/BudgetContext";
 import { ActivityProvider } from "@/components/context/ActivityContext";
-import { EmergencyProvider } from "@/components/context/EmergencyContext"; // 👈 ny
+import { EmergencyProvider } from "@/components/context/EmergencyContext";
 import Layout from "@/components/layout/Layout";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from '@vercel/speed-insights/next';
