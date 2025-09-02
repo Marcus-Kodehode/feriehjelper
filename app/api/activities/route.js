@@ -7,17 +7,23 @@ export const revalidate = 0;
 
 /**
  * Henter aktiviteter KUN for innlogget bruker.
- * NB: Vi stoler ikke på userId fra klienten; vi henter den fra Clerk på server.
+ * Støtter valgfritt ?tripId=123 for filtrering.
  */
-export async function GET() {
+export async function GET(req) {
   const { userId } = auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const db = await getDb();
+    const url = new URL(req.url);
+    const tripIdParam = url.searchParams.get("tripId");
+
+    const filter = { userId };
+    if (tripIdParam != null) filter.tripId = Number(tripIdParam);
+
     const docs = await db
       .collection("activities")
-      .find({ userId }) // <-- filter på bruker
+      .find(filter)
       .sort({ date: 1 })
       .toArray();
 
@@ -37,23 +43,34 @@ export async function GET() {
 
 /**
  * Oppretter aktivitet for innlogget bruker.
- * Serveren setter userId, ignorer evt. userId i body.
+ * Serveren setter userId; ignorer evt. userId/_id/mongoId i body.
  */
 export async function POST(req) {
   const { userId } = auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const body = await req.json();
+    const raw = await req.json();
     const db = await getDb();
 
-    const doc = {
-      ...body,
-      userId, // <-- bind til eier
-      createdAt: new Date(),
-    };
+    // Rens farlige/irrelevante felter fra klient
+    const { _id, mongoId, userId: _ignoreUserId, ...safe } = raw;
 
+    // Normaliser tripId hvis oppgitt
+    if (safe.tripId != null) {
+      const t = Number(safe.tripId);
+      if (!Number.isFinite(t)) {
+        return Response.json(
+          { error: "tripId must be a number" },
+          { status: 400 }
+        );
+      }
+      safe.tripId = t;
+    }
+
+    const doc = { ...safe, userId, createdAt: new Date() };
     const res = await db.collection("activities").insertOne(doc);
+
     return Response.json(
       { ...doc, mongoId: res.insertedId.toString() },
       { status: 201 }
