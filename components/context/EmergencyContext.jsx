@@ -1,49 +1,60 @@
 "use client";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useAuth } from "@clerk/nextjs";
 
-const EmergencyContext = createContext();
+const EmergencyContext = createContext(null);
 
-// LS helpers med dynamisk nøkkel
-function saveLS(key, items) {
+// Safe LS utils
+const readLS = (key) => {
   try {
-    localStorage.setItem(key, JSON.stringify(items));
-  } catch {}
-}
-function loadLS(key) {
-  try {
-    const s = localStorage.getItem(key);
-    return s ? JSON.parse(s) : [];
+    return key ? JSON.parse(localStorage.getItem(key) || "[]") : [];
   } catch {
     return [];
   }
-}
+};
+const writeLS = (key, val) => {
+  try {
+    if (key) localStorage.setItem(key, JSON.stringify(val));
+  } catch {}
+};
 
 export function EmergencyProvider({ children }) {
   const { isLoaded, isSignedIn, userId } = useAuth();
-  const storageKey =
-    isLoaded && isSignedIn ? `emergencyData:${userId}` : "emergencyData:guest";
+  const storageKey = useMemo(
+    () => (isLoaded && isSignedIn ? `emergencyData:${userId}` : null),
+    [isLoaded, isSignedIn, userId]
+  );
 
   const [emergencies, setEmergencies] = useState([]);
-  const hasHydrated = useRef(false);
+  const hydrated = useRef(false);
 
-  // 1) Hydrer fra localStorage når nøkkelen endres (inn/ut av bruker)
+  // Hydrer ved inn/utlogging
   useEffect(() => {
     if (!isLoaded) return;
-    setEmergencies(loadLS(storageKey));
-    hasHydrated.current = true;
-  }, [isLoaded, storageKey]);
+    // valgfritt: fjern gammel guest-cache
+    try {
+      if (!isSignedIn) localStorage.removeItem("emergencyData:guest");
+    } catch {}
+    setEmergencies(storageKey ? readLS(storageKey) : []);
+    hydrated.current = true;
+  }, [isLoaded, isSignedIn, storageKey]);
 
-  // 2) Persistér til localStorage
+  // Persistér kun når vi har nøkkel (innlogget)
   useEffect(() => {
-    if (hasHydrated.current) saveLS(storageKey, emergencies);
+    if (hydrated.current && storageKey) writeLS(storageKey, emergencies);
   }, [storageKey, emergencies]);
 
-  // 3) Hent fra API (KUN innlogget) og MERGE inn
+  // Hent fra API og MERGE (kun innlogget)
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     const ac = new AbortController();
-
     (async () => {
       try {
         const res = await fetch("/api/emergencies", {
@@ -51,69 +62,67 @@ export function EmergencyProvider({ children }) {
           signal: ac.signal,
         });
         if (!res.ok) throw new Error("Fetch emergencies failed");
-        const server = await res.json(); // [{..., id, tripId, mongoId}]
+        const server = await res.json();
         setEmergencies((prev) => {
           const byId = new Map(prev.map((e) => [e.id, e]));
-          server.forEach((s) => {
-            const curr = byId.get(s.id);
-            if (curr) byId.set(s.id, { ...curr, ...s });
-            else byId.set(s.id, s);
-          });
+          for (const s of server)
+            byId.set(s.id, { ...(byId.get(s.id) || {}), ...s });
           return Array.from(byId.values());
         });
       } catch (e) {
         if (e.name !== "AbortError")
-          console.warn("Using local emergencies only (API offline?)", e);
+          console.warn("Using local only (API offline?)", e);
       }
     })();
-
     return () => ac.abort();
   }, [isLoaded, isSignedIn, storageKey]);
 
-  // 4) Sync lokale uten mongoId (KUN innlogget)
+  // Sync lokale uten mongoId (kun innlogget)
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     (async () => {
       const toSync = emergencies.filter((e) => e && e.id && !e.mongoId);
-      if (!toSync.length) return;
       for (const e of toSync) {
         try {
-          const res = await fetch("/api/emergencies", {
+          const r = await fetch("/api/emergencies", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(e),
           });
-          if (!res.ok) throw new Error("sync POST failed");
-          const saved = await res.json(); // { ...e, mongoId }
+          if (!r.ok) continue;
+          const saved = await r.json();
           setEmergencies((prev) =>
             prev.map((x) =>
               x.id === e.id ? { ...x, mongoId: saved.mongoId } : x
             )
           );
-        } catch (err) {
-          console.warn("Sync of emergency failed", e.id, err);
-        }
+        } catch {}
       }
     })();
   }, [isLoaded, isSignedIn, emergencies]);
 
-  // ===== API helpers (optimistic) =====
+  // Blokker skriv når ikke innlogget
+  const requireAuth = () => {
+    if (!isLoaded || !isSignedIn) {
+      console.warn("Not signed in: writes are blocked");
+      return false;
+    }
+    return true;
+  };
 
-  // add/replace by tripId (én per trip)
+  // === Helpers (optimistic, men krever innlogging) ===
   const addEmergency = async (newData) => {
+    if (!requireAuth()) return;
     const parsed = {
       id: newData.id || Date.now(),
       tripId: Number(newData.tripId),
       ...newData,
     };
-
-    // lokalt: sikre én per tripId
+    // Én per tripId lokalt
     setEmergencies((prev) => {
       const others = prev.filter((e) => Number(e.tripId) !== parsed.tripId);
       return [...others, parsed];
     });
-
-    if (!isLoaded || !isSignedIn) return; // gjest: ikke kall server
 
     try {
       const res = await fetch("/api/emergencies", {
@@ -129,11 +138,12 @@ export function EmergencyProvider({ children }) {
         )
       );
     } catch (e) {
-      console.error("addEmergency: server failed, kept locally", e);
+      console.error("addEmergency failed", e);
     }
   };
 
   const updateEmergency = async (id, patch) => {
+    if (!requireAuth()) return;
     const norm = { ...patch };
     if (norm.tripId != null) norm.tripId = Number(norm.tripId);
 
@@ -141,55 +151,59 @@ export function EmergencyProvider({ children }) {
       prev.map((e) => (e.id === id ? { ...e, ...norm } : e))
     );
 
-    if (!isLoaded || !isSignedIn) return;
-
     const target = emergencies.find((e) => e.id === id);
     const mongoId = target?.mongoId;
 
     try {
       if (mongoId) {
-        const res = await fetch(`/api/emergencies/${mongoId}`, {
+        const r = await fetch(`/api/emergencies/${mongoId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...target, ...norm }),
         });
-        if (!res.ok) throw new Error("PUT failed");
+        if (!r.ok) throw new Error("PUT failed");
       } else {
-        const res = await fetch("/api/emergencies", {
+        const r = await fetch("/api/emergencies", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...target, ...norm }),
         });
-        if (!res.ok) throw new Error("POST (no mongoId) failed");
-        const saved = await res.json();
+        if (!r.ok) throw new Error("POST (no mongoId) failed");
+        const saved = await r.json();
         setEmergencies((prev) =>
           prev.map((e) => (e.id === id ? { ...e, mongoId: saved.mongoId } : e))
         );
       }
     } catch (e) {
-      console.error("updateEmergency: server failed, kept local state", e);
+      console.error("updateEmergency failed", e);
     }
   };
 
   const deleteEmergency = async (id) => {
+    if (!requireAuth()) return;
     const target = emergencies.find((e) => e.id === id);
-    setEmergencies((prev) => prev.filter((e) => e.id !== id)); // optimistisk
-
-    if (!isLoaded || !isSignedIn || !target?.mongoId) return;
+    setEmergencies((prev) => prev.filter((e) => e.id !== id));
+    if (!target?.mongoId) return;
 
     try {
-      const res = await fetch(`/api/emergencies/${target.mongoId}`, {
+      const r = await fetch(`/api/emergencies/${target.mongoId}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("DELETE failed");
+      if (!r.ok) throw new Error("DELETE failed");
     } catch (e) {
-      console.error("deleteEmergency: server failed, but removed locally", e);
+      console.error("deleteEmergency failed", e);
     }
   };
 
   return (
     <EmergencyContext.Provider
-      value={{ emergencies, addEmergency, updateEmergency, deleteEmergency }}
+      value={{
+        emergencies,
+        addEmergency,
+        updateEmergency,
+        deleteEmergency,
+        isSignedIn,
+      }}
     >
       {children}
     </EmergencyContext.Provider>
@@ -197,6 +211,7 @@ export function EmergencyProvider({ children }) {
 }
 
 export const useEmergency = () => useContext(EmergencyContext);
+
 /*
 EmergencyContext — én nødinfo per reise, offline-først med trygg synk
 
