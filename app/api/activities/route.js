@@ -1,31 +1,58 @@
 // app/api/activities/route.js
 import { getDb } from "@/lib/mongodb";
+import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
 
+/**
+ * Henter aktiviteter KUN for innlogget bruker.
+ * NB: Vi stoler ikke på userId fra klienten; vi henter den fra Clerk på server.
+ */
 export async function GET() {
+  const { userId } = auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
     const db = await getDb();
     const docs = await db
       .collection("activities")
-      .find({})
-      .sort({ date: 1 }) // enkel sortering; tid kan mangle
+      .find({ userId }) // <-- filter på bruker
+      .sort({ date: 1 })
       .toArray();
 
-    const data = docs.map(({ _id, ...a }) => ({ ...a, mongoId: _id.toString() }));
+    const data = docs.map(({ _id, ...a }) => ({
+      ...a,
+      mongoId: _id.toString(),
+    }));
     return Response.json(data, { status: 200 });
   } catch (err) {
     console.error("GET /api/activities failed:", err);
-    return Response.json({ error: "Failed to fetch activities" }, { status: 500 });
+    return Response.json(
+      { error: "Failed to fetch activities" },
+      { status: 500 }
+    );
   }
 }
 
+/**
+ * Oppretter aktivitet for innlogget bruker.
+ * Serveren setter userId, ignorer evt. userId i body.
+ */
 export async function POST(req) {
+  const { userId } = auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
     const body = await req.json();
     const db = await getDb();
-    const doc = { ...body, createdAt: new Date() };
+
+    const doc = {
+      ...body,
+      userId, // <-- bind til eier
+      createdAt: new Date(),
+    };
+
     const res = await db.collection("activities").insertOne(doc);
     return Response.json(
       { ...doc, mongoId: res.insertedId.toString() },
@@ -33,9 +60,13 @@ export async function POST(req) {
     );
   } catch (err) {
     console.error("POST /api/activities failed:", err);
-    return Response.json({ error: "Failed to create activity" }, { status: 500 });
+    return Response.json(
+      { error: "Failed to create activity" },
+      { status: 500 }
+    );
   }
 }
+
 /**
  * /api/activities
  *

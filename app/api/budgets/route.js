@@ -1,20 +1,30 @@
 // app/api/budgets/route.js
+// Brukerbinding med Clerk:
+// - Alle les/skriv operasjoner skjer kun for dokumenter med userId === innlogget bruker
+// - Serveren setter userId; vi ignorerer eventuell userId i request body
+
 import { getDb } from "@/lib/mongodb";
+import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
 
 export async function GET() {
+  const { userId } = auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
     const db = await getDb();
     const docs = await db
       .collection("budgets")
-      .find({})
-      .sort({ tripId: 1 }) // valgfritt
+      .find({ userId }) // ← bare denne brukerens budsjetter
+      .sort({ tripId: 1 })
       .toArray();
 
-    // behold din egen numeriske id, send mongoId separat
-    const data = docs.map(({ _id, ...b }) => ({ ...b, mongoId: _id.toString() }));
+    const data = docs.map(({ _id, ...b }) => ({
+      ...b,
+      mongoId: _id.toString(),
+    }));
     return Response.json(data, { status: 200 });
   } catch (err) {
     console.error("GET /api/budgets failed:", err);
@@ -23,10 +33,19 @@ export async function GET() {
 }
 
 export async function POST(req) {
+  const { userId } = auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
     const body = await req.json();
     const db = await getDb();
-    const doc = { ...body, createdAt: new Date() };
+
+    const doc = {
+      ...body,
+      userId, // ← eier settes på server
+      createdAt: new Date(),
+    };
+
     const res = await db.collection("budgets").insertOne(doc);
     return Response.json(
       { ...doc, mongoId: res.insertedId.toString() },
@@ -37,6 +56,7 @@ export async function POST(req) {
     return Response.json({ error: "Failed to create budget" }, { status: 500 });
   }
 }
+
 /**
  * /api/budgets
  *

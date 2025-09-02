@@ -1,34 +1,63 @@
+// app/api/trips/route.js
+// Brukerbinding med Clerk: alle spørringer og skriv opererer kun på { userId }.
+
 import { getDb } from "@/lib/mongodb";
+import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(req) {
+  const { userId } = auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
     const db = await getDb();
-    const trips = await db.collection("trips")
-      .find({})
+
+    // Valgfritt: støtt ?from=yyyy-mm-dd&to=yyyy-mm-dd (enkelt filter)
+    const url = new URL(req.url);
+    const from = url.searchParams.get("from");
+    const to = url.searchParams.get("to");
+
+    const filter = { userId };
+    if (from || to) {
+      filter.from = {};
+      if (from) filter.from.$gte = from;
+      if (to) filter.from.$lte = to;
+    }
+
+    const trips = await db
+      .collection("trips")
+      .find(filter)
       .sort({ from: 1 })
       .toArray();
 
-    // keep your own numeric id; expose Mongo's _id as mongoId
-    const data = trips.map(({ _id, ...t }) => ({ ...t, mongoId: _id.toString() }));
+    const data = trips.map(({ _id, ...t }) => ({
+      ...t,
+      mongoId: _id.toString(),
+    }));
     return Response.json(data, { status: 200 });
   } catch (err) {
-    // If this still returns HTML, the error happens before we get here (env / import time)
     return Response.json(
-      { ok: false, message: err?.message || "Failed to fetch trips", stack: err?.stack },
+      {
+        ok: false,
+        message: err?.message || "Failed to fetch trips",
+        stack: err?.stack,
+      },
       { status: 500 }
     );
   }
 }
 
 export async function POST(req) {
+  const { userId } = auth();
+  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
   try {
     const body = await req.json();
     const db = await getDb();
 
-    const doc = { ...body, createdAt: new Date() };
+    const doc = { ...body, userId, createdAt: new Date() };
     const res = await db.collection("trips").insertOne(doc);
 
     return Response.json(
@@ -37,11 +66,16 @@ export async function POST(req) {
     );
   } catch (err) {
     return Response.json(
-      { ok: false, message: err?.message || "Failed to create trip", stack: err?.stack },
+      {
+        ok: false,
+        message: err?.message || "Failed to create trip",
+        stack: err?.stack,
+      },
       { status: 500 }
     );
   }
 }
+
 /**
  * /api/trips
  *
