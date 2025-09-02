@@ -1,8 +1,11 @@
 // app/api/trips/route.js
-// Brukerbinding med Clerk: alle spørringer og skriv opererer kun på { userId }.
+// Kommentar:
+// - Beskytter alle spørringer med Clerk (auth()).
+// - Lagrer userId på dokumenter for "per bruker"-isolasjon.
+// - GET støtter ?from=YYYY-MM-DD&to=YYYY-MM-DD og returnerer kun innlogget brukers reiser.
 
-import { getDb } from "@/lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
+import { getDb } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
@@ -12,9 +15,6 @@ export async function GET(req) {
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const db = await getDb();
-
-    // Valgfritt: støtt ?from=yyyy-mm-dd&to=yyyy-mm-dd (enkelt filter)
     const url = new URL(req.url);
     const from = url.searchParams.get("from");
     const to = url.searchParams.get("to");
@@ -26,6 +26,7 @@ export async function GET(req) {
       if (to) filter.from.$lte = to;
     }
 
+    const db = await getDb();
     const trips = await db
       .collection("trips")
       .find(filter)
@@ -38,12 +39,9 @@ export async function GET(req) {
     }));
     return Response.json(data, { status: 200 });
   } catch (err) {
+    console.error("GET /api/trips failed:", err);
     return Response.json(
-      {
-        ok: false,
-        message: err?.message || "Failed to fetch trips",
-        stack: err?.stack,
-      },
+      { ok: false, message: err?.message || "Failed to fetch trips" },
       { status: 500 }
     );
   }
@@ -56,7 +54,6 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const db = await getDb();
-
     const doc = { ...body, userId, createdAt: new Date() };
     const res = await db.collection("trips").insertOne(doc);
 
@@ -65,12 +62,9 @@ export async function POST(req) {
       { status: 201 }
     );
   } catch (err) {
+    console.error("POST /api/trips failed:", err);
     return Response.json(
-      {
-        ok: false,
-        message: err?.message || "Failed to create trip",
-        stack: err?.stack,
-      },
+      { ok: false, message: err?.message || "Failed to create trip" },
       { status: 500 }
     );
   }

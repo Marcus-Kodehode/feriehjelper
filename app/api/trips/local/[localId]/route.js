@@ -1,5 +1,7 @@
 // app/api/trips/local/[localId]/route.js
-// Sikker localId-sletting: filtrer på { id: Number(params.localId), userId }.
+// Kommentar:
+// - Sletter en reise med lokal numerisk id (id) kun for innlogget bruker (userId).
+// - Brukes typisk når klienten har lokale rader uten mongoId.
 
 import { getDb } from "@/lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
@@ -15,7 +17,7 @@ export async function DELETE(_req, { params }) {
 
   const localId = Number(params.localId);
   if (!Number.isFinite(localId)) {
-    return Response.json({ error: "Bad localId" }, { status: 400 });
+    return Response.json({ error: "Invalid localId" }, { status: 400 });
   }
 
   try {
