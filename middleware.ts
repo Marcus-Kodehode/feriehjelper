@@ -5,9 +5,5 @@ export default clerkMiddleware();
 
 // Run the middleware for all pages and API routes (except static files/_next)
 export const config = {
-  matcher: [
-    "/((?!.+\\.[\\w]+$|_next).*)",
-    "/",
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };
