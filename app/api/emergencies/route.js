@@ -1,7 +1,6 @@
 // app/api/emergencies/route.js
-// Brukerbinding med Clerk:
-// - Alle spørringer filtreres med { userId }
-// - Upsert gjøres per { userId, tripId } (én rad per tur for hver bruker)
+// Brukerbinding med Clerk: alle operasjoner scoper til { userId }.
+// Upsert skjer per { userId, tripId }.
 
 import { getDb } from "@/lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
@@ -15,18 +14,33 @@ export async function GET(req) {
 
   try {
     const db = await getDb();
-
-    // Valgfritt: støtt ?tripId=123 for å hente én
     const url = new URL(req.url);
     const tripIdParam = url.searchParams.get("tripId");
-    const filter = { userId, ...(tripIdParam ? { tripId: Number(tripIdParam) } : {}) };
+
+    const filter = { userId };
+    if (tripIdParam != null) {
+      const n = Number(tripIdParam);
+      if (!Number.isFinite(n)) {
+        return Response.json(
+          { error: "tripId must be a number" },
+          { status: 400 }
+        );
+      }
+      filter.tripId = n;
+    }
 
     const docs = await db.collection("emergencies").find(filter).toArray();
-    const data = docs.map(({ _id, ...e }) => ({ ...e, mongoId: _id.toString() }));
+    const data = docs.map(({ _id, ...e }) => ({
+      ...e,
+      mongoId: _id.toString(),
+    }));
     return Response.json(data, { status: 200 });
   } catch (err) {
     console.error("GET /api/emergencies failed:", err);
-    return Response.json({ error: "Failed to fetch emergencies" }, { status: 500 });
+    return Response.json(
+      { error: "Failed to fetch emergencies" },
+      { status: 500 }
+    );
   }
 }
 
@@ -40,34 +54,45 @@ export async function POST(req) {
 
     const tripId = Number(body.tripId);
     if (!Number.isFinite(tripId)) {
-      return Response.json({ error: "tripId (number) is required" }, { status: 400 });
+      return Response.json(
+        { error: "tripId (number) is required" },
+        { status: 400 }
+      );
     }
 
-    const now = new Date();
+    // Rens body for felter vi ikke ønsker å lagre ukritisk
+    const {
+      _id,
+      mongoId,
+      userId: _ignoreUserId,
+      tripId: _ignoreTripId,
+      ...safe
+    } = body;
 
-    // Upsert én rad per { userId, tripId }
+    const now = new Date();
     await db.collection("emergencies").updateOne(
       { userId, tripId },
       {
-        $set: {
-          ...body,
-          userId,              // server setter eier
-          tripId,
-          updatedAt: now,
-        },
+        $set: { ...safe, userId, tripId, updatedAt: now },
         $setOnInsert: { createdAt: now },
       },
       { upsert: true }
     );
 
-    const saved = await db.collection("emergencies").findOne({ userId, tripId });
+    const saved = await db
+      .collection("emergencies")
+      .findOne({ userId, tripId });
+    const { _id: savedId, ...rest } = saved || {};
     return Response.json(
-      { ...saved, mongoId: saved._id.toString() },
+      { ...rest, mongoId: savedId.toString() },
       { status: 201 }
     );
   } catch (err) {
     console.error("POST /api/emergencies failed:", err);
-    return Response.json({ error: "Failed to upsert emergency" }, { status: 500 });
+    return Response.json(
+      { error: "Failed to upsert emergency" },
+      { status: 500 }
+    );
   }
 }
 
