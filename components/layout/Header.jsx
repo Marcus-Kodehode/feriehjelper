@@ -6,6 +6,7 @@ import MobileMenu from "./MobileMenu";
 import { useLanguage } from "@/components/context/LanguageContext";
 import translations from "@/components/lang/translations";
 import LanguageMenu from "@/components/shared/LanguageMenu";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export default function Header() {
   const { language } = useLanguage();
@@ -31,18 +32,42 @@ export default function Header() {
 
         {/* Navigasjon (PC) */}
         <nav className="items-center hidden gap-3 text-sm font-medium md:flex">
-          <Link href="/" className="nav-btn">{t.dashboard}</Link>
-          <Link href="/reiser" className="nav-btn">{t.trips}</Link>
-          <Link href="/budsjett" className="nav-btn">{t.budget}</Link>
-          <Link href="/aktiviteter" className="nav-btn">{t.activities}</Link>
-          <Link href="/konto" className="nav-btn">{t.account}</Link>
-          <Link href="/emergency" className="bg-red-600 nav-btn hover:bg-red-700">
+          <Link href="/" className="nav-btn">
+            {t.dashboard}
+          </Link>
+          <Link href="/reiser" className="nav-btn">
+            {t.trips}
+          </Link>
+          <Link href="/budsjett" className="nav-btn">
+            {t.budget}
+          </Link>
+          <Link href="/aktiviteter" className="nav-btn">
+            {t.activities}
+          </Link>
+          <Link href="/konto" className="nav-btn">
+            {t.account}
+          </Link>
+          <Link
+            href="/emergency"
+            className="bg-red-600 nav-btn hover:bg-red-700"
+          >
             {t.emergency}
           </Link>
 
           {/* Språkmeny (flagg + navn) */}
           <LanguageMenu />
         </nav>
+        <SignedOut>
+          <a href="/sign-in" className="btn">
+            Logg inn
+          </a>
+          <a href="/sign-up" className="btn btn-secondary">
+            Registrer
+          </a>
+        </SignedOut>
+        <SignedIn>
+          <UserButton afterSignOutUrl="/" />
+        </SignedIn>
 
         {/* Mobilmeny */}
         <MobileMenu />
