@@ -1,49 +1,59 @@
 "use client";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useAuth } from "@clerk/nextjs";
 
-const ActivityContext = createContext();
+const ActivityContext = createContext(null);
 
-// LS helpers med dynamisk nøkkel
-function saveLS(key, list) {
+const readLS = (key) => {
   try {
-    localStorage.setItem(key, JSON.stringify(list));
-  } catch {}
-}
-function loadLS(key) {
-  try {
-    const s = localStorage.getItem(key);
-    return s ? JSON.parse(s) : [];
+    return key ? JSON.parse(localStorage.getItem(key) || "[]") : [];
   } catch {
     return [];
   }
-}
+};
+const writeLS = (key, val) => {
+  try {
+    if (key) localStorage.setItem(key, JSON.stringify(val));
+  } catch {}
+};
 
 export function ActivityProvider({ children }) {
   const { isLoaded, isSignedIn, userId } = useAuth();
-  const storageKey =
-    isLoaded && isSignedIn ? `activities:${userId}` : "activities:guest";
+  const storageKey = useMemo(
+    () => (isLoaded && isSignedIn ? `activities:${userId}` : null),
+    [isLoaded, isSignedIn, userId]
+  );
 
   const [activities, setActivities] = useState([]);
-  const hasHydrated = useRef(false);
+  const hydrated = useRef(false);
 
-  // 1) Hydrer fra localStorage når nøkkelen endres (inn/ut av bruker)
+  // Hydrate per user (empty when logged out)
   useEffect(() => {
     if (!isLoaded) return;
-    setActivities(loadLS(storageKey));
-    hasHydrated.current = true;
-  }, [isLoaded, storageKey]);
+    // clean up any old guest key
+    try {
+      if (!isSignedIn) localStorage.removeItem("activities:guest");
+    } catch {}
+    setActivities(storageKey ? readLS(storageKey) : []);
+    hydrated.current = true;
+  }, [isLoaded, isSignedIn, storageKey]);
 
-  // 2) Persistér til localStorage
+  // Persist only when signed in (we have a storageKey)
   useEffect(() => {
-    if (hasHydrated.current) saveLS(storageKey, activities);
+    if (hydrated.current && storageKey) writeLS(storageKey, activities);
   }, [storageKey, activities]);
 
-  // 3) Hent fra API (kun innlogget) og MERGE inn
+  // Fetch & merge from API (signed in only)
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     const ac = new AbortController();
-
     (async () => {
       try {
         const res = await fetch("/api/activities", {
@@ -54,13 +64,11 @@ export function ActivityProvider({ children }) {
         const server = await res.json(); // [{..., id, mongoId}]
         setActivities((prev) => {
           const byId = new Map(prev.map((a) => [a.id, a]));
-          server.forEach((s) => {
+          for (const s of server) {
             const cur = byId.get(s.id);
-            if (cur) byId.set(s.id, { ...cur, ...s });
-            else byId.set(s.id, s);
-          });
+            byId.set(s.id, { ...(cur || {}), ...s });
+          }
           const list = Array.from(byId.values());
-          // robust sort: dato + tid (mangler tid => 23:59)
           const t = (x) => (x.time && x.time.trim() ? x.time : "23:59");
           return list.sort(
             (a, b) =>
@@ -69,71 +77,73 @@ export function ActivityProvider({ children }) {
         });
       } catch (e) {
         if (e.name !== "AbortError")
-          console.warn("Using local activities only (API offline?)", e);
+          console.warn("Using local only (API offline?)", e);
       }
     })();
-
     return () => ac.abort();
   }, [isLoaded, isSignedIn, storageKey]);
 
-  // 4) Sync lokale uten mongoId (kun innlogget)
+  // Sync local items missing mongoId (signed in only)
   useEffect(() => {
     if (!isLoaded || !isSignedIn) return;
     (async () => {
       const toSync = activities.filter((a) => a && a.id && !a.mongoId);
-      if (!toSync.length) return;
       for (const a of toSync) {
         try {
-          const res = await fetch("/api/activities", {
+          const r = await fetch("/api/activities", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(a),
           });
-          if (!res.ok) throw new Error("sync POST failed");
-          const saved = await res.json(); // { ...a, mongoId }
+          if (!r.ok) continue;
+          const saved = await r.json();
           setActivities((prev) =>
             prev.map((x) =>
               x.id === a.id ? { ...x, mongoId: saved.mongoId } : x
             )
           );
-        } catch (e) {
-          console.warn("Sync activity failed", a.id, e);
-        }
+        } catch {}
       }
     })();
   }, [isLoaded, isSignedIn, activities]);
 
-  // --------- API helpers (optimistisk) ---------
+  const requireAuth = () => {
+    if (!isLoaded || !isSignedIn) {
+      console.warn("Not signed in: writes are blocked");
+      return false;
+    }
+    return true;
+  };
 
+  // ---- Actions (blocked when logged out) ----
   const addActivity = async (input) => {
+    if (!requireAuth()) return;
     const activity = {
       id: input.id || Date.now(),
       tripId: Number(input.tripId),
       ...input,
     };
     setActivities((prev) => [...prev, activity]);
-
-    if (!isLoaded || !isSignedIn) return; // gjest: ikke kall server
-
     try {
-      const res = await fetch("/api/activities", {
+      const r = await fetch("/api/activities", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(activity),
       });
-      if (!res.ok) throw new Error("POST failed");
-      const saved = await res.json();
+      if (!r.ok) throw new Error("POST failed");
+      const saved = await r.json();
       setActivities((prev) =>
         prev.map((a) =>
           a.id === activity.id ? { ...a, mongoId: saved.mongoId } : a
         )
       );
     } catch (e) {
-      console.error("addActivity: server failed, kept locally", e);
+      console.error("addActivity failed", e);
     }
   };
 
   const updateActivity = async (id, patch) => {
+    if (!requireAuth()) return;
     const norm = {
       ...patch,
       ...(patch.tripId != null ? { tripId: Number(patch.tripId) } : {}),
@@ -141,51 +151,45 @@ export function ActivityProvider({ children }) {
     setActivities((prev) =>
       prev.map((a) => (a.id === id ? { ...a, ...norm } : a))
     );
-
-    if (!isLoaded || !isSignedIn) return;
-
     const target = activities.find((a) => a.id === id);
     const mongoId = target?.mongoId;
-
     try {
       if (mongoId) {
-        const res = await fetch(`/api/activities/${mongoId}`, {
+        const r = await fetch(`/api/activities/${mongoId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...target, ...norm }),
         });
-        if (!res.ok) throw new Error("PUT failed");
+        if (!r.ok) throw new Error("PUT failed");
       } else {
-        const res = await fetch("/api/activities", {
+        const r = await fetch("/api/activities", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...target, ...norm }),
         });
-        if (!res.ok) throw new Error("POST (no mongoId) failed");
-        const saved = await res.json();
+        if (!r.ok) throw new Error("POST (no mongoId) failed");
+        const saved = await r.json();
         setActivities((prev) =>
           prev.map((a) => (a.id === id ? { ...a, mongoId: saved.mongoId } : a))
         );
       }
     } catch (e) {
-      console.error("updateActivity: server failed, kept local state", e);
+      console.error("updateActivity failed", e);
     }
   };
 
   const deleteActivity = async (id) => {
+    if (!requireAuth()) return;
     const target = activities.find((a) => a.id === id);
-    // optimistisk lokalt
     setActivities((prev) => prev.filter((a) => a.id !== id));
-
-    if (!isLoaded || !isSignedIn || !target?.mongoId) return;
-
+    if (!target?.mongoId) return;
     try {
-      const res = await fetch(`/api/activities/${target.mongoId}`, {
+      const r = await fetch(`/api/activities/${target.mongoId}`, {
         method: "DELETE",
       });
-      if (!res.ok) throw new Error("DELETE failed");
+      if (!r.ok) throw new Error("DELETE failed");
     } catch (e) {
-      console.error("deleteActivity: server delete failed, removed locally", e);
+      console.error("deleteActivity failed", e);
     }
   };
 
