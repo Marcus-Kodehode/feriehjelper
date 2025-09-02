@@ -3,70 +3,105 @@
 // - Beskytter alle spørringer med Clerk (auth()).
 // - Lagrer userId på dokumenter for "per bruker"-isolasjon.
 // - GET støtter ?from=YYYY-MM-DD&to=YYYY-MM-DD og returnerer kun innlogget brukers reiser.
-
+import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { getDb } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+// Kun felter vi lar klienten skrive/oppdatere
+const ALLOWED_FIELDS = [
+  "id",
+  "title",
+  "destination",
+  "from",
+  "to",
+  "transport",
+  "stay",
+  "travelers",
+  "notes",
+];
+
+const pickAllowed = (obj = {}) =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([k]) => ALLOWED_FIELDS.includes(k))
+  );
+
 export async function GET(req) {
-  const { userId } = auth();
-  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
-    const url = new URL(req.url);
-    const from = url.searchParams.get("from");
-    const to = url.searchParams.get("to");
+    const { userId } = auth();
+    if (!userId)
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-    const filter = { userId };
-    if (from || to) {
-      filter.from = {};
-      if (from) filter.from.$gte = from;
-      if (to) filter.from.$lte = to;
-    }
+    const url = new URL(req.url);
+    const fromP = url.searchParams.get("from");
+    const toP = url.searchParams.get("to");
 
     const db = await getDb();
-    const trips = await db
+
+    // Filter: alle reiser for bruker, ev. som overlapper [fromP, toP]
+    const filter = { userId };
+    if (fromP || toP) {
+      const from = fromP || "0000-01-01";
+      const to = toP || "9999-12-31";
+      // Overlappslogikk: trip.to >= from  AND  trip.from <= to
+      filter.$and = [{ to: { $gte: from } }, { from: { $lte: to } }];
+    }
+
+    const docs = await db
       .collection("trips")
-      .find(filter)
-      .sort({ from: 1 })
+      .find(filter, { projection: { userId: 0 } })
+      .sort({ from: 1, id: 1 })
       .toArray();
 
-    const data = trips.map(({ _id, ...t }) => ({
-      ...t,
+    const items = docs.map(({ _id, ...rest }) => ({
+      ...rest,
       mongoId: _id.toString(),
     }));
-    return Response.json(data, { status: 200 });
-  } catch (err) {
-    console.error("GET /api/trips failed:", err);
-    return Response.json(
-      { ok: false, message: err?.message || "Failed to fetch trips" },
-      { status: 500 }
-    );
+
+    return NextResponse.json(items);
+  } catch (e) {
+    console.error("GET /api/trips failed:", e);
+    return NextResponse.json({ error: "server" }, { status: 500 });
   }
 }
 
 export async function POST(req) {
-  const { userId } = auth();
-  if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
-
   try {
-    const body = await req.json();
-    const db = await getDb();
-    const doc = { ...body, userId, createdAt: new Date() };
-    const res = await db.collection("trips").insertOne(doc);
+    const { userId } = auth();
+    if (!userId)
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-    return Response.json(
-      { ...doc, mongoId: res.insertedId.toString() },
+    const bodyRaw = await req.json();
+    const body = pickAllowed(bodyRaw);
+
+    if (body?.id == null) {
+      return NextResponse.json({ error: "missing id" }, { status: 400 });
+    }
+
+    const doc = { ...body, userId };
+    const db = await getDb();
+
+    // NB: anbefalt unik indeks: { userId: 1, id: 1 }
+    const result = await db.collection("trips").insertOne(doc);
+
+    // Klienten din trenger bare mongoId
+    return NextResponse.json(
+      { mongoId: result.insertedId.toString() },
       { status: 201 }
     );
-  } catch (err) {
-    console.error("POST /api/trips failed:", err);
-    return Response.json(
-      { ok: false, message: err?.message || "Failed to create trip" },
-      { status: 500 }
-    );
+  } catch (e) {
+    if (e?.code === 11000) {
+      // Treffer hvis du har unik indeks { userId, id }
+      return NextResponse.json(
+        { error: "duplicate id for user" },
+        { status: 409 }
+      );
+    }
+    console.error("POST /api/trips failed:", e);
+    return NextResponse.json({ error: "server" }, { status: 500 });
   }
 }
 
