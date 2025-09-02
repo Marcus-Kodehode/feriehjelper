@@ -2,7 +2,6 @@
 // Brukerbinding med Clerk:
 // - Alle les/skriv operasjoner skjer kun for dokumenter med userId === innlogget bruker
 // - Serveren setter userId; vi ignorerer eventuell userId i request body
-
 import { getDb } from "@/lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
@@ -17,7 +16,7 @@ export async function GET() {
     const db = await getDb();
     const docs = await db
       .collection("budgets")
-      .find({ userId }) // ← bare denne brukerens budsjetter
+      .find({ userId })
       .sort({ tripId: 1 })
       .toArray();
 
@@ -40,13 +39,24 @@ export async function POST(req) {
     const body = await req.json();
     const db = await getDb();
 
-    const doc = {
-      ...body,
-      userId, // ← eier settes på server
-      createdAt: new Date(),
-    };
+    // Rens: ikke ta imot sensitive felter fra klient
+    const { _id, mongoId, userId: _ignoreUserId, ...safe } = body;
 
+    // (Valgfritt) normaliser tripId
+    if (safe.tripId != null) {
+      const t = Number(safe.tripId);
+      if (!Number.isFinite(t)) {
+        return Response.json(
+          { error: "tripId must be a number" },
+          { status: 400 }
+        );
+      }
+      safe.tripId = t;
+    }
+
+    const doc = { ...safe, userId, createdAt: new Date() };
     const res = await db.collection("budgets").insertOne(doc);
+
     return Response.json(
       { ...doc, mongoId: res.insertedId.toString() },
       { status: 201 }
