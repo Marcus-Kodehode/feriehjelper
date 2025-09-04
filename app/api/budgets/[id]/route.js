@@ -50,7 +50,7 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(_req, { params }) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
   if (!isValidObjectId(params.id))
     return Response.json({ error: "Bad id" }, { status: 400 });
