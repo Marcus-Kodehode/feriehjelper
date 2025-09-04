@@ -1,47 +1,110 @@
+// app/api/trips/route.js
+// Kommentar:
+// - Beskytter alle spørringer med Clerk (auth()).
+// - Lagrer userId på dokumenter for "per bruker"-isolasjon.
+// - GET støtter ?from=YYYY-MM-DD&to=YYYY-MM-DD og returnerer kun innlogget brukers reiser.
+import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import { getDb } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET() {
+// Kun felter vi lar klienten skrive/oppdatere
+const ALLOWED_FIELDS = [
+  "id",
+  "title",
+  "destination",
+  "from",
+  "to",
+  "transport",
+  "stay",
+  "travelers",
+  "notes",
+];
+
+const pickAllowed = (obj = {}) =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([k]) => ALLOWED_FIELDS.includes(k))
+  );
+
+export async function GET(req) {
   try {
+    const { userId } = auth();
+    if (!userId)
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+    const url = new URL(req.url);
+    const fromP = url.searchParams.get("from");
+    const toP = url.searchParams.get("to");
+
     const db = await getDb();
-    const trips = await db.collection("trips")
-      .find({})
-      .sort({ from: 1 })
+
+    // Filter: alle reiser for bruker, ev. som overlapper [fromP, toP]
+    const filter = { userId };
+    if (fromP || toP) {
+      const from = fromP || "0000-01-01";
+      const to = toP || "9999-12-31";
+      // Overlappslogikk: trip.to >= from  AND  trip.from <= to
+      filter.$and = [{ to: { $gte: from } }, { from: { $lte: to } }];
+    }
+
+    const docs = await db
+      .collection("trips")
+      .find(filter, { projection: { userId: 0 } })
+      .sort({ from: 1, id: 1 })
       .toArray();
 
-    // keep your own numeric id; expose Mongo's _id as mongoId
-    const data = trips.map(({ _id, ...t }) => ({ ...t, mongoId: _id.toString() }));
-    return Response.json(data, { status: 200 });
-  } catch (err) {
-    // If this still returns HTML, the error happens before we get here (env / import time)
-    return Response.json(
-      { ok: false, message: err?.message || "Failed to fetch trips", stack: err?.stack },
-      { status: 500 }
-    );
+    const items = docs.map(({ _id, ...rest }) => ({
+      ...rest,
+      mongoId: _id.toString(),
+    }));
+
+    return NextResponse.json(items);
+  } catch (e) {
+    console.error("GET /api/trips failed:", e);
+    return NextResponse.json({ error: "server" }, { status: 500 });
   }
 }
 
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const { userId } = auth();
+    if (!userId)
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+    const bodyRaw = await req.json();
+    const body = pickAllowed(bodyRaw);
+
+    if (body?.id == null) {
+      return NextResponse.json({ error: "missing id" }, { status: 400 });
+    }
+
+    const doc = { ...body, userId };
     const db = await getDb();
 
-    const doc = { ...body, createdAt: new Date() };
-    const res = await db.collection("trips").insertOne(doc);
+    // NB: anbefalt unik indeks: { userId: 1, id: 1 }
+    const result = await db.collection("trips").insertOne(doc);
 
-    return Response.json(
-      { ...doc, mongoId: res.insertedId.toString() },
+    // Klienten din trenger bare mongoId
+    return NextResponse.json(
+      { mongoId: result.insertedId.toString() },
       { status: 201 }
     );
-  } catch (err) {
-    return Response.json(
-      { ok: false, message: err?.message || "Failed to create trip", stack: err?.stack },
-      { status: 500 }
-    );
+  } catch (e) {
+    if (e?.code === 11000) {
+      // Treffer hvis du har unik indeks { userId, id }
+      return NextResponse.json(
+        { error: "duplicate id for user" },
+        { status: 409 }
+      );
+    }
+    console.error("POST /api/trips failed:", e);
+    return NextResponse.json({ error: "server" }, { status: 500 });
   }
 }
+
 /**
  * /api/trips
  *

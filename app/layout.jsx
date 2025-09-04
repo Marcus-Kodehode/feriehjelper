@@ -2,11 +2,11 @@ import "@/styles/globals.css";
 import { TravelProvider } from "@/components/context/TravelContext";
 import { BudgetProvider } from "@/components/context/BudgetContext";
 import { ActivityProvider } from "@/components/context/ActivityContext";
-import { EmergencyProvider } from "@/components/context/EmergencyContext"; // 👈 ny
+import { EmergencyProvider } from "@/components/context/EmergencyContext";
 import Layout from "@/components/layout/Layout";
 import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from '@vercel/speed-insights/next';
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata = {
   title: "VacationHelper",
@@ -16,17 +16,19 @@ export default function RootLayout({ children }) {
   return (
     <html lang="no">
       <body className="bg-[#121212] text-white">
-        <TravelProvider>
-          <BudgetProvider>
-            <ActivityProvider>
-              <EmergencyProvider>
-                <Layout>{children}</Layout>
-              </EmergencyProvider>
-            </ActivityProvider>
-          </BudgetProvider>
-        </TravelProvider>
-        <Analytics />
-        <SpeedInsights />
+        <ClerkProvider>
+          <TravelProvider>
+            <BudgetProvider>
+              <ActivityProvider>
+                <EmergencyProvider>
+                  <Layout>{children}</Layout>
+                </EmergencyProvider>
+              </ActivityProvider>
+            </BudgetProvider>
+          </TravelProvider>
+          <Analytics />
+          <SpeedInsights />
+        </ClerkProvider>
       </body>
     </html>
   );

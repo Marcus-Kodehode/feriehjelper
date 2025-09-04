@@ -1,125 +1,167 @@
 "use client";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useAuth } from "@clerk/nextjs";
 
-const TravelContext = createContext();
+const TravelContext = createContext(null);
 
-function saveLS(trips) {
-  try { localStorage.setItem("trips", JSON.stringify(trips)); } catch {}
-}
-function loadLS() {
+// safe LS helpers
+const readLS = (key) => {
   try {
-    const s = localStorage.getItem("trips");
-    return s ? JSON.parse(s) : [];
+    return key ? JSON.parse(localStorage.getItem(key) || "[]") : [];
   } catch {
     return [];
   }
-}
+};
+const writeLS = (key, value) => {
+  try {
+    if (key) localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+};
 
 export function TravelProvider({ children }) {
+  const { isLoaded, isSignedIn, userId } = useAuth();
+
+  // Kun lagre/lese når innlogget – ellers ingen nøkkel => ingen data
+  const storageKey = useMemo(
+    () => (isLoaded && isSignedIn ? `trips:${userId}` : null),
+    [isLoaded, isSignedIn, userId]
+  );
+
   const [trips, setTrips] = useState([]);
-  const hasHydrated = useRef(false);
+  const hydrated = useRef(false);
 
-  // 1) Hydrer fra localStorage umiddelbart
+  // 1) Hydrer når auth/status/nøkkel endres
   useEffect(() => {
-    setTrips(loadLS());
-    hasHydrated.current = true;
-  }, []);
+    if (!isLoaded) return;
+    setTrips(storageKey ? readLS(storageKey) : []); // utlogget => tom liste
+    hydrated.current = true;
+  }, [isLoaded, storageKey]);
 
-  // 2) Persistér til localStorage ved endringer
+  // 2) Persistér kun når vi har en bruker-spesifikk nøkkel
   useEffect(() => {
-    if (hasHydrated.current) saveLS(trips);
-  }, [trips]);
+    if (hydrated.current && storageKey) writeLS(storageKey, trips);
+  }, [storageKey, trips]);
 
-  // 3) Hent fra API og merg inn (uten å ødelegge lokale)
+  // 3) Hent fra API og MERGE (kun når innlogget)
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
+    const ctrl = new AbortController();
+
     (async () => {
       try {
-        const res = await fetch("/api/trips", { cache: "no-store" });
-        if (!res.ok) throw new Error("Fetch trips failed");
-        const server = await res.json(); // [{..., id, mongoId }]
+        const r = await fetch("/api/trips", {
+          cache: "no-store",
+          signal: ctrl.signal,
+        });
+        if (!r.ok) throw new Error("Fetch trips failed");
+        const server = await r.json(); // [{..., id, mongoId}]
         setTrips((prev) => {
           const byId = new Map(prev.map((t) => [t.id, t]));
-          server.forEach((s) => {
-            const current = byId.get(s.id);
-            if (current) byId.set(s.id, { ...current, ...s });
-            else byId.set(s.id, s);
-          });
+          for (const s of server) {
+            byId.set(s.id, { ...(byId.get(s.id) || {}), ...s });
+          }
           return Array.from(byId.values()).sort(
             (a, b) => new Date(a.from) - new Date(b.from)
           );
         });
       } catch (e) {
-        console.warn("Using local trips only (API offline?)", e);
+        if (e.name !== "AbortError")
+          console.warn("Using local only (API offline?)", e);
       }
     })();
-  }, []);
 
-  // 4) Sync opp lokale trips som mangler mongoId
+    return () => ctrl.abort();
+  }, [isLoaded, isSignedIn, storageKey]);
+
+  // 4) Sync lokale uten mongoId (kun når innlogget)
   useEffect(() => {
+    if (!isLoaded || !isSignedIn) return;
     (async () => {
       const toSync = trips.filter((t) => t && t.id && !t.mongoId);
-      if (!toSync.length) return;
       for (const t of toSync) {
         try {
-          const res = await fetch("/api/trips", {
+          const r = await fetch("/api/trips", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(t),
           });
-          if (!res.ok) throw new Error("sync POST failed");
-          const saved = await res.json();
+          if (!r.ok) continue;
+          const saved = await r.json();
           setTrips((prev) =>
-            prev.map((x) => (x.id === t.id ? { ...x, mongoId: saved.mongoId } : x))
+            prev.map((x) =>
+              x.id === t.id ? { ...x, mongoId: saved.mongoId } : x
+            )
           );
-        } catch (e) {
-          console.warn("Sync of trip failed", t.id, e);
-        }
+        } catch {}
       }
     })();
-  }, [trips]);
+  }, [isLoaded, isSignedIn, trips]);
 
-  // API helpers (optimistic)
+  // Hjelper: blokker skriv hvis ikke innlogget
+  const requireAuth = () => {
+    if (!isLoaded || !isSignedIn) {
+      console.warn("Not signed in: writes are blocked");
+      return false;
+    }
+    return true;
+  };
+
+  // ==== API helpers (optimistic, men krever innlogging) ====
   const addTrip = async (tripInput) => {
+    if (!requireAuth()) return;
     const trip = { id: tripInput.id || Date.now(), ...tripInput };
     setTrips((prev) => [...prev, trip]);
+
     try {
-      const res = await fetch("/api/trips", {
+      const r = await fetch("/api/trips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(trip),
       });
-      if (!res.ok) throw new Error("POST failed");
-      const saved = await res.json();
+      if (!r.ok) throw new Error("POST failed");
+      const saved = await r.json();
       setTrips((prev) =>
-        prev.map((t) => (t.id === trip.id ? { ...t, mongoId: saved.mongoId } : t))
+        prev.map((t) =>
+          t.id === trip.id ? { ...t, mongoId: saved.mongoId } : t
+        )
       );
     } catch (e) {
-      console.error("addTrip: server failed, kept locally", e);
+      console.error("addTrip failed", e);
     }
   };
 
   const editTrip = async (updatedTrip) => {
+    if (!requireAuth()) return;
     setTrips((prev) =>
       prev.map((t) => (t.id === updatedTrip.id ? { ...t, ...updatedTrip } : t))
     );
-    const target = trips.find((t) => t.id === updatedTrip.id);
-    const mongoId = target?.mongoId;
+
+    const current = trips.find((t) => t.id === updatedTrip.id);
+    const mongoId = current?.mongoId;
+
     try {
       if (mongoId) {
-        const res = await fetch(`/api/trips/${mongoId}`, {
+        const r = await fetch(`/api/trips/${mongoId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedTrip),
         });
-        if (!res.ok) throw new Error("PUT failed");
+        if (!r.ok) throw new Error("PUT failed");
       } else {
-        const res = await fetch("/api/trips", {
+        const r = await fetch("/api/trips", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedTrip),
         });
-        if (!res.ok) throw new Error("POST (no mongoId) failed");
-        const saved = await res.json();
+        if (!r.ok) throw new Error("POST (no mongoId) failed");
+        const saved = await r.json();
         setTrips((prev) =>
           prev.map((t) =>
             t.id === updatedTrip.id ? { ...t, mongoId: saved.mongoId } : t
@@ -127,38 +169,42 @@ export function TravelProvider({ children }) {
         );
       }
     } catch (e) {
-      console.error("editTrip: server failed, kept local state", e);
+      console.error("editTrip failed", e);
     }
   };
 
   const deleteTrip = async (id) => {
+    if (!requireAuth()) return;
     const target = trips.find((t) => t.id === id);
-    setTrips((prev) => prev.filter((t) => t.id !== id)); // optimistisk
+    setTrips((prev) => prev.filter((t) => t.id !== id));
 
     try {
       if (target?.mongoId) {
-        const res = await fetch(`/api/trips/${target.mongoId}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("DELETE by mongoId failed");
+        const r = await fetch(`/api/trips/${target.mongoId}`, {
+          method: "DELETE",
+        });
+        if (!r.ok) throw new Error("DELETE by mongoId failed");
       } else {
-        const res = await fetch(`/api/trips/local/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("DELETE by localId failed");
+        const r = await fetch(`/api/trips/local/${id}`, { method: "DELETE" });
+        if (!r.ok) throw new Error("DELETE by localId failed");
       }
     } catch (e) {
-      console.error("deleteTrip: server delete failed, but removed locally", e);
+      console.error("deleteTrip failed", e);
     }
   };
 
-  // 🔧 DENNE MÅ VÆRE MED
+  const value = useMemo(
+    () => ({ trips, addTrip, editTrip, deleteTrip, isSignedIn }),
+    [trips, isSignedIn]
+  );
+
   return (
-    <TravelContext.Provider value={{ trips, addTrip, deleteTrip, editTrip }}>
-      {children}
-    </TravelContext.Provider>
+    <TravelContext.Provider value={value}>{children}</TravelContext.Provider>
   );
 }
 
-export function useTravel() {
-  return useContext(TravelContext);
-}
+export const useTravel = () => useContext(TravelContext);
+
 /*
 TravelContext — reiser, offline-først med trygg synk mot MongoDB
 
