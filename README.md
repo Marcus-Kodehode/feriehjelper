@@ -1,1 +1,1 @@
-Prosjektet er avsluttet og kan brenne i helvete!
+Møkka-Prosjektet er avsluttet og vil bli slettet.
