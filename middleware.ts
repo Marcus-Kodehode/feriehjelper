@@ -15,10 +15,18 @@ const isPublic = createRouteMatcher([
   "/favicon.ico",
 ]);
 
-export default clerkMiddleware((auth, req) => {
-  const a = (auth as any)();
+// VIKTIG: Ikke beskytt API-ruter med Clerk middleware
+const isApiRoute = createRouteMatcher(["/api/(.*)"]);
 
-  if (!isPublic(req) && !a?.userId) {
+export default clerkMiddleware(async (auth, req) => {
+  // La API-ruter gå gjennom uten redirect - de håndterer auth selv
+  if (isApiRoute(req)) {
+    return NextResponse.next();
+  }
+
+  const { userId } = await auth();
+
+  if (!isPublic(req) && !userId) {
     return NextResponse.redirect(new URL("/sign-in", req.url));
   }
 

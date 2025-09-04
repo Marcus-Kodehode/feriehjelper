@@ -5,7 +5,7 @@
 // - GET støtter ?from=YYYY-MM-DD&to=YYYY-MM-DD og returnerer kun innlogget brukers reiser.
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../lib/mongodb";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

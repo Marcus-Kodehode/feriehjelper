@@ -2,7 +2,7 @@
 // Brukerbinding med Clerk: alle operasjoner scoper til { userId }.
 // Upsert skjer per { userId, tripId }.
 
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";

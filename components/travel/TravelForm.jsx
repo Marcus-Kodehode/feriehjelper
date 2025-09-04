@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useTravel } from "@/components/context/TravelContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useTravel } from "../../components/context/TravelContext";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
 
 export default function TravelForm({ editData, onCancel }) {
   const { addTrip, editTrip } = useTravel();

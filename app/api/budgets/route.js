@@ -2,7 +2,7 @@
 // Brukerbinding med Clerk:
 // - Alle les/skriv operasjoner skjer kun for dokumenter med userId === innlogget bruker
 // - Serveren setter userId; vi ignorerer eventuell userId i request body
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";

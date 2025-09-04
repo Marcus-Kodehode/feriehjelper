@@ -3,7 +3,7 @@
 // - Sletter en reise med lokal numerisk id (id) kun for innlogget bruker (userId).
 // - Brukes typisk når klienten har lokale rader uten mongoId.
 
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../../../lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";

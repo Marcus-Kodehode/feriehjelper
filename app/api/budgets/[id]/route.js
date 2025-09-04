@@ -2,7 +2,7 @@
 // PUT/DELETE beskytter ved å inkludere { userId } i filteret.
 // Da kan du kun endre/slette dine egne dokumenter.
 import { ObjectId } from "mongodb";
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../../lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";

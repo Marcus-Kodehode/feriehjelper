@@ -1,5 +1,5 @@
 // app/api/health/route.js
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../lib/mongodb";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
