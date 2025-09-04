@@ -1,7 +1,7 @@
 "use client";
 import { useLanguage } from "../../components/context/LanguageContext";
 import translations from "../../components/lang/translations";
-import AccountPlaceholder from "../components/account/AccountPlaceholder";
+import AccountPlaceholder from "../../components/account/AccountPlaceholder";
 
 export default function AccountPage() {
   const { language } = useLanguage();

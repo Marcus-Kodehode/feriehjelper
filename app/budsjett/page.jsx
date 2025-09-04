@@ -2,8 +2,8 @@
 import { useBudget } from "../components/context/BudgetContext"; 
 import { useLanguage } from "../../components/context/LanguageContext";
 import translations from "../../components/lang/translations";
-import BudgetForm from "../components/budget/BudgetForm"; 
-import BudgetCard from "../components/budget/BudgetCard";
+import BudgetForm from "../../components/budget/BudgetForm"; 
+import BudgetCard from "../../components/budget/BudgetCard";
 
 export default function BudsjettPage() {
   const { budgets } = useBudget();

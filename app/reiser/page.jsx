@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import TravelForm from "../components/travel/TravelForm";
-import TravelSummary from "../components/dashboard/TravelSummary";
+import TravelForm from "../../components/travel/TravelForm";
+import TravelSummary from "../../components/dashboard/TravelSummary";
 import { useLanguage } from "../../components/context/LanguageContext";
 import translations from "../../components/lang/translations";
 

@@ -2,8 +2,8 @@
 import { useState } from "react"; 
 import { useLanguage } from "../../components/context/LanguageContext";
 import translations from "../../components/lang/translations";
-import ActivityForm from "../components/activity/ActivityForm"; 
-import GroupedActivityList from "../components/activity/GroupedActivityList";
+import ActivityForm from "../../components/activity/ActivityForm";
+import GroupedActivityList from "../../components/activity/GroupedActivityList";
 
 export default function ActivityPage() {
   const [editData, setEditData] = useState(null);
