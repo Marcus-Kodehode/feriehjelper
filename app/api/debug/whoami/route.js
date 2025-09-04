@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+// app/api/debug/whoami/route.ts
 import { auth } from "@clerk/nextjs/server";
 
 export function GET() {
