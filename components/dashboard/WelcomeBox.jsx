@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
 
 export default function WelcomeBox({ nextTrip }) {
   const { language } = useLanguage();

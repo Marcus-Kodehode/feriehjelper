@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useTravel } from "@/components/context/TravelContext";
-import { useEmergency } from "@/components/context/EmergencyContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useTravel } from "../context/TravelContext";
+import { useEmergency } from "../context/EmergencyContext";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
 
 export default function EmergencyForm({ editData, clearEdit }) {
   const { trips } = useTravel();

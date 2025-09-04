@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useLanguage } from "@/components/context/LanguageContext";
+import { useLanguage } from "../context/LanguageContext";
 
 // Konfig: språk -> visningsnavn + flaggsti
 const LANGS = {

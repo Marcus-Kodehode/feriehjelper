@@ -1,10 +1,9 @@
 "use client";
-import { useTravel } from "@/components/context/TravelContext";
+import { useTravel } from "../context/TravelContext";
 import TravelCard from "../travel/TravelCard";
 import WelcomeBox from "./WelcomeBox";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
 export default function TravelSummary({ onEditTrip }) {  // ← ta imot handler
   const { trips } = useTravel();
   const { language } = useLanguage();

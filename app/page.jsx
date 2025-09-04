@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import TravelSummary from "@/components/dashboard/TravelSummary";
+import { useLanguage } from "../components/context/LanguageContext";
+import translations from "../components/lang/translations";
+import TravelSummary from "../components/dashboard/TravelSummary";
 
 // Samle rutene ett sted (norske slugs)
 const ROUTES = {
@@ -64,9 +64,7 @@ export default function Home() {
             <h3 className="mb-2 text-lg font-semibold text-primary">
               {t.edit}: {tripToEdit.title}
             </h3>
-            <p className="mb-4 text-sm text-gray-300">
-              {t.viewDetails}?
-            </p>
+            <p className="mb-4 text-sm text-gray-300">{t.viewDetails}?</p>
 
             <div className="grid gap-2">
               <button onClick={() => go("trip")} className="btn-edit">
@@ -106,8 +104,6 @@ export default function Home() {
     </div>
   );
 }
-
-
 // Denne komponenten er hovedsiden for brukerens dashboard.
 // Den henter valgt språk fra LanguageContext, og bruker dette
 // til å vise oversatt tittel. Komponentens innhold består av en overskrift

@@ -1,14 +1,13 @@
 "use client";
-
 import { useState } from "react";
-import { useTravel } from "@/components/context/TravelContext";
-import { useBudget } from "@/components/context/BudgetContext";
-import { useActivity } from "@/components/context/ActivityContext";
-import { useEmergency } from "@/components/context/EmergencyContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import TravelDetails from "@/components/travel/details/TravelDetails";
-import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
+import { useTravel } from "./../context/TravelContext";
+import { useBudget } from "./../context/BudgetContext";
+import { useActivity } from "./../context/ActivityContext";
+import { useEmergency } from "./../context/EmergencyContext";
+import { useLanguage } from "./../context/LanguageContext";
+import translations from "./../lang/translations";
+import TravelDetails from "./../travel/details/TravelDetails";
+import BudgetMiniChart from "./../budget/BudgetMiniChart";
 import { ChevronDown } from "lucide-react";
 
 export default function TravelCard({ trip, isNextTrip, defaultOpen = true, onEditTrip }) {

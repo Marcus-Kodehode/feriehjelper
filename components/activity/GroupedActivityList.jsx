@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
-import { useTravel } from "@/components/context/TravelContext";
-import { useActivity } from "@/components/context/ActivityContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useTravel } from "../context/TravelContext";
+import { useActivity } from "../context/ActivityContext";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
 
-import ActivityCard from "./ActivityCard";
+import ActivityCard from "../ActivityCard";
 
 export default function GroupedActivityCard({ onEdit }) {
   const { trips } = useTravel();

@@ -1,9 +1,9 @@
 "use client";
-import { useTravel } from "@/components/context/TravelContext";
-import { useActivity } from "@/components/context/ActivityContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import { categoryLabel } from "@/components/utils/category";
+import { useTravel } from "../context/TravelContext";
+import { useActivity } from "../context/ActivityContext";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
+import { categoryLabel } from "../utils/category";
 
 
 export default function ActivityCard({ activity, onEdit }) {

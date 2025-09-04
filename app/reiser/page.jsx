@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import TravelForm from "@/components/travel/TravelForm";
-import TravelSummary from "@/components/dashboard/TravelSummary";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import TravelForm from "../components/travel/TravelForm";
+import TravelSummary from "../components/dashboard/TravelSummary";
+import { useLanguage } from "../components/context/LanguageContext";
+import translations from "../components/lang/translations";
 
 export default function ReiserPage() {
   const [visSkjema, setVisSkjema] = useState(false);

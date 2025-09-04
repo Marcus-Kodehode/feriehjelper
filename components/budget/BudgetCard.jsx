@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
-import { useTravel } from "@/components/context/TravelContext";
-import { useBudget } from "@/components/context/BudgetContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import BudgetSummary from "@/components/budget/BudgetSummary";
+import { useTravel } from "../context/TravelContext";
+import { useBudget } from "../context/BudgetContext";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
+import BudgetSummary from "./BudgetSummary";
 
 export default function BudgetCard({ budget }) {
   const { trips } = useTravel();

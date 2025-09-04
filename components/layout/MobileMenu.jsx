@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { X, Menu } from "lucide-react";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import LanguageMenu from "@/components/shared/LanguageMenu";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
+import LanguageMenu from "../shared/LanguageMenu";
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);

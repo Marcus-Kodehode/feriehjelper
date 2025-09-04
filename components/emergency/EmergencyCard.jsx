@@ -1,7 +1,7 @@
 "use client";
-import { useTravel } from "@/components/context/TravelContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useTravel } from "../context/TravelContext";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
 
 export default function EmergencyCard({ data, onEdit, onDelete }) {
   const { trips } = useTravel();

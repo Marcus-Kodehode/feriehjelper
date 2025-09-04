@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import { useBudget } from "@/components/context/BudgetContext";
-import { useTravel } from "@/components/context/TravelContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useBudget } from "../context/BudgetContext";
+import { useTravel } from "../context/TravelContext";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
 
 export default function BudgetForm() {
   const { addBudget } = useBudget();

@@ -1,12 +1,10 @@
 "use client";
-
-import { useState } from "react";
-import { useEmergency } from "@/components/context/EmergencyContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-
-import EmergencyCard from "@/components/emergency/EmergencyCard";
-import EmergencyForm from "@/components/emergency/EmergencyForm";
+import { useState } from "react"; 
+import { useEmergency } from "../components/context/EmergencyContext"; 
+import { useLanguage } from "../components/context/LanguageContext"; 
+import translations from "../components/lang/translations";
+import EmergencyCard from "../components/emergency/EmergencyCard"; 
+import EmergencyForm from "../components/emergency/EmergencyForm";
 
 export default function EmergencyPage() {
   const { emergencies, deleteEmergency } = useEmergency();

@@ -1,11 +1,10 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import MobileMenu from "./MobileMenu";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import LanguageMenu from "@/components/shared/LanguageMenu";
+import { useLanguage } from "../context/LanguageContext";
+import translations from "../lang/translations";
+import LanguageMenu from "../shared/LanguageMenu";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export default function Header() {

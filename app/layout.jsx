@@ -1,37 +1,40 @@
-import "@/styles/globals.css";
-import { TravelProvider } from "@/components/context/TravelContext";
-import { BudgetProvider } from "@/components/context/BudgetContext";
+import "../styles/globals.css";
+import { TravelProvider } from "../components/context/TravelContext";
+import { BudgetProvider } from "../components/context/BudgetContext";
 
-import { EmergencyProvider } from "@/components/context/EmergencyContext";
-import Layout from "@/components/layout/Layout";
+import { EmergencyProvider } from "../components/context/EmergencyContext";
+import Layout from "../components/layout/Layout";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-// import { ClerkProvider } from "@clerk/nextjs";
-import { ActivityProvider } from "@/components/context/ActivityContext";
+import { ClerkProvider } from "@clerk/nextjs";
+import { ActivityProvider } from "../components/context/ActivityContext";
 
 export const metadata = {
   title: "VacationHelper",
+  description: "Plan your perfect vacation",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="no">
-      <body className="bg-[#121212] text-white">
-        {/* <ClerkProvider> */}
+    <ClerkProvider>
+      <html lang="en">
+        <body>
           <TravelProvider>
             <BudgetProvider>
-              <ActivityProvider>
-                <EmergencyProvider>
-                  <Layout>{children}</Layout>
-                </EmergencyProvider>
-              </ActivityProvider>
+              <EmergencyProvider>
+                <ActivityProvider>
+                  <Layout>
+                    {children}
+                    <Analytics />
+                    <SpeedInsights />
+                  </Layout>
+                </ActivityProvider>
+              </EmergencyProvider>
             </BudgetProvider>
           </TravelProvider>
-          <Analytics />
-          <SpeedInsights />
-        {/* </ClerkProvider> */}
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
 // RootLayout definerer den overordnede strukturen for hele applikasjonen.

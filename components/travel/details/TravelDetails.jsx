@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useBudget } from "@/components/context/BudgetContext";
-import { useActivity } from "@/components/context/ActivityContext";
-import { useEmergency } from "@/components/context/EmergencyContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
+import { useBudget } from "../../context/BudgetContext";
+import { useActivity } from "../../context/ActivityContext";
+import { useEmergency } from "../../context/EmergencyContext";
+import { useLanguage } from "../../context/LanguageContext";
+import translations from "../../lang/translations";
+import BudgetMiniChart from "../../budget/BudgetMiniChart";
 
 export default function TravelDetails({ trip, onClose }) {
   const { language } = useLanguage();

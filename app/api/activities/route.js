@@ -10,7 +10,7 @@ export const revalidate = 0;
  * Støtter valgfritt ?tripId=123 for filtrering.
  */
 export async function GET(req) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   try {

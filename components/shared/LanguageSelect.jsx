@@ -1,5 +1,5 @@
 "use client";
-import { useLanguage } from "@/components/context/LanguageContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function LanguageSelect() {
   const { language, setLanguage, available } = useLanguage();
