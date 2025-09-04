@@ -2,7 +2,7 @@
 // Endre/slett kun egne dokumenter: filter inkluderer { _id, userId }.
 
 import { ObjectId } from "mongodb";
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../../lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";

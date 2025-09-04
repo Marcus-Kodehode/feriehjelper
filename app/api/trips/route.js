@@ -5,7 +5,7 @@
 // - GET støtter ?from=YYYY-MM-DD&to=YYYY-MM-DD og returnerer kun innlogget brukers reiser.
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../lib/mongodb";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -70,7 +70,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const { userId } = auth();
+    const { userId } = await auth();
     if (!userId)
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 

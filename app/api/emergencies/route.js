@@ -2,14 +2,14 @@
 // Brukerbinding med Clerk: alle operasjoner scoper til { userId }.
 // Upsert skjer per { userId, tripId }.
 
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
 
 export async function GET(req) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   try {

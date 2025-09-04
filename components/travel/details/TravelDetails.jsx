@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useBudget } from "@/components/context/BudgetContext";
-import { useActivity } from "@/components/context/ActivityContext";
-import { useEmergency } from "@/components/context/EmergencyContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import BudgetMiniChart from "@/components/budget/BudgetMiniChart";
+import { useBudget } from "../../../components/context/BudgetContext";
+import { useActivity } from "../../../components/context/ActivityContext";
+import { useEmergency } from "../../../components/context/EmergencyContext";
+import { useLanguage } from "../../../components/context/LanguageContext";
+import translations from "../../../components/lang/translations";
+import BudgetMiniChart from "../../../components/budget/BudgetMiniChart";
 
 export default function TravelDetails({ trip, onClose }) {
   const { language } = useLanguage();
@@ -25,8 +25,12 @@ export default function TravelDetails({ trip, onClose }) {
   if (!trip) return null;
 
   const length =
-    Math.ceil((new Date(trip.to) - new Date(trip.from)) / (1000 * 60 * 60 * 24)) + 1;
-  const daysLeft = Math.ceil((new Date(trip.from) - new Date()) / (1000 * 60 * 60 * 24));
+    Math.ceil(
+      (new Date(trip.to) - new Date(trip.from)) / (1000 * 60 * 60 * 24)
+    ) + 1;
+  const daysLeft = Math.ceil(
+    (new Date(trip.from) - new Date()) / (1000 * 60 * 60 * 24)
+  );
 
   const budsjett = budgets.find((b) => Number(b.tripId) === trip.id);
   const currency = budsjett?.currency || "kr";
@@ -72,8 +76,7 @@ export default function TravelDetails({ trip, onClose }) {
       <div className="relative w-full max-w-xl p-6 mx-4 border rounded-lg shadow-lg bg-dark border-contrast text-footerText max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute z-50 px-3 py-1 text-sm text-white bg-red-600 rounded top-4 right-2 hover:bg-red-700"
-        >
+          className="absolute z-50 px-3 py-1 text-sm text-white bg-red-600 rounded top-4 right-2 hover:bg-red-700">
           {t.close}
         </button>
 
@@ -88,7 +91,8 @@ export default function TravelDetails({ trip, onClose }) {
 
         {trip.transport && (
           <p className="text-sm text-gray-300">
-            <span className="font-semibold">{t.transport}:</span> {trip.transport}
+            <span className="font-semibold">{t.transport}:</span>{" "}
+            {trip.transport}
           </p>
         )}
         {trip.stay && (
@@ -98,7 +102,8 @@ export default function TravelDetails({ trip, onClose }) {
         )}
         {trip.travelers && (
           <p className="text-sm text-gray-300">
-            <span className="font-semibold">{t.travelers}:</span> {trip.travelers}
+            <span className="font-semibold">{t.travelers}:</span>{" "}
+            {trip.travelers}
           </p>
         )}
         {trip.notes && (
@@ -111,24 +116,38 @@ export default function TravelDetails({ trip, onClose }) {
         {budsjett && (
           <div className="mt-4 p-3 border rounded border-yellow-500 bg-[#2a2a2a] space-y-1">
             <p className="text-sm font-bold text-yellow-300">{t.budget}</p>
-            <p className="text-sm text-gray-300">{t.total}: {budsjett.amount} {currency}</p>
+            <p className="text-sm text-gray-300">
+              {t.total}: {budsjett.amount} {currency}
+            </p>
             {budsjett.daily && (
-              <p className="text-sm text-gray-300">{t.daily}: {budsjett.daily} {currency}</p>
+              <p className="text-sm text-gray-300">
+                {t.daily}: {budsjett.daily} {currency}
+              </p>
             )}
             {budsjett.transport && (
-              <p className="text-sm text-gray-300">{t.transport}: {budsjett.transport} {currency}</p>
+              <p className="text-sm text-gray-300">
+                {t.transport}: {budsjett.transport} {currency}
+              </p>
             )}
             {budsjett.accommodation && (
-              <p className="text-sm text-gray-300">{t.accommodation}: {budsjett.accommodation} {currency}</p>
+              <p className="text-sm text-gray-300">
+                {t.accommodation}: {budsjett.accommodation} {currency}
+              </p>
             )}
             {budsjett.food && (
-              <p className="text-sm text-gray-300">{t.food}: {budsjett.food} {currency}</p>
+              <p className="text-sm text-gray-300">
+                {t.food}: {budsjett.food} {currency}
+              </p>
             )}
             {budsjett.activities && (
-              <p className="text-sm text-gray-300">{t.activities}: {budsjett.activities} {currency}</p>
+              <p className="text-sm text-gray-300">
+                {t.activities}: {budsjett.activities} {currency}
+              </p>
             )}
             {budsjett.misc && (
-              <p className="text-sm text-gray-300">{t.misc}: {budsjett.misc} {currency}</p>
+              <p className="text-sm text-gray-300">
+                {t.misc}: {budsjett.misc} {currency}
+              </p>
             )}
             {budsjett.notes && (
               <p className="text-sm italic text-gray-400">{budsjett.notes}</p>
@@ -142,21 +161,31 @@ export default function TravelDetails({ trip, onClose }) {
         )}
 
         <div className="mt-6">
-          <h3 className="mb-2 text-lg font-bold text-green-400">{t.plannedActivities}</h3>
+          <h3 className="mb-2 text-lg font-bold text-green-400">
+            {t.plannedActivities}
+          </h3>
           {visibleActivities.length === 0 ? (
             <p className="text-sm text-gray-400">{t.noActivities}</p>
           ) : (
             <>
               <ul className="space-y-2">
                 {visibleActivities.map((a) => (
-                  <li key={a.id} className="p-3 border rounded border-contrast bg-zinc-900">
+                  <li
+                    key={a.id}
+                    className="p-3 border rounded border-contrast bg-zinc-900">
                     <p className="font-semibold text-primary">{a.name}</p>
                     <p className="text-sm text-gray-400">
                       {a.date} {a.time && `${t.at} ${a.time}`}
                     </p>
-                    {a.place && <p className="text-sm text-gray-300">{t.place}: {a.place}</p>}
+                    {a.place && (
+                      <p className="text-sm text-gray-300">
+                        {t.place}: {a.place}
+                      </p>
+                    )}
                     {a.cost && (
-                      <p className="text-sm text-gray-300">{t.cost}: {a.cost} {currency}</p>
+                      <p className="text-sm text-gray-300">
+                        {t.cost}: {a.cost} {currency}
+                      </p>
                     )}
                     {a.category && (
                       <p className="text-sm italic text-gray-400">
@@ -164,10 +193,15 @@ export default function TravelDetails({ trip, onClose }) {
                       </p>
                     )}
                     {a.notes && (
-                      <p className="text-sm italic text-gray-400">📝 {a.notes}</p>
+                      <p className="text-sm italic text-gray-400">
+                        📝 {a.notes}
+                      </p>
                     )}
                     {a.link && (
-                      <a href={a.link} target="_blank" className="text-sm text-pink-400 underline">
+                      <a
+                        href={a.link}
+                        target="_blank"
+                        className="text-sm text-pink-400 underline">
                         {t.moreInfo}
                       </a>
                     )}
@@ -177,8 +211,7 @@ export default function TravelDetails({ trip, onClose }) {
               {allActivities.length > 2 && (
                 <button
                   onClick={() => setShowAll((prev) => !prev)}
-                  className="mt-3 text-sm underline text-accent"
-                >
+                  className="mt-3 text-sm underline text-accent">
                   {showAll ? t.showLess : t.showAll}
                 </button>
               )}
@@ -188,15 +221,47 @@ export default function TravelDetails({ trip, onClose }) {
 
         {emergency && (
           <div className="mt-6 p-3 border rounded border-red-500 bg-[#2a2a2a] space-y-1">
-            <h3 className="text-sm font-bold text-red-400">{t.emergencyInfo}</h3>
-            {emergency.embassy && <p className="text-sm text-gray-300">{t.embassy}: {emergency.embassy}</p>}
-            {emergency.police && <p className="text-sm text-gray-300">{t.police}: {emergency.police}</p>}
-            {emergency.ambulance && <p className="text-sm text-gray-300">{t.ambulance}: {emergency.ambulance}</p>}
-            {emergency.fire && <p className="text-sm text-gray-300">{t.fire}: {emergency.fire}</p>}
-            {emergency.insurance && <p className="text-sm text-gray-300">{t.insurance}: {emergency.insurance}</p>}
-            {emergency.policyNumber && <p className="text-sm text-gray-300">{t.policyNumber}: {emergency.policyNumber}</p>}
-            {emergency.contactPerson && <p className="text-sm text-gray-300">{t.contactPerson}: {emergency.contactPerson}</p>}
-            {emergency.notes && <p className="text-sm italic text-gray-400">{emergency.notes}</p>}
+            <h3 className="text-sm font-bold text-red-400">
+              {t.emergencyInfo}
+            </h3>
+            {emergency.embassy && (
+              <p className="text-sm text-gray-300">
+                {t.embassy}: {emergency.embassy}
+              </p>
+            )}
+            {emergency.police && (
+              <p className="text-sm text-gray-300">
+                {t.police}: {emergency.police}
+              </p>
+            )}
+            {emergency.ambulance && (
+              <p className="text-sm text-gray-300">
+                {t.ambulance}: {emergency.ambulance}
+              </p>
+            )}
+            {emergency.fire && (
+              <p className="text-sm text-gray-300">
+                {t.fire}: {emergency.fire}
+              </p>
+            )}
+            {emergency.insurance && (
+              <p className="text-sm text-gray-300">
+                {t.insurance}: {emergency.insurance}
+              </p>
+            )}
+            {emergency.policyNumber && (
+              <p className="text-sm text-gray-300">
+                {t.policyNumber}: {emergency.policyNumber}
+              </p>
+            )}
+            {emergency.contactPerson && (
+              <p className="text-sm text-gray-300">
+                {t.contactPerson}: {emergency.contactPerson}
+              </p>
+            )}
+            {emergency.notes && (
+              <p className="text-sm italic text-gray-400">{emergency.notes}</p>
+            )}
           </div>
         )}
       </div>

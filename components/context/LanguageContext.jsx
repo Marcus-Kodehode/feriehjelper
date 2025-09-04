@@ -11,7 +11,7 @@ const LanguageContext = createContext({
 const ORDER = ["no", "en", "es", "zh"];
 const DEFAULT_LANG = "no";
 
-export function LanguageProvider({ children }) {
+export const LanguageProvider = ({ children }) => {
   // Viktig: ikke les localStorage her!
   const [language, setLanguage] = useState(DEFAULT_LANG);
 
@@ -44,14 +44,15 @@ export function LanguageProvider({ children }) {
   );
 
   return (
-    <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
+    <LanguageContext.Provider value={value}>
+      {children}
+    </LanguageContext.Provider>
   );
-}
+};
 
 export function useLanguage() {
   return useContext(LanguageContext);
 }
-
 
 // LanguageContext styrer hvilket språk som er aktivt i appen (norsk eller engelsk).
 // Brukeren kan bytte språk med toggleLanguage, som veksler mellom "no" og "en".

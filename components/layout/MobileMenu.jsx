@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { X, Menu } from "lucide-react";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
-import LanguageMenu from "@/components/shared/LanguageMenu";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
+import LanguageMenu from "../../components/shared/LanguageMenu";
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
@@ -25,8 +25,7 @@ export default function MobileMenu() {
       <button
         onClick={() => setOpen(true)}
         className="p-2 text-white md:hidden"
-        aria-label="Open menu"
-      >
+        aria-label="Open menu">
         <Menu size={28} />
       </button>
 
@@ -35,8 +34,7 @@ export default function MobileMenu() {
           <button
             onClick={() => setOpen(false)}
             className="absolute text-white top-4 right-4"
-            aria-label="Close menu"
-          >
+            aria-label="Close menu">
             <X size={32} />
           </button>
 
@@ -45,10 +43,11 @@ export default function MobileMenu() {
               key={href}
               href={href}
               className={`text-xl font-semibold px-4 py-2 rounded transition ${
-                danger ? "bg-red-600 hover:bg-red-700" : "bg-teal-700 hover:bg-teal-600"
+                danger
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-teal-700 hover:bg-teal-600"
               }`}
-              onClick={() => setOpen(false)}
-            >
+              onClick={() => setOpen(false)}>
               {label}
             </Link>
           ))}

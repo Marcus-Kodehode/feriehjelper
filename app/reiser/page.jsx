@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import TravelForm from "@/components/travel/TravelForm";
-import TravelSummary from "@/components/dashboard/TravelSummary";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import TravelForm from "../../components/travel/TravelForm";
+import TravelSummary from "../../components/dashboard/TravelSummary";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
 
 export default function ReiserPage() {
   const [visSkjema, setVisSkjema] = useState(false);
@@ -35,8 +35,7 @@ export default function ReiserPage() {
         <div className="my-6">
           <button
             onClick={() => setVisSkjema(!visSkjema)}
-            className="px-4 py-2 text-white transition rounded bg-accent hover:bg-pink-500"
-          >
+            className="px-4 py-2 text-white transition rounded bg-accent hover:bg-pink-500">
             {visSkjema ? t.hideForm : t.addTrip}
           </button>
         </div>
@@ -45,7 +44,10 @@ export default function ReiserPage() {
       {/* SKJEMA FOR Å REGISTRERE / REDIGERE REISE */}
       {visSkjema && (
         <div className="p-6 bg-transparent border rounded-lg border-contrast">
-          <TravelForm editData={editData} onCancel={handleCancelEdit} />
+          <TravelForm
+            editData={editData}
+            onCancel={handleCancelEdit}
+          />
         </div>
       )}
     </div>

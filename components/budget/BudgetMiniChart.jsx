@@ -1,13 +1,8 @@
 "use client";
-import { Pie } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -20,8 +15,14 @@ export default function BudgetMiniChart({ budget }) {
     datasets: [
       {
         data: [],
-        backgroundColor: ['#facc15', '#f87171', '#34d399', '#60a5fa', '#a78bfa'],
-        borderColor: '#1f1f1f',
+        backgroundColor: [
+          "#facc15",
+          "#f87171",
+          "#34d399",
+          "#60a5fa",
+          "#a78bfa",
+        ],
+        borderColor: "#1f1f1f",
         borderWidth: 1,
       },
     ],
@@ -52,7 +53,10 @@ export default function BudgetMiniChart({ budget }) {
 
   return (
     <div className="w-40 mx-auto mt-2">
-      <Pie data={data} options={{ plugins: { legend: { display: false } } }} />
+      <Pie
+        data={data}
+        options={{ plugins: { legend: { display: false } } }}
+      />
     </div>
   );
 }

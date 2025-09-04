@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
 
 export default function Footer() {
   const { language } = useLanguage();
@@ -26,9 +26,14 @@ export default function Footer() {
         </div>
 
         {/* Tekst */}
-        <p>© {new Date().getFullYear()} {language === "no" ? "Feriehjelper" : "VacationHelper"}. {t.rightsReserved}</p>
         <p>
-          {t.builtWith} <span className="text-primary">Next.js</span> & Tailwind CSS
+          © {new Date().getFullYear()}{" "}
+          {language === "no" ? "Feriehjelper" : "VacationHelper"}.{" "}
+          {t.rightsReserved}
+        </p>
+        <p>
+          {t.builtWith} <span className="text-primary">Next.js</span> & Tailwind
+          CSS
         </p>
       </div>
     </footer>

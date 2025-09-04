@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useLanguage } from "@/components/context/LanguageContext";
+import { useLanguage } from "../../components/context/LanguageContext";
 
 // Konfig: språk -> visningsnavn + flaggsti
 const LANGS = {
@@ -28,7 +28,9 @@ export default function LanguageMenu({ compact = false }) {
   const current = LANGS[language] ?? { name: language.toUpperCase(), flag: "" };
 
   return (
-    <div className="relative" ref={ref}>
+    <div
+      className="relative"
+      ref={ref}>
       {/* Trigger-knapp */}
       <button
         onClick={() => setOpen((v) => !v)}
@@ -36,8 +38,7 @@ export default function LanguageMenu({ compact = false }) {
           compact ? "text-xs" : "text-sm"
         }`}
         aria-haspopup="menu"
-        aria-expanded={open}
-      >
+        aria-expanded={open}>
         {current.flag ? (
           <Image
             src={current.flag}
@@ -56,8 +57,7 @@ export default function LanguageMenu({ compact = false }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-50 mt-2 w-40 rounded border bg-[#1f1f1f] shadow-lg"
-        >
+          className="absolute right-0 z-50 mt-2 w-40 rounded border bg-[#1f1f1f] shadow-lg">
           {available.map((code) => {
             const item = LANGS[code] ?? { name: code.toUpperCase(), flag: "" };
             const active = code === language;
@@ -71,8 +71,7 @@ export default function LanguageMenu({ compact = false }) {
                 }}
                 className={`w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-800 ${
                   active ? "opacity-90" : ""
-                }`}
-              >
+                }`}>
                 {item.flag ? (
                   <Image
                     src={item.flag}

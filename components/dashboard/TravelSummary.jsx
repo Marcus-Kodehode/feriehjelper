@@ -1,17 +1,20 @@
 "use client";
-import { useTravel } from "@/components/context/TravelContext";
+import { useTravel } from "../../components/context/TravelContext";
 import TravelCard from "../travel/TravelCard";
 import WelcomeBox from "./WelcomeBox";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
 
-export default function TravelSummary({ onEditTrip }) {  // ← ta imot handler
+export default function TravelSummary({ onEditTrip }) {
+  // ← ta imot handler
   const { trips } = useTravel();
   const { language } = useLanguage();
   const t = translations[language];
 
   const today = new Date();
-  const sortedTrips = trips.slice().sort((a, b) => new Date(a.from) - new Date(b.from));
+  const sortedTrips = trips
+    .slice()
+    .sort((a, b) => new Date(a.from) - new Date(b.from));
   const nextTrip = sortedTrips.find((trip) => new Date(trip.from) > today);
 
   if (trips.length === 0) {
@@ -26,7 +29,7 @@ export default function TravelSummary({ onEditTrip }) {  // ← ta imot handler
           key={trip.id}
           trip={trip}
           isNextTrip={trip.id === nextTrip?.id}
-          onEditTrip={onEditTrip}  // ← send den videre til hvert kort
+          onEditTrip={onEditTrip} // ← send den videre til hvert kort
         />
       ))}
     </div>

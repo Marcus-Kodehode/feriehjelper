@@ -5,7 +5,7 @@
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { auth } from "@clerk/nextjs/server";
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../../lib/mongodb";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

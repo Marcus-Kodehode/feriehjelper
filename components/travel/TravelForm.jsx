@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useTravel } from "@/components/context/TravelContext";
-import { useLanguage } from "@/components/context/LanguageContext";
-import translations from "@/components/lang/translations";
+import { useTravel } from "../../components/context/TravelContext";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
 
 export default function TravelForm({ editData, onCancel }) {
   const { addTrip, editTrip } = useTravel();
@@ -61,11 +61,12 @@ export default function TravelForm({ editData, onCancel }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 space-y-4 border rounded-lg bg-dark border-contrast"
-    >
+      className="p-6 space-y-4 border rounded-lg bg-dark border-contrast">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-400">{t.tripTitleLabel}</label>
+          <label className="mb-1 text-sm text-gray-400">
+            {t.tripTitleLabel}
+          </label>
           <input
             type="text"
             name="title"
@@ -78,7 +79,9 @@ export default function TravelForm({ editData, onCancel }) {
         </div>
 
         <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-400">{t.destinationLabel}</label>
+          <label className="mb-1 text-sm text-gray-400">
+            {t.destinationLabel}
+          </label>
           <input
             type="text"
             name="destination"
@@ -115,7 +118,9 @@ export default function TravelForm({ editData, onCancel }) {
         </div>
 
         <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-400">{t.transportLabel}</label>
+          <label className="mb-1 text-sm text-gray-400">
+            {t.transportLabel}
+          </label>
           <input
             type="text"
             name="transport"
@@ -139,7 +144,9 @@ export default function TravelForm({ editData, onCancel }) {
         </div>
 
         <div className="flex flex-col">
-          <label className="mb-1 text-sm text-gray-400">{t.travelersLabel}</label>
+          <label className="mb-1 text-sm text-gray-400">
+            {t.travelersLabel}
+          </label>
           <input
             type="number"
             name="travelers"
@@ -166,16 +173,14 @@ export default function TravelForm({ editData, onCancel }) {
       <div className="flex gap-3">
         <button
           type="submit"
-          className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500"
-        >
+          className="px-4 py-2 font-medium text-white rounded bg-accent hover:bg-pink-500">
           {editData ? t.updateTrip || "Oppdater reise" : t.submitTrip}
         </button>
         {editData && (
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 font-medium text-white bg-gray-600 rounded hover:bg-gray-700"
-          >
+            className="px-4 py-2 font-medium text-white bg-gray-600 rounded hover:bg-gray-700">
             {t.cancel}
           </button>
         )}

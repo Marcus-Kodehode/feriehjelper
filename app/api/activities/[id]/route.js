@@ -1,6 +1,6 @@
 // app/api/activities/[id]/route.js
 import { ObjectId } from "mongodb";
-import { getDb } from "@/lib/mongodb";
+import { getDb } from "../../../../lib/mongodb";
 import { auth } from "@clerk/nextjs/server";
 
 export const runtime = "nodejs";

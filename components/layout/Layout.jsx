@@ -1,6 +1,6 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import { LanguageProvider } from "@/components/context/LanguageContext";
+import { LanguageProvider } from "../../components/context/LanguageContext";
 
 export default function Layout({ children }) {
   return (
