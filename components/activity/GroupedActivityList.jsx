@@ -5,7 +5,7 @@ import { useActivity } from "../context/ActivityContext";
 import { useLanguage } from "../context/LanguageContext";
 import translations from "../lang/translations";
 
-import ActivityCard from "../ActivityCard";
+import ActivityCard from "./ActivityCard";
 
 export default function GroupedActivityCard({ onEdit }) {
   const { trips } = useTravel();

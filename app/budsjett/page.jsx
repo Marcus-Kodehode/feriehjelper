@@ -1,5 +1,5 @@
 "use client";
-import { useBudget } from "../../components/context/BudgetContext"; 
+import { useBudget } from "../../components/context/BudgetContext";
 import { useLanguage } from "../../components/context/LanguageContext";
 import translations from "../../components/lang/translations";
 import BudgetForm from "../../components/budget/BudgetForm"; 
