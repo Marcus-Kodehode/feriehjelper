@@ -1,12 +1,13 @@
 import "@/styles/globals.css";
 import { TravelProvider } from "@/components/context/TravelContext";
 import { BudgetProvider } from "@/components/context/BudgetContext";
-import { ActivityProvider } from "@/components/context/ActivityContext";
+
 import { EmergencyProvider } from "@/components/context/EmergencyContext";
 import Layout from "@/components/layout/Layout";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { ClerkProvider } from "@clerk/nextjs";
+// import { ClerkProvider } from "@clerk/nextjs";
+import { ActivityProvider } from "@/components/context/ActivityContext";
 
 export const metadata = {
   title: "VacationHelper",
@@ -16,7 +17,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="no">
       <body className="bg-[#121212] text-white">
-        <ClerkProvider>
+        {/* <ClerkProvider> */}
           <TravelProvider>
             <BudgetProvider>
               <ActivityProvider>
@@ -28,7 +29,7 @@ export default function RootLayout({ children }) {
           </TravelProvider>
           <Analytics />
           <SpeedInsights />
-        </ClerkProvider>
+        {/* </ClerkProvider> */}
       </body>
     </html>
   );

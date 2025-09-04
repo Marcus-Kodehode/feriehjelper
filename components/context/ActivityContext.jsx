@@ -24,7 +24,7 @@ const writeLS = (key, val) => {
   } catch {}
 };
 
-export function ActivityProvider({ children }) {
+export const  ActivityProvider=({ children }) => {
   const { isLoaded, isSignedIn, userId } = useAuth();
   const storageKey = useMemo(
     () => (isLoaded && isSignedIn ? `activities:${userId}` : null),

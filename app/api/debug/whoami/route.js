@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+// app/api/debug/whoami/route.ts
 import { auth } from "@clerk/nextjs/server";
-
-export function GET() {
-  const a = auth();
-  return NextResponse.json({
-    userId: a.userId ?? null,
-    sessionId: a.sessionId ?? null,
-    sessionStatus: a.sessionStatus ?? null,
+export async function GET() {
+  const { userId, sessionId, session } = auth();
+  return Response.json({
+    ok: true,
+    userId: userId ?? null,
+    sessionId: sessionId ?? null,
+    sessionStatus: session?.status ?? null,
   });
 }
