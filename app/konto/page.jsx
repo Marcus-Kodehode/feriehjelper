@@ -1,6 +1,6 @@
 "use client";
-import { useLanguage } from "../components/context/LanguageContext";
-import translations from "../components/lang/translations";
+import { useLanguage } from "../../components/context/LanguageContext";
+import translations from "../../components/lang/translations";
 import AccountPlaceholder from "../components/account/AccountPlaceholder";
 
 export default function AccountPage() {
