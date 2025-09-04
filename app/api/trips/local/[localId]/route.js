@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 export const revalidate = 0;
 
 export async function DELETE(_req, { params }) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
