@@ -4,7 +4,7 @@
 // export async function GET() {
 //   let client;
 //   try {
-//     const uri = "mongodb+srv://LazyElmo:PASSWORD@elmocluster.xcd2fux.mongodb.net/?retryWrites=true&w=majority&appName=ElmoCluster";
+//
     
 //     client = new MongoClient(uri);
 //     console.log("Attempting to connect to MongoDB...");
