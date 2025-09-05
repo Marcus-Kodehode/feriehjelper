@@ -87,7 +87,7 @@ export function TravelProvider({ children }) {
       const toSync = trips.filter((t) => t && t.id && !t.mongoId);
       for (const t of toSync) {
         try {
-          const r = await fetch("/api/trips", {
+          const r = await fetch("https://feriehjelper.vercel.app/api/trips", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(t),
